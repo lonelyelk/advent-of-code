@@ -7,3 +7,9 @@ intcode.compute_continue
 puts intcode.halt?
 
 puts intcode.flush_output.inspect
+
+intcode = Intcode.new(prog: prog, input: [2])
+intcode.compute_continue
+puts intcode.halt?
+
+puts intcode.flush_output.inspect
