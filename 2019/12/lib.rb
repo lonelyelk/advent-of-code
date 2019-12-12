@@ -49,4 +49,22 @@ class MoonSystem
   def tot
     moons.map(&:tot).inject(&:+)
   end
+
+  def axis_stopped?(n)
+    moons.all? { |m| m.vel[n] == 0 }
+  end
+end
+
+def return_to_start_steps(sys)
+  steps_to_stop = Array.new(3, 0)
+  steps = 0
+  while steps_to_stop.any? { |num| num == 0 }
+    steps += 1
+    sys.step!
+    steps_to_stop.each_with_index do |num, i|
+      next unless num == 0
+      steps_to_stop[i] = steps if sys.axis_stopped?(i)
+    end
+  end
+  steps_to_stop.inject(&:lcm) * 2
 end
