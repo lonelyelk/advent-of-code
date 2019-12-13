@@ -16,6 +16,10 @@ class Intcode
     @input.push(data)
   end
 
+  def bulk_input(arr)
+    @input += arr
+  end
+
   def output
     @output.shift
   end
@@ -122,6 +126,10 @@ def plot(arr)
   end
   puts score
   screen.each do |row|
+    unless row
+      print "\033[B"
+      next
+    end
     puts (row.map do |char|
       case char
       when nil
@@ -141,4 +149,5 @@ def plot(arr)
       end
     end.join)
   end
+  puts "\033[25A"
 end
