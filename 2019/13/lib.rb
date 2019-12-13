@@ -148,8 +148,6 @@ end
 
 def convert_char(char)
   case char
-  when nil
-    ' '
   when 0
     ' '
   when 1
