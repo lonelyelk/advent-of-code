@@ -113,41 +113,51 @@ class Intcode
   end
 end
 
-def plot(arr)
-  screen = []
-  score = 0
+def plot(arr, screen, score)
+  screen_memory = []
+  score ||= 0
   arr.each_slice(3) do |point|
     if point[0..1] == [-1, 0]
       score = point[2]
       next
     end
-    screen[point[1]] ||= []
-    screen[point[1]][point[0]] = point[2]
+    screen_memory[point[1]] ||= []
+    screen_memory[point[1]][point[0]] = point[2]
   end
   puts score
-  screen.each do |row|
-    unless row
-      print "\033[B"
-      next
+  if screen.nil?
+    screen = screen_memory.map do |row|
+      row.map { |char| convert_char(char) }.join
     end
-    puts (row.map do |char|
-      case char
-      when nil
-        ' '
-      when 0
-        ' '
-      when 1
-        '#'
-      when 2
-        '.'
-      when 3
-        '-'
-      when 4
-        'o'
-      else
-        raise "ERROR"
+  else
+    screen_memory.each_with_index do |row, y|
+      next if row.nil?
+      row.each_with_index do |char, x|
+        next if char.nil?
+        screen[y] = screen[y][0...x] + convert_char(char) + screen[y][(x+1)..-1]
       end
-    end.join)
+    end
   end
+  screen.each { |row| puts row }
   puts "\033[25A"
+  [screen, score]
+end
+
+def convert_char(char)
+  case char
+  when nil
+    ' '
+  when 0
+    ' '
+  when 1
+    '#'
+  when 2
+    '.'
+  when 3
+    '-'
+  when 4
+    'o'
+  else
+    raise "ERROR"
+  end
 end

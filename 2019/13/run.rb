@@ -11,11 +11,11 @@ puts arr.each_slice(3).map(&:last).count { |n| n == 2 }
 prog[0] = 2
 
 intcode = Intcode.new(prog: prog)
-intcode.bulk_input([1,0,-1])
-[1, 0, -1].each do |input|
+screen = nil
+score = nil
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].each do |input|
   intcode.compute_continue
   intcode.input(input)
-  arr = intcode.flush_output
-  plot(arr) if arr.any?
+  screen, score = plot(intcode.flush_output, screen, score)
   sleep 1
 end
