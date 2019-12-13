@@ -108,3 +108,37 @@ class Intcode
     end
   end
 end
+
+def plot(arr)
+  screen = []
+  score = 0
+  arr.each_slice(3) do |point|
+    if point[0..1] == [-1, 0]
+      score = point[2]
+      next
+    end
+    screen[point[1]] ||= []
+    screen[point[1]][point[0]] = point[2]
+  end
+  puts score
+  screen.each do |row|
+    puts (row.map do |char|
+      case char
+      when nil
+        ' '
+      when 0
+        ' '
+      when 1
+        '#'
+      when 2
+        '.'
+      when 3
+        '-'
+      when 4
+        'o'
+      else
+        raise "ERROR"
+      end
+    end.join)
+  end
+end
