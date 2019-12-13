@@ -1,4 +1,6 @@
 class Intcode
+  attr_reader :prg, :index
+
   def initialize(prog: , input: [])
     @input = input
     @prg = prog.dup
@@ -124,12 +126,14 @@ def plot(arr, screen, score)
     screen_memory[point[1]] ||= []
     screen_memory[point[1]][point[0]] = point[2]
   end
-  puts score
   if screen.nil?
+    puts score
     screen = screen_memory.map do |row|
       row.map { |char| convert_char(char) }.join
     end
   else
+    puts "\033[25A"
+    puts score
     screen_memory.each_with_index do |row, y|
       next if row.nil?
       row.each_with_index do |char, x|
@@ -139,7 +143,6 @@ def plot(arr, screen, score)
     end
   end
   screen.each { |row| puts row }
-  puts "\033[25A"
   [screen, score]
 end
 

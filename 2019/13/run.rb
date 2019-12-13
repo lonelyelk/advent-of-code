@@ -13,9 +13,13 @@ prog[0] = 2
 intcode = Intcode.new(prog: prog)
 screen = nil
 score = nil
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].each do |input|
+while !intcode.halt?
   intcode.compute_continue
-  intcode.input(input)
+  intcode.prg[391] = -1 if intcode.prg[389] == 20 # cheat!
+
+  intcode.input(0)
   screen, score = plot(intcode.flush_output, screen, score)
-  sleep 1
+  # sleep 0.01
 end
+
+puts score
