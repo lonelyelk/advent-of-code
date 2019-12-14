@@ -9,10 +9,6 @@ class Chemical
   def fuel?
     name == "FUEL"
   end
-
-  def ore?
-    name == "ORE"
-  end
 end
 
 class Reaction
@@ -33,24 +29,6 @@ class Reaction
 
   def produce_fuel?
     result.fuel?
-  end
-
-  def require?(name)
-    ingredients.any? { |chemical| chemical.name == name }
-  end
-
-  def require_ore?
-    ingredients.any?(&:ore?)
-  end
-
-  def require_ore_amount
-    ingredients.inject(0) do |acc, chemical|
-      chemical.ore? ? acc + chemical.amount : acc
-    end
-  end
-
-  def require_non_ore
-    ingredients.select { |chemical| !chemical.ore? }
   end
 end
 
