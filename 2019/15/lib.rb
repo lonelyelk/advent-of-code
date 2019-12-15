@@ -121,9 +121,9 @@ end
 
 class Droid
   attr_accessor :x, :y, :x_next, :y_next, :active
-  attr_reader :input, :intcode
+  attr_reader :input, :intcode, :path
 
-  def initialize(intcode:, input:, x:, y:, x_next:, y_next:)
+  def initialize(intcode:, input:, x:, y:, x_next:, y_next:, path: [])
     @intcode = intcode
     @input = input
     @x = x
@@ -131,20 +131,23 @@ class Droid
     @x_next = x_next
     @y_next = y_next
     @active = true
+    @path = path
   end
 
-  def to_s
-    "Droid: x=#{x}; y=#{y}; x_next=#{x_next}; y_next=#{y_next}; input=#{input}"
-  end
-
-  def inspect
-    "Droid: x=#{x}; y=#{y}; x_next=#{x_next}; y_next=#{y_next}; input=#{input}"
+  def update_path!
+    x_new, y_new = next_coords(input, x_next, y_next)
+    @path.push([@x, @y])
+    @x = @x_next
+    @y = @y_next
+    @x_next = x_new
+    @y_next = y_new
   end
 end
 
 def draw_map(prog)
   x_min, y_min = Array.new(4, 0)
   map = [[1]]
+  path_length = 0
   droids = Array.new(4) do |index|
     input = index + 1
     x_next, y_next = next_coords(input, 0, 0)
@@ -169,16 +172,13 @@ def draw_map(prog)
       map, x_min, y_min = fit_map(output, map, droid.x_next, droid.y_next, x_min, y_min)
       case output
       when 0
-        # puts "0. x=#{droid.x}; y=#{droid.y}; x_next=#{droid.x_next}; y_next=#{droid.y_next}; map=#{map.inspect}"
         droid.active = false
         next
-      when 1, 2
-        # puts "#{output}. x=#{droid.x}; y=#{droid.y}; x_next=#{droid.x_next}; y_next=#{droid.y_next}; map=#{map.inspect}"
-        x_next, y_next = next_coords(droid.input, droid.x_next, droid.y_next)
-        droid.x = droid.x_next
-        droid.y = droid.y_next
-        droid.x_next = x_next
-        droid.y_next = y_next
+      when 1
+        droid.update_path!
+      when 2
+        droid.update_path!
+        path_length = droid.path.length if path_length == 0
       else
         raise "ERROR"
       end
@@ -186,7 +186,6 @@ def draw_map(prog)
         input = index + 1
         next if input == droid.input
         x_next, y_next = next_coords(input, droid.x, droid.y)
-        # puts "x_min=#{x_min}; y_min=#{y_min}; x=#{droid.x}; y=#{droid.y}; x_next=#{x_next}; y_next=#{y_next}; map=#{map.inspect}"
         next if x_next >=  x_min && y_next >= y_min && y_next < map.length + y_min && !map[y_next-y_min][x_next-x_min].nil?
         new_droid = Droid.new(
           intcode: droid.intcode.clone,
@@ -195,6 +194,7 @@ def draw_map(prog)
           y: droid.y,
           x_next: x_next,
           y_next: y_next,
+          path: droid.path.dup
         )
         new_droid.intcode.input(input)
         new_droids.push(new_droid)
@@ -202,11 +202,11 @@ def draw_map(prog)
       droid.intcode.input(droid.input)
     end
     droids += new_droids
-    # puts droids.inspect
-    plot(map)
-    puts
-    sleep 0.1
+    # plot(map)
+    # puts
+    # sleep 0.1
   end
+  [map, path_length]
 end
 
 def fit_map(val, map, x, y, x_min, y_min)
@@ -221,7 +221,6 @@ def fit_map(val, map, x, y, x_min, y_min)
   if y >= map.length + y_min
     map.push([])
   end
-  # puts "x=#{x}; y=#{y}; x_min=#{x_min}; y_min=#{y_min}; map=#{map.inspect}"
   map[y - y_min][x - x_min] = val
   [map, x_min, y_min]
 end
@@ -251,4 +250,31 @@ def plot(map)
     end
     puts str.join
   end
+end
+
+def oxigen_fill(map)
+  count = 0
+  while map.any? { |line| line.any? { |pt| pt == 1 } } do
+    count += 1
+    map = map.map.with_index do |line, y|
+      line.map.with_index do |pt, x|
+        case pt
+        when nil, 0, 2
+          pt
+        when 1
+          if map[y][x-1] == 2 || map[y][x+1] == 2 || map[y-1][x] == 2 || map[y+1][x] == 2
+            2
+          else
+            1
+          end
+        else
+          raise "ERROR"
+        end
+      end
+    end
+    # plot(map)
+    # puts
+    # sleep 0.1
+  end
+  count
 end
