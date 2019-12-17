@@ -201,11 +201,9 @@ def trajectory(output)
         return traj
       end
     else
-      puts lines.map { |line| line.map(&:chr).join }.join("\n")
       raise "ERROR"
     end
   end
-  puts lines.map { |line| line.map(&:chr).join }.join("\n")
   traj
 end
 
