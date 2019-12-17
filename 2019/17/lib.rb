@@ -115,9 +115,13 @@ class Intcode
   end
 end
 
-def alignment(output)
+def to_lines(output)
   len = output.index(10)
-  lines = output.each_slice(len+1).map { |line| line[0...-1] }
+  output.each_slice(len+1).map { |line| line[0...-1] }
+end
+
+def alignment(output)
+  lines = to_lines(output)
   (1..(lines.length-2)).inject(0) do |algnmnt, y|
     (1..(lines[y].length-1)).inject(algnmnt) do |a, x|
       if lines[y][x] == 35 && lines[y-1][x] == 35 && lines[y+1][x] == 35 && lines[y][x-1] == 35 && lines[y][x+1] == 35
@@ -127,4 +131,105 @@ def alignment(output)
       end
     end
   end
+end
+
+SCAFFOLD = %w[^ v < > #].map(&:ord)
+
+def trajectory(output)
+  lines = to_lines(output)
+  robot = %w[^ v < >].map(&:ord)
+  y = lines.index { |line| robot.any? { |r| line.include?(r) } }
+  x = lines[y].index { |char| robot.include?(char) }
+  dir = robot.index(lines[y][x])
+  traj = []
+  while lines.any? { |line| line.any? { |c| c == "#".ord } } do
+    case dir
+    when 0
+      if y > 0 && SCAFFOLD.include?(lines[y-1][x])
+        traj[-1] += 1
+        lines[y][x] = robot[dir]
+        y -= 1
+      elsif x > 0 && SCAFFOLD.include?(lines[y][x-1])
+        dir = 2
+        traj += ["L", 0]
+      elsif x < lines[y].length - 1 && SCAFFOLD.include?(lines[y][x+1])
+        dir = 3
+        traj += ["R", 0]
+      else
+        return traj
+      end
+    when 1
+      if y < lines.length - 1 && SCAFFOLD.include?(lines[y+1][x])
+        traj[-1] += 1
+        lines[y][x] = robot[dir]
+        y += 1
+      elsif x > 0 && SCAFFOLD.include?(lines[y][x-1])
+        dir = 2
+        traj += ["R", 0]
+      elsif x < lines[y].length - 1 && SCAFFOLD.include?(lines[y][x+1])
+        dir = 3
+        traj += ["L", 0]
+      else
+        return traj
+      end
+    when 2
+      if x > 0 && SCAFFOLD.include?(lines[y][x-1])
+        traj[-1] += 1
+        lines[y][x] = robot[dir]
+        x -= 1
+      elsif y > 0 && SCAFFOLD.include?(lines[y-1][x])
+        dir = 0
+        traj += ["R", 0]
+      elsif y < lines.length - 1 && SCAFFOLD.include?(lines[y+1][x])
+        dir = 1
+        traj += ["L", 0]
+      else
+        return traj
+      end
+    when 3
+      if x < lines[y].length - 1 && SCAFFOLD.include?(lines[y][x+1])
+        traj[-1] += 1
+        lines[y][x] = robot[dir]
+        x += 1
+      elsif y > 0 && SCAFFOLD.include?(lines[y-1][x])
+        dir = 0
+        traj += ["L", 0]
+      elsif y < lines.length - 1 && SCAFFOLD.include?(lines[y+1][x])
+        dir = 1
+        traj += ["R", 0]
+      else
+        return traj
+      end
+    else
+      puts lines.map { |line| line.map(&:chr).join }.join("\n")
+      raise "ERROR"
+    end
+  end
+  puts lines.map { |line| line.map(&:chr).join }.join("\n")
+  traj
+end
+
+def find_functions_input(traj)
+  a = ""
+  b = ""
+  c = ""
+  prog = traj.join
+  (4..20).each do |a_length|
+    a = prog[0...a_length]
+    bcs = prog.split(a)
+    bcs.each do |bc|
+      (4..20).each do |b_length|
+        b = bc[0...b_length]
+        cs = bc.split(b)
+        cs.each do |c|
+          if prog.split(a).map { |pcs| pcs.split(b).map { |pcs1| pcs1.split(c) } }.flatten.empty?
+            prog = prog.gsub(a, "A").gsub(b, "B").gsub(c, "C")
+            return ([prog.chars.join(",")] +
+              [a, b, c].map { |sr| sr.gsub(/([0-9])([RL])/, '\1,\2').gsub(/([RL])([0-9])/, '\1,\2') }).join("\n")
+          end
+        end
+      end
+    end
+  end
+  raise "ERROR"
 end
