@@ -130,3 +130,19 @@ def walk(prog, script)
     raise "ERROR"
   end
 end
+
+def run(prog, script)
+  intcode = Intcode.new(prog: prog, input: (script + "RUN\n").chars.map(&:ord))
+  intcode.compute_continue
+  if intcode.halt?
+    intcode.flush_output.each do |c|
+      if c <= 255
+        print c.chr
+      else
+        puts c
+      end
+    end
+  else
+    raise "ERROR"
+  end
+end
