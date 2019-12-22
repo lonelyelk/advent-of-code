@@ -11,7 +11,7 @@ def new_stack(arr)
 end
 
 def index_before_new_stack(length, index)
-  length - 1 - index
+  -(index + 1) % length
 end
 
 def deal_with_inc(arr, n)
@@ -51,14 +51,18 @@ def index_before_shuffle(length, index, instructions)
   end
 end
 
-def shuffle2(index, instructions)
-  instructions.inject(index) do |i, instr|
+def c_d_instructions(instructions, length)
+  d = 0
+  c = 1
+  instructions.each do |instr|
     if (md = instr.match(/cut (-?[0-9]+)/))
-      i - md[1].to_i
+      d -= md[1].to_i
     elsif instr.match(/deal into new stack/)
-      -i
+      d = -d - 1
     elsif (md = instr.match(/deal with increment ([0-9]+)/))
-      i * md[1].to_i
+      d *= md[1].to_i
+      c *= md[1].to_i
     end
   end
+  [c % length, d % length]
 end

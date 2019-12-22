@@ -34,5 +34,3 @@ assert_equal([9,2,5,8,1,4,7,0,3,6], shuffle((0...10).to_a, input.chomp.split("\n
 instructions = File.readlines("input.txt").map(&:chomp)
 stack = shuffle((0...10007).to_a, instructions)
 assert_equal(stack, (0...10007).to_a.map { |index| index_before_shuffle(10007, index, instructions) })
-
-puts shuffle2(2019, instructions) % 10007
