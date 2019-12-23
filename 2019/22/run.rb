@@ -10,9 +10,16 @@ puts (c * 2019 + d) % 10007
 length = 119315717514047
 repeated_instructions_stack = length / 2
 times_apply = 101741582076661 % repeated_instructions_stack
-c, d = c_d_instructions(instructions, length)
 index = 2020
-times_apply.times do |i|
-  index = (c * index + d) % length # :(
+shift = 1
+c, d = c_d_instructions(instructions, length)
+while shift < times_apply
+  if times_apply & shift > 0
+    index = (c * index + d) % length # :(
+  end
+  d = (c * d) % length
+  c = (c * c) % length
+  shift <<= 1
+  # puts shift
 end
 puts index
