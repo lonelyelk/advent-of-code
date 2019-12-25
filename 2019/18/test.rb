@@ -10,9 +10,7 @@ input = <<MIN
 ########################
 MIN
 
-sol = solve(input.chomp.split("\n").map(&:chars))
-puts sol.inspect
-puts sol.inject(0) { |acc, pt| acc + pt[1] }
+assert_equal(132, Pathfinder.new.solve(input.chomp.split("\n").map(&:chars))[:steps_count], "Wrong steps count")
 
 input = <<MIN
 #################
@@ -26,9 +24,7 @@ input = <<MIN
 #################
 MIN
 
-sol = solve(input.chomp.split("\n").map(&:chars))
-puts sol.inspect
-puts sol.inject(0) { |acc, pt| acc + pt[1] }
+assert_equal(136, Pathfinder.new.solve(input.chomp.split("\n").map(&:chars))[:steps_count], "Wrong steps count")
 
 input = <<MIN
 ########################
@@ -39,6 +35,4 @@ input = <<MIN
 ########################
 MIN
 
-sol = solve(input.chomp.split("\n").map(&:chars))
-puts sol.inspect
-puts sol.inject(0) { |acc, pt| acc + pt[1] }
+assert_equal(81, Pathfinder.new.solve(input.chomp.split("\n").map(&:chars))[:steps_count], "Wrong steps count")
