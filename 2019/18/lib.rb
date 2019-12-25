@@ -76,7 +76,7 @@ class Pathfinder
         steps[k_d] = count + shift
       end
     end
-    # puts "RESOLVE: #{key_door} keys: #{keys.inspect}; shift: #{shift}; chain: #{chain}; resolved: #{resolved.inspect}"
+    # puts "RESOLVE: #{key_door} RK: #{required_keys.inspect}; shift: #{shift}; chain: #{chain}; resolved: #{resolved.inspect}"
     resolved
   end
 
@@ -143,15 +143,70 @@ class Pathfinder
     current_step + tail
   end
 
+  def tail_path_bots(required_keys, steps_map, bot_steps, current_step, bot_state)
+    cache_prefix = bot_state.keys.sort.map { |bot| bot_state[bot] }.join
+    if required_keys.empty?
+      return current_step
+    elsif (tail = @cached_tails["#{cache_prefix}_#{required_keys.sort.join}"])
+      return current_step + tail
+    end
+    # puts "RK: #{required_keys.inspect}; SM: #{steps_map.inspect}; BS: #{bot_steps.inspect}; CS: #{current_step.inspect}; BOT_STATE: #{bot_state.inspect}; cached tails: #{@cached_tails.inspect}"
+
+    tails = bot_steps.select { |_, s| s.keys.any? { |k| k.match?(/[a-z]/) } }.map do |b, s|
+      s.select { |k, _| k.match?(/[a-z]/) }.map do |k, c|
+        if required_keys.include?(k)
+          next_steps_map = steps_map_with_open(steps_map, k)
+          next_bot_steps = steps_map_with_open(steps_map.merge(bot_steps), k).select { |b, _| bot_steps.keys.include?(b) }
+          next_bot_steps[b] = next_steps_map[k]
+          tail_path_bots(required_keys - [k], next_steps_map, next_bot_steps, [[k, c]], bot_state.merge({b => k}))
+        end
+      end.reject do |pth|
+        pth.nil? || pth.empty?
+      end.min_by { |pth| pth.map { |pt| pt[1] }.inject(&:+) }
+    end
+    
+    tail = tails.reject do |pth|
+      pth.nil? || pth.empty?
+    end.min_by { |pth| pth.map { |pt| pt[1] }.inject(&:+) }
+    # puts "Ts: #{tails.inspect} T: #{tail}"
+
+    return unless tail
+
+    @cached_tails["#{cache_prefix}_#{required_keys.sort.join}"] = tail
+    current_step + tail
+  end
+
   def solve(source_map)
     steps = next_search(source_map).each_with_object({}) do |(k, v), obj|
       obj[k] = v if /[a-z]/.match?(k)
     end
     steps_map = build_steps_map(source_map)
     required_keys = source_map.map { |line| line.select { |c| /[a-z]/.match?(c) } }.flatten.compact
-    # puts steps_map.inspect
-    # puts required_keys.inspect
     path = tail_path(required_keys, steps_map, steps, [])
+    {
+      steps_count: path.inject(0) { |acc, pt| acc + pt[1] },
+      path: path
+    }
+  end
+
+  def solve_bots(source_map)
+    count = 0
+    bot_steps = source_map.each_with_object({}).with_index do |(line, bots), y|
+      line.each_with_index do |c, x|
+        next if c != "@"
+        one_bot_map = source_map.map.with_index do |l, yy|
+          l.map.with_index do |cc, xx|
+            cc == "@" && (xx != x || yy != y) ? "." : cc
+          end
+        end
+        bots["@#{count}"] = next_search(one_bot_map)
+        count += 1
+      end
+    end
+    steps_map = build_steps_map(source_map)
+    required_keys = source_map.map { |line| line.select { |c| /[a-z]/.match?(c) } }.flatten.compact
+    bot_state = bot_steps.keys.each_with_object({}) { |bot, obj| obj[bot] = "0" }
+    path = tail_path_bots(required_keys, steps_map, bot_steps, [], bot_state)
     {
       steps_count: path.inject(0) { |acc, pt| acc + pt[1] },
       path: path
