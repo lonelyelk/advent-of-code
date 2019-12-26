@@ -66,3 +66,28 @@ def c_d_instructions(instructions, length)
   end
   [c % length, d % length]
 end
+
+def rev_c_d_instructions(instructions, length)
+  d = 0
+  c = 1
+  instructions.reverse.each do |instr|
+    if (md = instr.match(/cut (-?[0-9]+)/))
+      d += md[1].to_i
+    elsif instr.match(/deal into new stack/)
+      d += 1
+      d = -d
+      c = -c
+    elsif (md = instr.match(/deal with increment ([0-9]+)/))
+      inc = md[1].to_i.pow(length-2, length)
+      d *= inc
+      c *= inc
+    end
+  end
+  [c % length, d % length]
+end
+
+def rev_index(instructions, length, times, index)
+  c, d = rev_c_d_instructions(instructions, length)
+  c1 = c.pow(times, length)
+  (index * c1 + d * (c1 + length - 1) * (c - 1).pow(length - 2, length)) % length
+end
