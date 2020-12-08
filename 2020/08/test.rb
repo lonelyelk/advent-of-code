@@ -15,3 +15,4 @@ acc +6"
 assembly = Assembly.new(input)
 
 assert_equal [:fail, 5], assembly.execute, "Wrong acc value"
+assert_equal [:success, 8], assembly.fix, "Wrong acc value when fixed"
