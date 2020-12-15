@@ -28,11 +28,10 @@ class Mask
     arr.each_with_object([]) do |num, res|
       if num & bit == 0
         res.push(num | bit)
-        res.push(num)
       else
         res.push(num - bit)
-        res.push(num)
       end
+      res.push(num)
     end
   end
 end
