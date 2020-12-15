@@ -25,14 +25,7 @@ class Mask
   end
 
   def apply_floating_bit(arr, bit)
-    arr.each_with_object([]) do |num, res|
-      if num & bit == 0
-        res.push(num | bit)
-      else
-        res.push(num - bit)
-      end
-      res.push(num)
-    end
+    arr + arr.map { |num| num ^ bit }
   end
 end
 
