@@ -13,8 +13,8 @@ def rule_to_regexp_string(rules, rule)
   elsif rule.match?(/^42 31 \| 42 11 31$/) # patch
     r42 = rule_to_regexp_string(rules, rules["42"])
     r31 = rule_to_regexp_string(rules, rules["31"])
-    arr = (1..10).map do |num| # should be enough :)
-      r42 * num + r31 * num
+    arr = Array.new(10) do |num| # should be enough :)
+      "#{r42}{#{num+1}}#{r31}{#{num+1}}"
     end
     "(#{arr.join("|")})"
   elsif rule.match?(/^[0-9 ]+$/)
