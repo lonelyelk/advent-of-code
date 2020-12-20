@@ -79,7 +79,7 @@ class TileSet
     @sea_monster = "                  # 
 #    ##    ##    ###
  #  #  #  #  #  #   ".split("\n").map(&:chars)
-    @monster_count = @sea_monster.inject(0) do |sum, l|
+    @monster_size = @sea_monster.inject(0) do |sum, l|
       sum + l.count("#")
     end
     init_transformations
@@ -87,6 +87,23 @@ class TileSet
 
   def find_corners
     corner_tiles.inject(1) { |chk, tile| chk * tile.id }
+  end
+
+  def count_water_roughness!
+    assemble!
+    count_monsters = find_monster!
+    @contents.inject(0) do |sum, l|
+      sum + l.count("#")
+    end - @monster_size * count_monsters
+  end
+
+  protected
+
+  def corner_tiles
+    tiles.select do |tile|
+      borders = tiles.reject { |t| t.id == tile.id }.map { |t| tile.common_border(t) }.compact
+      borders.length <= 2
+    end
   end
 
   def assemble!
@@ -106,8 +123,7 @@ class TileSet
     while y < @size do
       bottom_border = tile.border(:bottom).dup
       while x < @size do
-        tiles_s = rest.select { |t| t.fit_border!(:left, tile.border(:right)) }
-        tile = tiles_s.first
+        tile = rest.detect { |t| t.fit_border!(:left, tile.border(:right)) }
         new_contents = tile.borderless
         new_contents.each_with_index do |tile_line, i|
           @contents[y*new_contents.length + i] += tile_line
@@ -140,22 +156,5 @@ class TileSet
       transform! if monster_count == 0
     end
     monster_count
-  end
-
-  def count_water_roughness!
-    assemble!
-    cnt = find_monster!
-    @contents.inject(0) do |sum, l|
-      sum + l.count("#")
-    end - @monster_count * cnt
-  end
-
-  protected
-
-  def corner_tiles
-    tiles.select do |tile|
-      borders = tiles.reject { |t| t.id == tile.id }.map { |t| tile.common_border(t) }.compact
-      borders.length <= 2
-    end
   end
 end
