@@ -1,4 +1,28 @@
+module Transformable
+  attr :transformations_count
+
+  TRANSFORMATIONS = [
+    (->(c) { c.transpose }),
+    (->(c) { c.reverse }),
+  ].freeze
+  FULL_CYCLE_LENGTH = 8
+
+  def init_transformations(after_hook = nil)
+    @transformations_count = 0
+    @after_hook = after_hook
+  end
+
+  def transform!
+    @contents = TRANSFORMATIONS[@transformations_count].call(@contents)
+    @transformations_count += 1
+    @transformations_count = 0 if @transformations_count >= TRANSFORMATIONS.length
+    self.send(@after_hook) if @after_hook
+  end
+end
+
 class Tile
+  include Transformable
+
   attr_reader :id, :borders
 
   def initialize(input)
@@ -7,11 +31,7 @@ class Tile
     @contents = lines[1..-1].map(&:chars)
     assign_borders
     @border_names = %i[top bottom left right]
-    @transformations = [
-      (->(c) { c.transpose }),
-      (->(c) { c.map(&:reverse) }),
-    ] * 4
-    @trans_index = 0
+    init_transformations(:assign_borders)
   end
 
   def common_border(tile)
@@ -25,7 +45,7 @@ class Tile
   end
 
   def fit_border!(name, external_border)
-    @transformations.length.times do
+    FULL_CYCLE_LENGTH.times do
       return true if external_border == border(name)
       transform!
     end
@@ -34,13 +54,6 @@ class Tile
 
   def borderless
     @contents[1..-2].map { |l| l[1..-2] }
-  end
-
-  def transform!
-    @contents = @transformations[@trans_index].call(@contents)
-    assign_borders
-    @trans_index += 1
-    @trans_index = 0 if @trans_index >= @transformations.length
   end
 
   protected
@@ -56,22 +69,20 @@ class Tile
 end
 
 class TileSet
+  include Transformable
+
   attr_reader :tiles
 
   def initialize(input)
     @tiles = input.split("\n\n").reject(&:empty?).map { |i| Tile.new(i) }
     @size = Math.sqrt(@tiles.size)
-    @transformations = [
-      (->(c) { c.transpose }),
-      (->(c) { c.map(&:reverse) }),
-    ] * 4
-    @trans_index = 0
     @sea_monster = "                  # 
 #    ##    ##    ###
  #  #  #  #  #  #   ".split("\n").map(&:chars)
     @monster_count = @sea_monster.inject(0) do |sum, l|
       sum + l.count("#")
     end
+    init_transformations
   end
 
   def find_corners
@@ -139,18 +150,11 @@ class TileSet
     end - @monster_count * cnt
   end
 
-  def transform!
-    @contents = @transformations[@trans_index].call(@contents)
-    @trans_index += 1
-    @trans_index = 0 if @trans_index >= @transformations.length
-  end
-
   protected
 
   def corner_tiles
     tiles.select do |tile|
       borders = tiles.reject { |t| t.id == tile.id }.map { |t| tile.common_border(t) }.compact
-      # puts borders.inspect
       borders.length <= 2
     end
   end
