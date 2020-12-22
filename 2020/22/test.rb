@@ -33,4 +33,4 @@ Player 2:
 "
 
 dealed = parse_input(input)
-puts play_recursive(dealed)
+play_recursive(dealed)

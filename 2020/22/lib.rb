@@ -23,14 +23,9 @@ def score(winner)
   end
 end
 
-def play_recursive(dealed, cache = {}, layer = 0)
+def play_recursive(dealed)
   states = {}
   dealed = dealed.map(&:dup)
-  cache_state_straight = dealed.map { |hand| hand.join(",") }.join("_")
-  cache_state_reversed = dealed.reverse.map { |hand| hand.join(",") }.join("_")
-  return cache[cache_state_straight] if cache[cache_state_straight]
-  return cache[cache_state_reversed] if cache[cache_state_reversed]
-
   while dealed.all? { |hand| !hand.empty? }
     # puts states.keys.length
     # puts dealed.map(&:inspect).join("\n")
@@ -43,15 +38,12 @@ def play_recursive(dealed, cache = {}, layer = 0)
     states[state] = true
     round = dealed.map(&:shift)
     if round.each_with_index.all? { |card, index| card <= dealed[index].length }
-      # puts "recursive! #{layer}"
-      winner = play_recursive(dealed, cache, layer + 1).map(&:length)
-      puts "returned! #{layer} cache size: #{cache.keys.length}"
+      sub_dealed = dealed.each_with_index.map { |hand, index| hand[0,round[index]] }
+      winner = play_recursive(sub_dealed).map(&:length)
       dealed[winner.index(winner.max)] += round.each_with_index.sort_by { |card, index| -winner[index] }.map(&:first)
     else
       dealed[round.index(round.max)] += round.sort.reverse
     end
   end
-  cache[cache_state_straight] = dealed
-  cache[cache_state_reversed] = dealed.reverse
   dealed
 end
