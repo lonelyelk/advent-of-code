@@ -24,12 +24,13 @@ def score(winner)
 end
 
 def play_recursive(dealed)
+  max_player_1 = dealed[0].max
+  if max_player_1 > dealed[1].max && max_player_1 > dealed.map(&:length).inject(&:+)
+    return [dealed[0], []]
+  end
   states = {}
   dealed = dealed.map(&:dup)
   while dealed.all? { |hand| !hand.empty? }
-    # puts states.keys.length
-    # puts dealed.map(&:inspect).join("\n")
-    # gets
     state = dealed.map { |hand| hand.join(",") }.join("_")
     if states[state]
       return [dealed[0], []]
