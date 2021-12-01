@@ -1,0 +1,28 @@
+AllCops:
+  NewCops: enable
+
+  Exclude:
+    - "2019/**/*"
+    - "2020/**/*"
+    - "spec/spec_helper.rb"
+
+require: rubocop-rspec
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
+Style/MixinUsage:
+  Enabled: No
