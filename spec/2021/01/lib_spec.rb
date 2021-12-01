@@ -32,4 +32,16 @@ RSpec.describe "day 1" do
       ])
     end
   end
+
+  describe "problem_1" do
+    it "returns 7 for test input" do
+      expect(problem_1(process_input(input))).to eq(7)
+    end
+  end
+
+  describe "problem_2" do
+    it "returns 5 for test input" do
+      expect(problem_2(process_input(input))).to eq(5)
+    end
+  end
 end
