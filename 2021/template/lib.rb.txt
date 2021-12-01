@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+module Day%<day>02d
+  def process_input(str)
+  end
+
+  def problem1(input)
+  end
+
+  def problem2(input)
+  end
+end

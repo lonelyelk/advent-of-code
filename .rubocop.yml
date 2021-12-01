@@ -2,11 +2,13 @@ AllCops:
   NewCops: enable
 
   Exclude:
-    - "2019/**/*"
-    - "2020/**/*"
-    - "spec/spec_helper.rb"
+  - "2019/**/*"
+  - "2020/**/*"
+  - "spec/spec_helper.rb"
 
-require: rubocop-rspec
+require:
+- rubocop-rspec
+- rubocop-rake
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -22,7 +24,7 @@ Style/TrailingCommaInHashLiteral:
 
 Metrics/BlockLength:
   Exclude:
-    - "spec/**/*"
+  - "spec/**/*"
 
 Style/MixinUsage:
   Enabled: No

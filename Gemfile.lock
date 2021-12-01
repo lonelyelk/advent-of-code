@@ -7,6 +7,7 @@ GEM
     parser (3.0.3.1)
       ast (~> 2.4.1)
     rainbow (3.0.0)
+    rake (13.0.6)
     regexp_parser (2.1.1)
     rexml (3.2.5)
     rspec (3.10.0)
@@ -33,6 +34,8 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.13.0)
       parser (>= 3.0.1.1)
+    rubocop-rake (0.6.0)
+      rubocop (~> 1.0)
     rubocop-rspec (2.6.0)
       rubocop (~> 1.19)
     ruby-progressbar (1.11.0)
@@ -42,8 +45,10 @@ PLATFORMS
   x86_64-darwin-19
 
 DEPENDENCIES
+  rake (~> 13.0.6)
   rspec (~> 3.10)
   rubocop (~> 1.23)
+  rubocop-rake (~> 0.6.0)
   rubocop-rspec (~> 2.6.0)
 
 BUNDLED WITH
