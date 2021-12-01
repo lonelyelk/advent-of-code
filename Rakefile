@@ -6,6 +6,7 @@ task :next_day, [:day] do |_t, args|
   template_path = File.join(year, "template")
   spec_template_path = File.join("spec", year, "template")
   template_args = { day: args.day.to_i }
+  template_args[:day] = Dir.children(year).map(&:to_i).max + 1 if template_args[:day].zero?
   path = File.join(year, format("%<day>02d", template_args))
   spec_path = File.join("spec", year, format("%<day>02d", template_args))
   mkdir_p path
