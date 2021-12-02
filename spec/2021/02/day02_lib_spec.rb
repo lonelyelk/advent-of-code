@@ -39,8 +39,8 @@ forward 2
   end
 
   describe "problem2" do
-    it "returns 5 for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+    it "returns 900 for test input" do
+      expect(problem2(processed_input)).to eq(900)
     end
   end
 end

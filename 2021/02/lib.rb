@@ -24,5 +24,17 @@ module Day02
   end
 
   def problem2(input)
+    position, depth, _ = input.inject([0, 0, 0]) do |s, instr|
+      pos, depth, aim = s
+      case instr
+      in ["forward", num]
+        [pos + num, depth + aim * num, aim]
+      in ["up", num]
+        [pos, depth, aim - num]
+      in ["down", num]
+        [pos, depth, aim + num]
+      end
+    end
+    position * depth
   end
 end
