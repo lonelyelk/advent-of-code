@@ -27,7 +27,7 @@ forward 2
   end
 
   describe "process_input" do
-    it "consumes multiline string and returns an array of ints" do
+    it "consumes multiline string and returns an array of commands" do
       expect(process_input(input)).to eq(processed_input)
     end
   end
