@@ -39,3 +39,17 @@ task :run, [:day] do |_t, args|
 end
 
 task default: [:run]
+
+begin
+  require "rspec/core/rake_task"
+  RSpec::Core::RakeTask.new(:spec)
+rescue LoadError
+  puts "Failed to load rspec task"
+end
+
+begin
+  require "rubocop/rake_task"
+  RuboCop::RakeTask.new
+rescue LoadError
+  puts "Failed to load rubocop task"
+end
