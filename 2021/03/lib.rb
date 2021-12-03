@@ -28,6 +28,18 @@ module Day03
     gas_rate(input, %w[1 0])
   end
 
+  def problem2(input)
+    oxygen_rate(input) * co2_rate(input)
+  end
+
+  protected
+
+  def count_ones(input)
+    input.each_with_object(Array.new(input.first.size, 0)) do |val, counter|
+      val.chars.each_with_index { |bit, index| counter[index] += bit.to_i }
+    end
+  end
+
   def gas_rate(input, rejection_priority)
     index = 0
     filtered = input.dup
@@ -39,18 +51,6 @@ module Day03
       index += 1
     end
     filtered.first.to_i(2)
-  end
-
-  def problem2(input)
-    oxygen_rate(input) * co2_rate(input)
-  end
-
-  protected
-
-  def count_ones(input)
-    input.each_with_object(Array.new(input.first.size, 0)) do |val, counter|
-      val.chars.each_with_index { |bit, index| counter[index] += bit.to_i }
-    end
   end
 
   def reject_bit(size, count, rejection_priority)
