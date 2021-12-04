@@ -22,5 +22,16 @@ module Day04
   end
 
   def problem2(input)
+    numbers, *boards = input
+    numbers.each do |num|
+      boards = boards.map do |board|
+        board.map { |rc| rc.reject { |n| n == num } }
+      end
+      if boards.size > 1
+        boards = boards.reject { |board| board.any?(&:empty?) }
+      else
+        return boards.first.reject(&:empty?).inject(0) { |acc, row| acc + row.inject(&:+) } * num / 2 if boards.first.any?(&:empty?)
+      end
+    end
   end
 end

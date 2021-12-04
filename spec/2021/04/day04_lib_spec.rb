@@ -77,8 +77,8 @@ RSpec.describe Day04 do
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+    it "returns 31424 for test input" do
+      expect(problem2(processed_input)).to eq(1924)
     end
   end
 end
