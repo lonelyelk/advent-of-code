@@ -29,8 +29,10 @@ module Day04
       end
       if boards.size > 1
         boards = boards.reject { |board| board.any?(&:empty?) }
-      else
-        return boards.first.reject(&:empty?).inject(0) { |acc, row| acc + row.inject(&:+) } * num / 2 if boards.first.any?(&:empty?)
+      elsif boards.first.any?(&:empty?)
+        return boards.first.reject(&:empty?).inject(0) do |acc, row|
+                 acc + row.inject(&:+)
+               end * num / 2
       end
     end
   end
