@@ -49,7 +49,12 @@ end
 
 begin
   require "rubocop/rake_task"
-  RuboCop::RakeTask.new
+  RuboCop::RakeTask.new(:rc)
+
+  namespace :rc do
+    desc "Short version of rc:auto_correct"
+    task a: [:auto_correct]
+  end
 rescue LoadError
   puts "Failed to load rubocop task"
 end
