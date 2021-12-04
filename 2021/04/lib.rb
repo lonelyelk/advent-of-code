@@ -15,8 +15,8 @@ module Day04
     numbers, *boards = input
     numbers.each do |num|
       boards = mark_number(boards, num)
-      winner = winner_score(boards, num)
-      return winner if winner
+      sum = winner_sum(boards)
+      return sum * num if sum
     end
   end
 
@@ -27,8 +27,8 @@ module Day04
       if boards.size > 1
         boards = boards.reject { |board| board.any?(&:empty?) }
       else
-        winner = winner_score(boards, num)
-        return winner if winner
+        sum = winner_sum(boards)
+        return sum * num if sum
       end
     end
   end
@@ -41,12 +41,12 @@ module Day04
     end
   end
 
-  def winner_score(boards, num)
+  def winner_sum(boards)
     winning_board = boards.detect { |board| board.any?(&:empty?) }
-    return score(winning_board, num) if winning_board
+    return unmarked_board_sum(winning_board) if winning_board
   end
 
-  def score(board, num)
-    board.reject(&:empty?).inject(0) { |acc, row| acc + row.inject(&:+) } * num / 2
+  def unmarked_board_sum(board)
+    board.reject(&:empty?).inject(0) { |acc, row| acc + row.inject(&:+) } / 2
   end
 end
