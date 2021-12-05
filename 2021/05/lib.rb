@@ -35,11 +35,9 @@ module Day05
 
   def to_coords_range_array(coords)
     x1, y1, x2, y2 = *coords
-    x_range = to_range_array(x1, x2).to_a
-    y_range = to_range_array(y1, y2).to_a
-    x_range *= y_range.size if x_range.size == 1
-    y_range *= x_range.size if y_range.size == 1
-    x_range.zip(y_range)
+    ranges = [[x1, x2], [y1, y2]].map { |cs| to_range_array(*cs).to_a }
+    size = ranges.map(&:size).max
+    ranges.map { |r| r.size == 1 ? r * size : r }.inject(&:zip)
   end
 
   def count_dangerous_vents(vents)
