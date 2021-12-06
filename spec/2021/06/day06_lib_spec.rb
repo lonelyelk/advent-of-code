@@ -27,8 +27,8 @@ RSpec.describe Day06 do
   end
 
   describe "problem2" do
-    it "returns 26984457539 for test input" do
-      expect(problem2(processed_input)).to eq(26984457539)
+    it "returns 26_984_457_539 for test input" do
+      expect(problem2(processed_input)).to eq(26_984_457_539)
     end
   end
 end
