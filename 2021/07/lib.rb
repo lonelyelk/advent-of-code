@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# https://adventofcode.com/2021/day/7
 module Day07
   def process_input(str)
     str.chomp.split(",").map(&:to_i)
@@ -12,7 +13,7 @@ module Day07
   end
 
   def problem2(input)
-    mean = (input.inject(0.0) { |acc, crab| acc + crab} / input.size).round
+    mean = (input.inject(0.0) { |acc, crab| acc + crab } / input.size).round
     possible = ((mean - 3)..(mean + 3)).map { |pos| total_fuel(input, pos) }
     possible.min
   end
@@ -24,7 +25,8 @@ module Day07
   end
 
   def fuel_for(steps)
-    return 0 if steps == 0
+    return 0 if steps.zero?
+
     (1..steps).to_a.inject(&:+)
   end
 end
