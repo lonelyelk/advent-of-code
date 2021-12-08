@@ -2,7 +2,7 @@
 
 # https://adventofcode.com/2021/day/8
 module Day08
-  LETTERS = "abcdefg".chars.freeze
+  SEGMENTS = "abcdefg".chars.freeze
   DIGITS = {
     0 => "abcefg".chars.freeze,
     1 => "cf".chars.freeze,
@@ -33,48 +33,54 @@ module Day08
     input.inject(0) do |sum, line|
       dict = build_dict(line.first)
       dict = deduce(dict)
-      number = line.last.map do |repr|
-        mapped = repr.chars.map { |c| dict[c] }
-        DIGITS.keys.detect { |d| DIGITS[d].size == mapped.size && DIGITS[d].difference(mapped).empty? }
-      end
-      sum + number.join.to_i
+      number = convert_to_number(line.last, dict)
+      sum + number
     end
   end
 
   protected
 
   def segment_frequency(all_digits)
-    all_digits.each_with_object(Hash.new(0)) { |repr, acc| repr.chars.each { |letter| acc[letter] += 1 } }
+    all_digits.each_with_object(Hash.new(0)) { |repr, acc| repr.chars.each { |segment| acc[segment] += 1 } }
   end
 
   def build_dict(signals)
-    frequency = segment_frequency(signals)
-    dict = FREQUENCY.each_with_object({}) { |(letter, freq), acc| acc[frequency.key(freq)] = [letter] }
-    signals.each_with_object(dict) do |digit_repr, dict|
-      possible_letters = DIGITS.inject([]) { |acc, (_d, l)| l.size == digit_repr.size ? acc + l : acc }
+    signals.each_with_object(init_dict(signals)) do |digit_repr, dict|
+      possible_segments = possible_segments_from_size(digit_repr)
       repr_chars = digit_repr.chars
-      next if repr_chars.any? { |l| dict[l] && !dict[l].intersect?(possible_letters) }
+      next if repr_chars.any? { |l| dict[l] && !dict[l].intersect?(possible_segments) }
 
-      repr_chars.each do |l|
-        dict[l] = if dict[l]
-                    dict[l].intersection(possible_letters)
-                  else
-                    possible_letters
-                  end
-      end
+      repr_chars.each { |l| dict[l] = dict[l].intersection(possible_segments) }
     end
+  end
+
+  def init_dict(signals)
+    frequency = segment_frequency(signals)
+    dict = FREQUENCY.each_with_object({}) { |(segment, freq), acc| acc[frequency.key(freq)] = [segment] }
+    SEGMENTS.each_with_object(dict) { |segment, acc| acc[segment] ||= SEGMENTS.dup }
+  end
+
+  def possible_segments_from_size(digit_repr)
+    DIGITS.inject([]) { |acc, (_d, l)| l.size == digit_repr.size ? acc + l : acc }
   end
 
   def deduce(dict)
     while dict.values.any? { |v| v.size > 1 }
       dict = dict.transform_values do |vals|
-        if vals.size == 1
-          vals
-        else
-          dict.values.inject(vals) { |a, v| v.size == 1 ? a - v : a }
-        end
+        vals.size == 1 ? vals : remove_certain(vals, dict)
       end
     end
     dict.transform_values(&:first)
+  end
+
+  def remove_certain(values, dict)
+    dict.values.inject(values) { |acc, vals| vals.size == 1 ? acc - vals : acc }
+  end
+
+  def convert_to_number(signals, dict)
+    signals.map do |repr|
+      mapped = repr.chars.map { |c| dict[c] }
+      DIGITS.keys.detect { |d| DIGITS[d].size == mapped.size && DIGITS[d].difference(mapped).empty? }
+    end.join.to_i
   end
 end
