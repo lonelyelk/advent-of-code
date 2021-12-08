@@ -61,7 +61,7 @@ module Day08
   end
 
   def possible_segments_from_size(representation)
-    DIGITS.inject([]) { |acc, (_d, l)| l.size == representation.size ? acc + l : acc }
+    DIGITS.inject([]) { |acc, (_d, segments)| segments.size == representation.size ? acc + segments : acc }
   end
 
   def deduce(dict)
