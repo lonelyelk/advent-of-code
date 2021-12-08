@@ -46,11 +46,11 @@ module Day08
 
   def build_dict(signals)
     signals.each_with_object(init_dict(signals)) do |digit_repr, dict|
-      possible_segments = possible_segments_from_size(digit_repr)
-      repr_chars = digit_repr.chars
-      next if repr_chars.any? { |l| dict[l] && !dict[l].intersect?(possible_segments) }
+      representation = digit_repr.chars
+      possible_segments = possible_segments_from_size(representation)
+      next if representation.any? { |l| !dict[l].intersect?(possible_segments) }
 
-      repr_chars.each { |l| dict[l] = dict[l].intersection(possible_segments) }
+      representation.each { |l| dict[l] = dict[l].intersection(possible_segments) }
     end
   end
 
@@ -60,14 +60,14 @@ module Day08
     SEGMENTS.each_with_object(dict) { |segment, acc| acc[segment] ||= SEGMENTS.dup }
   end
 
-  def possible_segments_from_size(digit_repr)
-    DIGITS.inject([]) { |acc, (_d, l)| l.size == digit_repr.size ? acc + l : acc }
+  def possible_segments_from_size(representation)
+    DIGITS.inject([]) { |acc, (_d, l)| l.size == representation.size ? acc + l : acc }
   end
 
   def deduce(dict)
-    while dict.values.any? { |v| v.size > 1 }
-      dict = dict.transform_values do |vals|
-        vals.size == 1 ? vals : remove_certain(vals, dict)
+    while dict.values.any? { |segments| segments.size > 1 }
+      dict = dict.transform_values do |segments|
+        segments.size == 1 ? segments : remove_certain(segments, dict)
       end
     end
     dict.transform_values(&:first)
