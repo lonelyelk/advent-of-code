@@ -56,25 +56,25 @@ module Day08
       next if repr_chars.any? { |l| dict[l] && !dict[l].intersect?(possible_letters) }
 
       repr_chars.each do |l|
-        if dict[l]
-          dict[l] = dict[l].intersection(possible_letters)
-        else
-          dict[l] = possible_letters
-        end
+        dict[l] = if dict[l]
+                    dict[l].intersection(possible_letters)
+                  else
+                    possible_letters
+                  end
       end
     end
   end
 
   def deduce(dict)
     while dict.values.any? { |v| v.size > 1 }
-      dict = dict.each_with_object({}) do |(letter, vals), acc|
+      dict = dict.transform_values do |vals|
         if vals.size == 1
-          acc[letter] = vals
+          vals
         else
-          acc[letter] = dict.values.inject(vals) { |a, v| v.size == 1 ? a - v : a }
+          dict.values.inject(vals) { |a, v| v.size == 1 ? a - v : a }
         end
       end
     end
-    dict.each_with_object({}) { |(letter, vals), acc| acc[letter] = vals.first }
+    dict.transform_values(&:first)
   end
 end
