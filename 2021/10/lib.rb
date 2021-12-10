@@ -22,6 +22,7 @@ module Day10
     "}" => 3,
     ">" => 4,
   }.freeze
+
   def process_input(str)
     str.split("\n").reject(&:empty?)
   end
