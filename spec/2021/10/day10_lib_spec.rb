@@ -42,13 +42,13 @@ RSpec.describe Day10 do
 
   describe "problem1" do
     it "returns 26397 for test input" do
-      expect(problem1(processed_input)).to eq(26397)
+      expect(problem1(processed_input)).to eq(26_397)
     end
   end
 
   describe "problem2" do
     it "returns 288957 for test input" do
-      expect(problem2(processed_input)).to eq(288957)
+      expect(problem2(processed_input)).to eq(288_957)
     end
   end
 end

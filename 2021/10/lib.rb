@@ -1,26 +1,27 @@
 # frozen_string_literal: true
 
+# https://adventofcode.com/2021/day/10
 module Day10
   PARENS = {
     "(" => ")",
     "{" => "}",
     "[" => "]",
     "<" => ">",
-  }
+  }.freeze
   ILLEGAL_SCORES = {
     "" => 0,
     ")" => 3,
     "]" => 57,
     "}" => 1197,
-    ">" => 25137,
-  }
+    ">" => 25_137,
+  }.freeze
   AUTOCOMPLETE_SCORES = {
     "" => 0,
     ")" => 1,
     "]" => 2,
     "}" => 3,
     ">" => 4,
-  }
+  }.freeze
   def process_input(str)
     str.split("\n").reject(&:empty?)
   end
@@ -37,7 +38,7 @@ module Day10
       parsed = parse(line)
       next unless parsed[:illegal].empty?
 
-      parsed[:stack].reverse.inject(0) { |sum, char| sum * 5 + AUTOCOMPLETE_SCORES[char] }
+      parsed[:stack].reverse.inject(0) { |sum, char| (sum * 5) + AUTOCOMPLETE_SCORES[char] }
     end
     scores.sort[scores.size / 2]
   end
