@@ -11,7 +11,7 @@ module Day11
     total_flashes = 0
     (0...steps).each do
       pool = basic_step_inc(pool)
-      flashes = step_flash(pool)
+      pool, flashes = step_flash(pool)
       total_flashes += flashes.size
       pool = step_flash_reset(pool)
     end
@@ -22,7 +22,7 @@ module Day11
     pool = input
     (1..).each do |step|
       pool = basic_step_inc(pool)
-      step_flash(pool)
+      pool, = step_flash(pool)
       break step if count_flashes(pool) == 100
 
       pool = step_flash_reset(pool)
@@ -51,21 +51,23 @@ module Day11
     end
   end
 
-  def step_flash(pool)
-    flashes = []
-    sub_step_flash(pool, flashes) while flashes.size < count_flashes(pool)
-    flashes
+  def step_flash(pool, flashes = [])
+    pool, flashes = sub_step_flash(pool, flashes) while flashes.size < count_flashes(pool)
+    [pool, flashes]
   end
 
   def sub_step_flash(pool, flashes)
+    next_pool = pool.map(&:dup)
+    next_flashes = flashes.dup
     (0..9).each do |x|
       (0..9).each do |y|
-        next unless pool[x][y] > 9 && !flashes.include?([x, y])
+        next unless next_pool[x][y] > 9 && !next_flashes.include?([x, y])
 
-        flashes.push([x, y])
-        neighbours([x, y]).each { |xx, yy| pool[xx][yy] += 1 }
+        next_flashes.push([x, y])
+        neighbours([x, y]).each { |xx, yy| next_pool[xx][yy] += 1 }
       end
     end
+    [next_pool, next_flashes]
   end
 
   def count_flashes(pool)
