@@ -6,7 +6,7 @@ module Day11
     str.split("\n").reject(&:empty?).map { |l| l.chars.map(&:to_i) }
   end
 
-  def problem1(input, steps=100)
+  def problem1(input, steps = 100)
     pool = input
     total_flashes = 0
     (0...steps).each do
@@ -17,11 +17,11 @@ module Day11
       while flashes.size < pool.inject(0) { |sum, l| sum + l.count { |c| c > 9 } }
         (0..9).each do |x|
           (0..9).each do |y|
-            if pool[x][y] > 9 && !flashes.include?([x, y])
-              flashes.push([x, y])
-              neighbours([x, y]).each do |xx, yy|
-                pool[xx][yy] += 1
-              end
+            next unless pool[x][y] > 9 && !flashes.include?([x, y])
+
+            flashes.push([x, y])
+            neighbours([x, y]).each do |xx, yy|
+              pool[xx][yy] += 1
             end
           end
         end
@@ -46,16 +46,17 @@ module Day11
       while flashes.size < pool.inject(0) { |sum, l| sum + l.count { |c| c > 9 } }
         (0..9).each do |x|
           (0..9).each do |y|
-            if pool[x][y] > 9 && !flashes.include?([x, y])
-              flashes.push([x, y])
-              neighbours([x, y]).each do |xx, yy|
-                pool[xx][yy] += 1
-              end
+            next unless pool[x][y] > 9 && !flashes.include?([x, y])
+
+            flashes.push([x, y])
+            neighbours([x, y]).each do |xx, yy|
+              pool[xx][yy] += 1
             end
           end
         end
       end
       break step if pool.all? { |l| l.all? { |c| c > 9 } }
+
       (0..9).each do |x|
         (0..9).each do |y|
           pool[x][y] = 0 if pool[x][y] > 9
