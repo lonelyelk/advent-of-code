@@ -10,28 +10,10 @@ module Day11
     pool = input
     total_flashes = 0
     (0...steps).each do
-      pool = pool.map do |line|
-        line.map(&:succ)
-      end
-      flashes = []
-      while flashes.size < pool.inject(0) { |sum, l| sum + l.count { |c| c > 9 } }
-        (0..9).each do |x|
-          (0..9).each do |y|
-            next unless pool[x][y] > 9 && !flashes.include?([x, y])
-
-            flashes.push([x, y])
-            neighbours([x, y]).each do |xx, yy|
-              pool[xx][yy] += 1
-            end
-          end
-        end
-      end
+      pool = basic_step_inc(pool)
+      flashes = step_flash(pool)
       total_flashes += flashes.size
-      (0..9).each do |x|
-        (0..9).each do |y|
-          pool[x][y] = 0 if pool[x][y] > 9
-        end
-      end
+      pool = step_flash_reset(pool)
     end
     total_flashes
   end
@@ -39,43 +21,60 @@ module Day11
   def problem2(input)
     pool = input
     (1..).each do |step|
-      pool = pool.map do |line|
-        line.map(&:succ)
-      end
-      flashes = []
-      while flashes.size < pool.inject(0) { |sum, l| sum + l.count { |c| c > 9 } }
-        (0..9).each do |x|
-          (0..9).each do |y|
-            next unless pool[x][y] > 9 && !flashes.include?([x, y])
+      pool = basic_step_inc(pool)
+      step_flash(pool)
+      break step if count_flashes(pool) == 100
 
-            flashes.push([x, y])
-            neighbours([x, y]).each do |xx, yy|
-              pool[xx][yy] += 1
-            end
-          end
-        end
-      end
-      break step if pool.all? { |l| l.all? { |c| c > 9 } }
-
-      (0..9).each do |x|
-        (0..9).each do |y|
-          pool[x][y] = 0 if pool[x][y] > 9
-        end
-      end
+      pool = step_flash_reset(pool)
     end
   end
 
   protected
 
+  def diffs
+    d = (-1..1).to_a
+    d.inject([]) { |acc, x| acc + d.map { |y| [x, y] } }
+  end
+
   def neighbours(coords)
-    res = []
-    (-1..1).each do |dx|
-      (-1..1).each do |dy|
-        res.push([coords, [dx, dy]].transpose.map(&:sum))
-      end
+    res = diffs.each_with_object([]) do |(dx, dy), acc|
+      acc.push([coords, [dx, dy]].transpose.map(&:sum))
     end
     res.reject do |c|
       c.any? { |coord| coord.negative? || coord > 9 } || c == coords
+    end
+  end
+
+  def basic_step_inc(pool)
+    pool.map do |line|
+      line.map(&:succ)
+    end
+  end
+
+  def step_flash(pool)
+    flashes = []
+    sub_step_flash(pool, flashes) while flashes.size < count_flashes(pool)
+    flashes
+  end
+
+  def sub_step_flash(pool, flashes)
+    (0..9).each do |x|
+      (0..9).each do |y|
+        next unless pool[x][y] > 9 && !flashes.include?([x, y])
+
+        flashes.push([x, y])
+        neighbours([x, y]).each { |xx, yy| pool[xx][yy] += 1 }
+      end
+    end
+  end
+
+  def count_flashes(pool)
+    pool.inject(0) { |sum, l| sum + l.count { |c| c > 9 } }
+  end
+
+  def step_flash_reset(pool)
+    pool.map do |l|
+      l.map { |c| c > 9 ? 0 : c }
     end
   end
 end
