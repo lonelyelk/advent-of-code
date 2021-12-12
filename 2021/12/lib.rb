@@ -13,39 +13,40 @@ module Day12
   end
 
   def problem1(input)
+    explore_and_reject(input) { |path| bad_path1(path) }
+  end
+
+  def problem2(input)
+    explore_and_reject(input) { |path| bad_path2(path) }
+  end
+
+  protected
+
+  def expand_paths(paths, input)
+    paths.each_with_object([]) do |path, acc|
+      acc.push(path) && next if path.last == "end"
+
+      input[path.last].each do |cave|
+        acc.push([*path, cave])
+      end
+    end
+  end
+
+  def explore_and_reject(input, &block)
     paths = input["start"].map { |cave| ["start", cave] }
     while paths.any? { |path| path.last != "end" }
-      paths = paths.each_with_object([]) do |path, acc|
-        acc.push(path) && next if path.last == "end"
-
-        input[path.last].each do |cave|
-          acc.push([*path, cave])
-        end
-      end
-
-      paths = paths.reject do |path|
-        path.tally.any? { |cave, num| cave == cave.downcase && num > 1 }
-      end
+      paths = expand_paths(paths, input)
+      paths = paths.reject(&block)
     end
     paths.size
   end
 
-  def problem2(input)
-    paths = input["start"].map { |cave| ["start", cave] }
-    while paths.any? { |path| path.last != "end" }
-      paths = paths.each_with_object([]) do |path, acc|
-        acc.push(path) && next if path.last == "end"
+  def bad_path1(path)
+    path.tally.any? { |cave, num| cave == cave.downcase && num > 1 }
+  end
 
-        input[path.last].each do |cave|
-          acc.push([*path, cave])
-        end
-      end
-
-      paths = paths.reject do |path|
-        tally = path.tally.select { _1 == _1.downcase }
-        tally["start"] > 1 || tally.any? { _2 > 2 } || tally.count { _2 > 1 } > 1
-      end
-    end
-    paths.size
+  def bad_path2(path)
+    tally = path.tally.select { _1 == _1.downcase }
+    tally["start"] > 1 || tally.values.any? { |cnt| cnt > 2 } || tally.values.count { |cnt| cnt > 1 } > 1
   end
 end
