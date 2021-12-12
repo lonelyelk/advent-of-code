@@ -18,12 +18,12 @@ b-end
   end
   let(:processed_input) do
     {
-      "A" => ["start", "c", "b", "end"],
-      "b" => ["start", "A", "d", "end"],
+      "A" => %w[start c b end],
+      "b" => %w[start A d end],
       "c" => ["A"],
       "d" => ["b"],
-      "end" => ["A", "b"],
-      "start" => ["A", "b"],
+      "end" => %w[A b],
+      "start" => %w[A b],
     }
   end
 
