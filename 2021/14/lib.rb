@@ -9,47 +9,77 @@ module Day14
 
   def problem1(input)
     template, rules = input
-    start = {}
-    template.chars.inject(start) do |acc, c|
+    start = build_linked_list(template)
+    10.times do
+      linked_list_step(start, rules)
+    end
+    values = count_linked_list_elements(start)
+    values.max - values.min
+  end
+
+  def problem2(input)
+    template, rules = input
+    pair_tally = build_pair_tally(template)
+    40.times do
+      pair_tally = pair_tally_step(pair_tally, rules)
+    end
+    values = count_pair_tally_elements(pair_tally, template)
+    values.max - values.min
+  end
+
+  protected
+
+  def build_linked_list(template)
+    list_start = {}
+    # rubocop:disable Lint/UnmodifiedReduceAccumulator
+    template.chars.inject(list_start) do |acc, c|
       acc[:c] = c
       acc[:next] = {}
     end
-    10.times do
-      cursor = start
-      while cursor[:next] && cursor[:next][:c]
-        insert = rules[cursor[:c] + cursor[:next][:c]]
-        cursor[:next] = { c: insert, next: cursor[:next] }
-        cursor = cursor[:next][:next]
-      end
+    # rubocop:enable Lint/UnmodifiedReduceAccumulator
+    list_start
+  end
+
+  def linked_list_step(cursor, rules)
+    while cursor[:next] && cursor[:next][:c]
+      insert = rules[cursor[:c] + cursor[:next][:c]]
+      cursor[:next] = { c: insert, next: cursor[:next] }
+      cursor = cursor[:next][:next]
     end
-    cursor = start
+  end
+
+  def count_linked_list_elements(cursor)
     tally = Hash.new(0)
     while cursor[:next]
       tally[cursor[:c]] += 1
       cursor = cursor[:next]
     end
-    tally.values.max - tally.values.min
+    tally.values
   end
 
-  def problem2(input)
-    template, rules = input
-    counter = Hash.new(0)
+  def build_pair_tally(template)
+    tally = Hash.new(0)
     template.chars.each_cons(2) do |pair_chars|
-      counter[pair_chars.join] = 1
+      tally[pair_chars.join] = 1
     end
-    40.times do
-      counter = counter.each_with_object(Hash.new(0)) do |(pair, count), acc|
-        insert = rules[pair]
-        first, last = pair.chars
-        acc[first + insert] += count
-        acc[insert + last] += count
-      end
+    tally
+  end
+
+  def pair_tally_step(tally, rules)
+    tally.each_with_object(Hash.new(0)) do |(pair, count), acc|
+      insert = rules[pair]
+      first, last = pair.chars
+      acc[first + insert] += count
+      acc[insert + last] += count
     end
-    counter = counter.each_with_object(Hash.new(0)) do |(pair, count), acc|
+  end
+
+  def count_pair_tally_elements(pair_tally, template)
+    tally = pair_tally.each_with_object(Hash.new(0)) do |(pair, count), acc|
       pair.chars.each { |c| acc[c] += count }
     end
-    counter[template.chars.first] += 1
-    counter[template.chars.last] += 1
-    (counter.values.max - counter.values.min) / 2
+    tally[template.chars.first] += 1
+    tally[template.chars.last] += 1
+    tally.values.map { |v| v / 2 }
   end
 end
