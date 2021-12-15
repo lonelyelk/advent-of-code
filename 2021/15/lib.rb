@@ -12,12 +12,12 @@ module Day15
     end
     total_risk[0][0] = 0
     to_update = [[0, 0]]
-    while !to_update.empty?
+    until to_update.empty?
       to_update = to_update.inject([]) do |acc, (x, y)|
         acc + update_neighbours(x, y, input, total_risk)
       end
     end
-    
+
     total_risk[input.size - 1][input.first.size - 1]
   end
 
@@ -45,10 +45,11 @@ module Day15
 
   protected
 
+  # rubocop:disable Naming/MethodParameterName
   def update_neighbours(x, y, risk, total_risk)
     to_update = []
     [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]].each do |xx, yy|
-      next if xx < 0 || yy < 0 || xx >= risk.size || yy >= risk.first.size
+      next if xx.negative? || yy.negative? || xx >= risk.size || yy >= risk.first.size
       next if total_risk[xx][yy] <= total_risk[x][y] + risk[xx][yy]
 
       total_risk[xx][yy] = total_risk[x][y] + risk[xx][yy]
@@ -56,4 +57,5 @@ module Day15
     end
     to_update
   end
+  # rubocop:enable Naming/MethodParameterName
 end
