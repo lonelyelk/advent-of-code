@@ -2,6 +2,24 @@
 
 require_relative "../../../2021/16/lib"
 
+TEST_CASES_PROBLEM1 = {
+  "8A004A801A8002F478" => 16,
+  "620080001611562C8802118E34" => 12,
+  "C0015000016115A2E0802F182340" => 23,
+  "A0016C880162017C3686B18A3D4780" => 31,
+}.freeze
+
+TEST_CASES_PROBLEM2 = {
+  "C200B40A82" => 3,
+  "04005AC33890" => 54,
+  "880086C3E88112" => 7,
+  "CE00C43D881120" => 9,
+  "D8005AC2A8F0" => 1,
+  "F600BC2D8F" => 0,
+  "9C005AC2F8F0" => 0,
+  "9C0141080250320F1802104A08" => 1,
+}.freeze
+
 RSpec.describe Day16 do
   include described_class
 
@@ -20,24 +38,18 @@ RSpec.describe Day16 do
   end
 
   describe "problem1" do
-    it "returns nil for test input" do
-      expect(problem1(process_input("8A004A801A8002F478"))).to eq(16)
-      expect(problem1(process_input("620080001611562C8802118E34"))).to eq(12)
-      expect(problem1(process_input("C0015000016115A2E0802F182340"))).to eq(23)
-      expect(problem1(process_input("A0016C880162017C3686B18A3D4780"))).to eq(31)
+    TEST_CASES_PROBLEM1.each do |input, expected|
+      it "returns #{expected} for test input '#{input}'" do
+        expect(problem1(process_input(input))).to eq(expected)
+      end
     end
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(process_input("C200B40A82"))).to eq(3)
-      expect(problem2(process_input("04005AC33890"))).to eq(54)
-      expect(problem2(process_input("880086C3E88112"))).to eq(7)
-      expect(problem2(process_input("CE00C43D881120"))).to eq(9)
-      expect(problem2(process_input("D8005AC2A8F0"))).to eq(1)
-      expect(problem2(process_input("F600BC2D8F"))).to eq(0)
-      expect(problem2(process_input("9C005AC2F8F0"))).to eq(0)
-      expect(problem2(process_input("9C0141080250320F1802104A08"))).to eq(1)
+    TEST_CASES_PROBLEM2.each do |input, expected|
+      it "returns #{expected} for test input '#{input}'" do
+        expect(problem2(process_input(input))).to eq(expected)
+      end
     end
   end
 end

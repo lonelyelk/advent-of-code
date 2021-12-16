@@ -18,16 +18,23 @@ module Day16
 
   protected
 
+  OPERATORS = {
+    0 => ->(values) { values.inject(&:+) },
+    1 => ->(values) { values.inject(1) { |acc, v| acc * v } },
+    2 => ->(values) { values.min },
+    3 => ->(values) { values.max },
+    5 => ->(values) { values.inject(&:>) ? 1 : 0 },
+    6 => ->(values) { values.inject(&:<) ? 1 : 0 },
+    7 => ->(values) { values.inject(&:==) ? 1 : 0 },
+  }.freeze
+
   def process_packet_version(input, pointer)
     version = input[pointer, 3].to_i(2)
     type = input[pointer + 3, 3].to_i(2)
     pointer += 6
     case type
     when 4
-      bits = input[pointer..].chars.each_slice(5).take_while { |s| s.first == "1" }.map { |s| s[1..].join }
-      pointer += bits.size * 5
-      bits.push(input[(pointer + 1), 4])
-      pointer += 5
+      _, pointer = process_value(input, pointer)
       [version, pointer]
     else
       if input[pointer] == "0"
@@ -56,11 +63,7 @@ module Day16
     pointer += 6
     case type
     when 4
-      bits = input[pointer..].chars.each_slice(5).take_while { |s| s.first == "1" }.map { |s| s[1..].join }
-      pointer += bits.size * 5
-      bits.push(input[(pointer + 1), 4])
-      pointer += 5
-      [bits.join.to_i(2), pointer]
+      process_value(input, pointer)
     else
       if input[pointer] == "0"
         len = input[pointer + 1, 15].to_i(2)
@@ -80,22 +83,18 @@ module Day16
           values.push(value)
         end
       end
-      case type
-      when 0
-        [values.inject(&:+), pointer]
-      when 1
-        [values.inject(1) { |acc, v| acc * v }, pointer]
-      when 2
-        [values.min, pointer]
-      when 3
-        [values.max, pointer]
-      when 5
-        [values.inject(&:>) ? 1 : 0, pointer]
-      when 6
-        [values.inject(&:<) ? 1 : 0, pointer]
-      when 7
-        [values.inject(&:==) ? 1 : 0, pointer]
-      end
+      [operator(type, values), pointer]
     end
+  end
+
+  def process_value(input, pointer)
+    bits = input[pointer..].chars.each_slice(5).take_while { |s| s.first == "1" }.map { |s| s[1..].join }
+    pointer += bits.size * 5
+    bits.push(input[(pointer + 1), 4])
+    [bits.join.to_i(2), pointer + 5]
+  end
+
+  def operator(type, values)
+    OPERATORS[type].call(values)
   end
 end
