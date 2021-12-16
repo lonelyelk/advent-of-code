@@ -12,7 +12,7 @@ module Day15
     until to_update.empty?
       to_update = to_update.inject([]) do |acc, (x, y)|
         acc + update_neighbours(x, y, input, total_risk)
-      end
+      end.uniq
     end
 
     total_risk[input.size - 1][input.first.size - 1]
@@ -57,7 +57,7 @@ module Day15
 
       total_risk[xx][yy] = potential
       to_update.push([xx, yy])
-    end
+    end.uniq
   end
   # rubocop:enable Naming/MethodParameterName
 
