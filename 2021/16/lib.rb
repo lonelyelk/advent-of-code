@@ -36,21 +36,10 @@ module Day16
     when 4
       _, pointer = process_value(input, pointer)
     else
-      if input[pointer] == "0"
-        len = input[pointer + 1, 15].to_i(2)
-        pointer += 16
-        limit = pointer + len
-        while pointer < limit
-          new_version, pointer = process_packet_version(input, pointer)
-          version += new_version
-        end
-      else
-        num = input[pointer + 1, 11].to_i(2)
-        pointer += 12
-        num.times do
-          new_version, pointer = process_packet_version(input, pointer)
-          version += new_version
-        end
+      process_subpacket(input, pointer) do |pt|
+        new_version, pointer = process_packet_version(input, pt)
+        version += new_version
+        pointer
       end
     end
     [version, pointer]
@@ -63,23 +52,11 @@ module Day16
     when 4
       process_value(input, pointer)
     else
-      if input[pointer] == "0"
-        len = input[pointer + 1, 15].to_i(2)
-        pointer += 16
-        limit = pointer + len
-        values = []
-        while pointer < limit
-          value, pointer = process_packet(input, pointer)
-          values.push(value)
-        end
-      else
-        num = input[pointer + 1, 11].to_i(2)
-        pointer += 12
-        values = []
-        num.times do
-          value, pointer = process_packet(input, pointer)
-          values.push(value)
-        end
+      values = []
+      process_subpacket(input, pointer) do |pt|
+        value, pointer = process_packet(input, pt)
+        values.push(value)
+        pointer
       end
       [operator(type, values), pointer]
     end
@@ -98,5 +75,18 @@ module Day16
 
   def operator(type, values)
     OPERATORS[type].call(values)
+  end
+
+  def process_subpacket(input, pointer, &block)
+    if input[pointer] == "0"
+      len = input[pointer + 1, 15].to_i(2)
+      pointer += 16
+      limit = pointer + len
+      pointer = block.call(pointer) while pointer < limit
+    else
+      num = input[pointer + 1, 11].to_i(2)
+      pointer += 12
+      num.times { pointer = block.call(pointer) }
+    end
   end
 end
