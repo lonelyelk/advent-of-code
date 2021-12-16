@@ -35,7 +35,6 @@ module Day16
     case type
     when 4
       _, pointer = process_value(input, pointer)
-      [version, pointer]
     else
       if input[pointer] == "0"
         len = input[pointer + 1, 15].to_i(2)
@@ -53,8 +52,8 @@ module Day16
           version += new_version
         end
       end
-      [version, pointer]
     end
+    [version, pointer]
   end
 
   def process_packet(input, pointer)
@@ -92,9 +91,9 @@ module Day16
   end
 
   def value_bits(input, pointer)
-    bits = input[pointer..].chars.each_slice(5).take_while { |s| s.first == "1" }.map { |s| s[1..].join }
-    bits.push(input[(pointer + 1), 4].chars)
-    bits
+    bits = input[pointer..].chars.each_slice(5).take_while { |s| s.first == "1" }.map(&:join)
+    bits.push(input[pointer + (bits.size * 5), 5])
+    bits.map { |s| s[1..] }
   end
 
   def operator(type, values)
