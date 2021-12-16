@@ -45,16 +45,15 @@ module Day16
           new_version, pointer = process_packet_version(input, pointer)
           version += new_version
         end
-        [version, pointer]
       else
         num = input[pointer + 1, 11].to_i(2)
         pointer += 12
-        new_version, pointer = (0...num).to_a.inject([version, pointer]) do |(vn, pt), _i|
-          new_vn, new_pt = process_packet_version(input, pt)
-          [vn + new_vn, new_pt]
+        num.times do
+          new_version, pointer = process_packet_version(input, pointer)
+          version += new_version
         end
-        [new_version, pointer]
       end
+      [version, pointer]
     end
   end
 
@@ -88,10 +87,14 @@ module Day16
   end
 
   def process_value(input, pointer)
+    bits = value_bits(input, pointer)
+    [bits.join.to_i(2), pointer + (bits.size * 5)]
+  end
+
+  def value_bits(input, pointer)
     bits = input[pointer..].chars.each_slice(5).take_while { |s| s.first == "1" }.map { |s| s[1..].join }
-    pointer += bits.size * 5
-    bits.push(input[(pointer + 1), 4])
-    [bits.join.to_i(2), pointer + 5]
+    bits.push(input[(pointer + 1), 4].chars)
+    bits
   end
 
   def operator(type, values)
