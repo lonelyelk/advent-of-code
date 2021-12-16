@@ -30,7 +30,14 @@ RSpec.describe Day16 do
 
   describe "problem2" do
     it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+      expect(problem2(process_input("C200B40A82"))).to eq(3)
+      expect(problem2(process_input("04005AC33890"))).to eq(54)
+      expect(problem2(process_input("880086C3E88112"))).to eq(7)
+      expect(problem2(process_input("CE00C43D881120"))).to eq(9)
+      expect(problem2(process_input("D8005AC2A8F0"))).to eq(1)
+      expect(problem2(process_input("F600BC2D8F"))).to eq(0)
+      expect(problem2(process_input("9C005AC2F8F0"))).to eq(0)
+      expect(problem2(process_input("9C0141080250320F1802104A08"))).to eq(1)
     end
   end
 end
