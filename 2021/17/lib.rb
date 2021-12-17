@@ -12,26 +12,25 @@ module Day17
   end
 
   def problem2(input)
-    count = 0
-    input[:y].min.upto(-input[:y].min - 1).each do |vy0|
-      1.upto(input[:x].max).each do |vx0|
-        x = y = 0
-        vx = vx0
-        vy = vy0
-        hit = false
-        while !hit && x <= input[:x].max && y >= input[:y].min
-          if x.between?(*input[:x]) && y.between?(*input[:y])
-            hit = true
-            count += 1
-          else
-            x += vx
-            y += vy
-            vx -= 1 if vx > 0
-            vy -= 1
-          end
-        end
+    input[:y].min.upto(-input[:y].min - 1).inject(0) do |acc, vy0|
+      acc + 1.upto(input[:x].max).count do |vx0|
+        solve(vx0, vy0, input)
       end
     end
-    count
+  end
+
+  protected
+
+  def solve(speed_x, speed_y, input)
+    x = y = 0
+    while x <= input[:x].max && y >= input[:y].min
+      return true if x.between?(*input[:x]) && y.between?(*input[:y])
+
+      x += speed_x
+      y += speed_y
+      speed_x -= 1 if speed_x.positive?
+      speed_y -= 1
+    end
+    false
   end
 end
