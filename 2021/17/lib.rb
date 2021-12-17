@@ -8,11 +8,11 @@ module Day17
   end
 
   def problem1(input)
-    (-input[:y].min - 1).downto(1).inject(&:+)
+    max_speed_y(input).downto(1).inject(&:+)
   end
 
   def problem2(input)
-    input[:y].min.upto(-input[:y].min - 1).inject(0) do |acc, vy0|
+    input[:y].min.upto(max_speed_y(input)).inject(0) do |acc, vy0|
       acc + 1.upto(input[:x].max).count do |vx0|
         solve(vx0, vy0, input)
       end
@@ -20,6 +20,10 @@ module Day17
   end
 
   protected
+
+  def max_speed_y(input)
+    -input[:y].min - 1
+  end
 
   def solve(speed_x, speed_y, input)
     x = y = 0
