@@ -73,18 +73,24 @@ module Day19
   def best_transformation_from(base_scanner, input, index)
     (0...24).each do |r|
       rotated = rotation(input, index, r)
-      (0..(rotated.size - 12)).each do |i|
-        transformed = {}
-        base_scanner.each do |coord0|
-          diff = coord0 - rotated[i]
-          next if transformed.key?(diff.to_s)
-
-          transformed[diff.to_s] = rotated.map { |c| c + diff }
-          intersection = base_scanner.intersection(transformed[diff.to_s]).size
-          return [transformed[diff.to_s], diff] if intersection >= 12
-        end
-      end
+      translation = find_translation(base_scanner, rotated)
+      return translation if translation
     end
     [nil, nil]
+  end
+
+  def find_translation(base_scanner, rotated)
+    transformed = {}
+    (0..(rotated.size - 12)).each do |i|
+      base_scanner.each do |coord0|
+        diff = coord0 - rotated[i]
+        next if transformed.key?(diff.to_s)
+
+        transformed[diff.to_s] = rotated.map { |c| c + diff }
+        intersection = base_scanner.intersection(transformed[diff.to_s]).size
+        return [transformed[diff.to_s], diff] if intersection >= 12
+      end
+    end
+    nil
   end
 end

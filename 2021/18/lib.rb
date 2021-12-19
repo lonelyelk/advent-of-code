@@ -86,10 +86,8 @@ module Day18
     when 2
       "[#{num.map { |n| n[:value] }.join(",")}]"
     else
-      parts = num.chunk do |n|
-        n[:path].first
-      end.map do |_dir, part|
-        number_to_s(part.map { |n| { path: n[:path][1..], value: n[:value] } })
+      parts = direction_chunks(num).map do |_dir, part|
+        number_to_s(trim_outer_direction(part))
       end
       "[#{parts.join(",")}]"
     end
@@ -102,10 +100,8 @@ module Day18
     when 2
       (num[0][:value] * 3) + (num[1][:value] * 2)
     else
-      parts = num.chunk do |n|
-        n[:path].first
-      end.map do |_dir, part|
-        magnitude(part.map { |n| { path: n[:path][1..], value: n[:value] } })
+      parts = direction_chunks(num).map do |_dir, part|
+        magnitude(trim_outer_direction(part))
       end
       (parts[0] * 3) + (parts[1] * 2)
     end
@@ -119,5 +115,15 @@ module Day18
     input.combination(2).map do |pair|
       [magnitude(add_list(pair)), magnitude(add_list(pair.reverse))]
     end.flatten.max
+  end
+
+  protected
+
+  def direction_chunks(number)
+    number.chunk { |num| num[:path].first }
+  end
+
+  def trim_outer_direction(number)
+    number.map { |num| { path: num[:path][1..], value: num[:value] } }
   end
 end

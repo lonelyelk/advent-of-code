@@ -26,7 +26,7 @@ RSpec.describe Day19 do
     end
   end
 
-  describe "problem12" do
+  xdescribe "problem12" do
     it "returns 79 and 3621 for test input for problem 1 and 2" do
       expect(problem12(process_input(input))).to eq([79, 3621])
     end
