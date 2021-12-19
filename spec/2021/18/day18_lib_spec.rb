@@ -69,11 +69,13 @@ RSpec.describe Day18 do
 
   describe "split" do
     it "splits a number once" do
-      expect(number_to_s(split(explode(process_line("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]"))))).to eq("[[[[0,7],4],[[7,8],[0,13]]],[1,1]]")
+      expect(number_to_s(split(explode(process_line("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]")))))
+        .to eq("[[[[0,7],4],[[7,8],[0,13]]],[1,1]]")
     end
 
     it "splits the second number second time" do
-      expect(split(split(explode(process_line("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]"))))).to eq(process_line("[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]"))
+      expect(split(split(explode(process_line("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]")))))
+        .to eq(process_line("[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]"))
     end
   end
 

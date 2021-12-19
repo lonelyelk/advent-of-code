@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# https://adventofcode.com/2021/day/18
 module Day18
   def process_input(str)
     str.split("\n").reject(&:empty?).map do |l|
@@ -38,7 +39,6 @@ module Day18
         left += res[(to_expl + 2)..]
       end
       res = left
-      # puts "exp: #{number_to_s(res)}"
       to_expl = res.index { |n| n[:path].size > 4 }
     end
     res
@@ -67,14 +67,10 @@ module Day18
     cnt = 0
     input.inject do |acc, num|
       cnt += 1
-      # puts "#{number_to_s(acc)} + #{number_to_s(num)}"
       sum = add(acc, num)
       loop do
-        # puts "SUM: #{number_to_s(sum)}"
         expl = explode(sum)
-        # puts "EXP: #{number_to_s(expl)}"
         spl = split(expl)
-        # puts "SPL: #{number_to_s(spl)}"
         break if spl == sum
 
         sum = spl

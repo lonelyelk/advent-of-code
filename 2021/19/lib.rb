@@ -43,7 +43,7 @@ module Day19
   end
 
   def rotation_matrices
-    @matrices ||= [1, -1].each_with_object([]) do |c0, acc|
+    @rotation_matrices ||= [1, -1].each_with_object([]) do |c0, acc|
       (0..2).each do |i|
         column0 = Array.new(3, 0)
         column0[i] = c0
@@ -55,18 +55,19 @@ module Day19
               k = ((0..2).to_a - [i, j]).first
               column2 = Array.new(3, 0)
               column2[k] = c2
-              acc.push(::Matrix.columns([column0, column1, column2]))
+              matrix = Matrix.columns([column0, column1, column2])
+              acc.push(matrix) if matrix.determinant.positive?
             end
           end
         end
       end
-    end.reject { |m| m.determinant.negative? }
+    end
   end
 
-  def rotation(input, index, nr)
+  def rotation(input, index, number)
     @rotation_cache ||= {}
-    key = "#{index},#{nr}"
-    @rotation_cache[key] ||= input[index].map { |coord| rotation_matrices[nr] * coord }
+    key = "#{index},#{number}"
+    @rotation_cache[key] ||= input[index].map { |coord| rotation_matrices[number] * coord }
   end
 
   def best_transformation_from(base_scanner, input, index)
