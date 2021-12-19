@@ -15,7 +15,7 @@ MAGNITUDE = {
   "[[[[3,0],[5,3]],[4,4]],[5,5]]" => 791,
   "[[[[5,0],[7,4]],[5,5]],[6,6]]" => 1137,
   "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]" => 3488,
-}
+}.freeze
 
 RSpec.describe Day18 do
   include described_class
@@ -27,11 +27,11 @@ RSpec.describe Day18 do
   let(:processed_input) do
     [
       [
-        { path: [:l, :l], value: 1 },
-        { path: [:l, :r], value: 9 },
-        { path: [:r, :l], value: 8 },
-        { path: [:r, :r], value: 5 }
-      ]
+        { path: %i[l l], value: 1 },
+        { path: %i[l r], value: 9 },
+        { path: %i[r l], value: 8 },
+        { path: %i[r r], value: 5 },
+      ],
     ]
   end
 

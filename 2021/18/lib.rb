@@ -12,9 +12,9 @@ module Day18
     line.chars.each_with_object([]) do |c, res|
       case c
       when "["
-        current_path = current_path + [:l]
+        current_path += [:l]
       when ","
-        current_path = current_path + [:r]
+        current_path += [:r]
       when "]"
         current_path = current_path[0..-2]
       when /\d/
@@ -27,9 +27,9 @@ module Day18
   def explode(num)
     res = num.map(&:dup)
     to_expl = res.index { |n| n[:path].size > 4 }
-    while !to_expl.nil?
+    until to_expl.nil?
       left = [{ path: res[to_expl][:path][0..-2], value: 0 }]
-      if to_expl > 0
+      if to_expl.positive?
         res[to_expl - 1][:value] += res[to_expl][:value]
         left = res[0..(to_expl - 1)] + left
       end
@@ -56,14 +56,10 @@ module Day18
     val = num[to_split][:value] / 2
     left = [
       { path: num[to_split][:path] + [:l], value: val },
-      { path: num[to_split][:path] + [:r], value: num[to_split][:value] - val }
+      { path: num[to_split][:path] + [:r], value: num[to_split][:value] - val },
     ]
-    if to_split > 0
-      left = num[0..(to_split - 1)] + left
-    end
-    if to_split < num.size - 1
-      left += num[(to_split + 1)..]
-    end
+    left = num[0..(to_split - 1)] + left if to_split.positive?
+    left += num[(to_split + 1)..] if to_split < num.size - 1
     left
   end
 
@@ -80,6 +76,7 @@ module Day18
         spl = split(expl)
         # puts "SPL: #{number_to_s(spl)}"
         break if spl == sum
+
         sum = spl
       end
       sum
@@ -87,9 +84,10 @@ module Day18
   end
 
   def number_to_s(num)
-    if num.size == 1
+    case num.size
+    when 1
       num[0][:value].to_s
-    elsif num.size == 2
+    when 2
       "[#{num.map { |n| n[:value] }.join(",")}]"
     else
       parts = num.chunk do |n|
@@ -102,9 +100,10 @@ module Day18
   end
 
   def magnitude(num)
-    if num.size == 1
+    case num.size
+    when 1
       num[0][:value]
-    elsif num.size == 2
+    when 2
       (num[0][:value] * 3) + (num[1][:value] * 2)
     else
       parts = num.chunk do |n|

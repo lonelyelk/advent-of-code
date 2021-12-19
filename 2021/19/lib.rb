@@ -34,7 +34,7 @@ module Day19
     end
     beacons = accounted.values.flatten.uniq
     max_distance = (0...(scanners.size - 1)).inject(0) do |acc, i|
-      ((i+1)...scanners.size).inject(acc) do |m, j|
+      ((i + 1)...scanners.size).inject(acc) do |m, j|
         distance = (0..2).map { |n| (scanners[i][n] - scanners[j][n]).abs }.inject(&:+)
         distance > m ? distance : m
       end
@@ -60,7 +60,7 @@ module Day19
           end
         end
       end
-    end.reject { |m| m.determinant < 0 }
+    end.reject { |m| m.determinant.negative? }
   end
 
   def rotation(input, index, nr)
