@@ -38,7 +38,7 @@ RSpec.describe Day20 do
     end
   end
 
-  describe "problem2" do
+  xdescribe "problem2" do
     it "returns 3351 for test input" do
       expect(problem2(process_input(input))).to eq(3351)
     end

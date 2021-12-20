@@ -37,6 +37,11 @@ module Day20
   end
   # rubocop:enable Naming/MethodParameterName
 
+  def enhanced(point, alg, pic)
+    pixel = neighbours(point).map { |c| pic[c].to_s }.join.to_i(2)
+    alg[pixel] == "#" ? 1 : 0
+  end
+
   def neighbours(point)
     [-1i, 0i, 1i].each_with_object([]) do |dy, acc|
       (-1..1).each do |dx|
@@ -53,15 +58,22 @@ module Day20
     end
   end
 
-  def step(def_val, alg, pic)
+  def x_range(pic)
     x_min, x_max = pic.keys.map(&:real).minmax
+    ((x_min - 1)..(x_max + 1))
+  end
+
+  def y_range(pic)
     y_min, y_max = pic.keys.map(&:imaginary).minmax
+    ((y_min - 1)..(y_max + 1))
+  end
+
+  def step(def_val, alg, pic)
     next_pic = Hash.new(def_val)
-    ((x_min - 1)..(x_max + 1)).each do |x|
-      ((y_min - 1)..(y_max + 1)).each do |y|
+    x_range(pic).each do |x|
+      y_range(pic).each do |y|
         point = pt(x, y)
-        pixel = neighbours(point).map { |c| pic[c].to_s }.join.to_i(2)
-        next_pic[point] = alg[pixel] == "#" ? 1 : 0
+        next_pic[point] = enhanced(point, alg, pic)
       end
     end
     next_pic
