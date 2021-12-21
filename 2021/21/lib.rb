@@ -10,6 +10,8 @@ module Day21
     positions = input.dup
     scores = [0, 0]
     player = 0
+    @count = 0
+    @die = (1..100).to_enum
     loop do
       positions, scores = game_move(positions, scores, player, roll_det_3d100)
       return scores[next_player(player)] * @count if scores[player] >= 1000
@@ -30,8 +32,6 @@ module Day21
   end
 
   def roll_det_3d100
-    @count ||= 0
-    @die ||= (1..100).to_enum
     (1..3).inject(0) do |acc, _|
       @count += 1
       acc + @die.next
@@ -56,7 +56,7 @@ module Day21
         wins.each_with_index.map { |w, i| i == player ? w + count : w }
       else
         cache_key = variant_positions + variant_scores + [player]
-        @cache[cache_key] ||= round_dirac(variant_positions, variant_scores, player ^ 1)
+        @cache[cache_key] ||= round_dirac(variant_positions, variant_scores, next_player(player))
         wins.zip(@cache[cache_key].map { |w| w * count }).map(&:sum)
       end
     end
