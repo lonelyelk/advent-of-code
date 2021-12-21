@@ -11,9 +11,7 @@ module Day21
     scores = [0, 0]
     player = 0
     loop do
-      positions[player] += roll_det_3d100
-      positions[player] %= 10
-      scores[player] += positions[player] + 1
+      positions, scores = game_move(positions, scores, player, roll_det_3d100)
       return scores[next_player(player)] * @count if scores[player] >= 1000
 
       player = next_player(player)
@@ -53,23 +51,23 @@ module Day21
 
   def round_dirac(positions, scores, player)
     roll_dirac.tally.inject([0, 0]) do |wins, (roll, count)|
-      variant_positions = positions.dup
-      variant_scores = scores.dup
-      variant_positions[player] += roll
-      variant_positions[player] %= 10
-      variant_scores[player] += variant_positions[player] + 1
+      variant_positions, variant_scores = game_move(positions, scores, player, roll)
       if variant_scores[player] >= 21
         wins.each_with_index.map { |w, i| i == player ? w + count : w }
       else
         cache_key = variant_positions + variant_scores + [player]
-        result =
-          if @cache[cache_key]
-            @cache[cache_key]
-          else
-            @cache[cache_key] = round_dirac(variant_positions, variant_scores, player ^ 1)
-          end
-        wins.zip(result.map { |w| w * count }).map(&:sum)
+        @cache[cache_key] ||= round_dirac(variant_positions, variant_scores, player ^ 1)
+        wins.zip(@cache[cache_key].map { |w| w * count }).map(&:sum)
       end
     end
+  end
+
+  def game_move(positions, scores, player, roll)
+    next_positions = positions.dup
+    next_scores = scores.dup
+    next_positions[player] += roll
+    next_positions[player] %= 10
+    next_scores[player] += next_positions[player] + 1
+    [next_positions, next_scores]
   end
 end
