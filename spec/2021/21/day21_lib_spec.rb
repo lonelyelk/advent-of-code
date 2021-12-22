@@ -26,7 +26,7 @@ Player 2 starting position: 8
     end
   end
 
-  describe "problem2" do
+  xdescribe "problem2" do
     it "returns 444_356_092_776_315 for test input" do
       expect(problem2(processed_input)).to eq(444_356_092_776_315)
     end
