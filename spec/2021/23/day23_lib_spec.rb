@@ -18,6 +18,7 @@ RSpec.describe Day23 do
       Array.new(11),
       [:B, :C, :B, :D],
       [:A, :D, :C, :A],
+      0,
     ]
   end
 
@@ -28,6 +29,7 @@ RSpec.describe Day23 do
           [nil, :B, nil, :C, nil, :D, nil, :A, nil, nil, nil],
           Array.new(4),
           [:A, :D, :C, :B],
+          0,
         ]
       end
 
@@ -58,6 +60,7 @@ RSpec.describe Day23 do
           [nil, :A, nil, :B, nil, :D, nil, nil, nil, :C, nil],
           Array.new(4),
           [:A, :D, :C, :B],
+          0,
         ]
       end
       let(:state2) do
@@ -65,6 +68,7 @@ RSpec.describe Day23 do
           [nil, nil, nil, :B, nil, :D, nil, :C, nil, :C, nil],
           [:A, nil, nil, nil],
           [:A, :D, nil, :B],
+          0,
         ]
       end
 
