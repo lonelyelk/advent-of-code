@@ -95,7 +95,8 @@ module Day23
             next_hall[hall_pos] = a
             next_states = state[1, state.size - 2].map(&:dup)
             next_states[d - 1][i] = nil
-            possible.push([next_hall, *next_states, (cost + d - 1) * COSTS[a]])
+            cost = (cost + d - 1) * COSTS[a]
+            possible.push([next_hall, *next_states, cost])
           end
         end
       end
@@ -117,18 +118,20 @@ module Day23
       next_hall[i] = nil
       next_states = state[1, state.size - 2].map(&:dup)
       next_states[d][pos] = a
-      possible.push([next_hall, *next_states, (cost + d) * COSTS[a]])
+      cost = (cost + d) * COSTS[a]
+      possible.push([next_hall, *next_states, cost])
     end
     possible
   end
 
-  def find_solutions(input)
+  def find_solutions(input, cost_so_far = 0)
     possible_moves(input).each_with_object([]) do |move, acc|
       if move[0].all?(&:nil?)
         acc.push move.last
-      else
-        key = move[0..2].inject(&:+)
-        @cache[key] ||= find_solutions(move)
+        # @costs.push(cost_so_far + move.last)
+      else #if @costs.empty? || cost_so_far + move.last < @costs.min
+        key = move[0, move.size - 1].inject(&:+)
+        @cache[key] ||= find_solutions(move, cost_so_far + move.last)
         acc.concat(@cache[key].map { |c| c + move.last })
       end
     end
@@ -136,6 +139,7 @@ module Day23
 
   def problem1(input)
     @cache = {}
+    @costs = []
     solutions = find_solutions(input)
 
     solutions.min

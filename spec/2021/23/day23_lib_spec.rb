@@ -13,10 +13,30 @@ RSpec.describe Day23 do
   #########
 )
   end
+  let(:input_long) do
+    %(#############
+#...........#
+###B#C#B#D###
+  #D#C#B#A#
+  #D#B#A#C#
+  #A#D#C#A#
+  #########
+)
+  end
   let(:processed_input) do
     [
       Array.new(11),
       [:B, :C, :B, :D],
+      [:A, :D, :C, :A],
+      0,
+    ]
+  end
+  let(:processed_input_long) do
+    [
+      Array.new(11),
+      [:B, :C, :B, :D],
+      [:D, :C, :B, :A],
+      [:D, :B, :A, :C],
       [:A, :D, :C, :A],
       0,
     ]
@@ -94,16 +114,20 @@ RSpec.describe Day23 do
     it "consumes multiline string and returns processed input" do
       expect(process_input(input)).to eq(processed_input)
     end
+
+    it "consumes multiline string and returns processed long input" do
+      expect(process_input(input_long)).to eq(processed_input_long)
+    end
   end
 
   describe "problem1" do
-    it "returns nil 12_521 for test input" do
+    it "returns 12_521 for test input" do
       expect(problem1(processed_input)).to eq(12_521)
     end
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
+    it "returns 44_169 for test input" do
       expect(problem2(processed_input)).to eq(nil)
     end
   end
