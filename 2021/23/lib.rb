@@ -128,11 +128,16 @@ module Day23
     possible_moves(input).each_with_object([]) do |move, acc|
       if move[0].all?(&:nil?)
         acc.push move.last
-        # @costs.push(cost_so_far + move.last)
-      else #if @costs.empty? || cost_so_far + move.last < @costs.min
+        @costs.push(cost_so_far + move.last)
+      elsif @costs.empty? || cost_so_far + move.last < @costs.min
         key = move[0, move.size - 1].inject(&:+)
-        @cache[key] ||= find_solutions(move, cost_so_far + move.last)
-        acc.concat(@cache[key].map { |c| c + move.last })
+        if !@cache.key?(key) || @cache[key][:cost] > cost_so_far
+          @cache[key] = {
+            cost: cost_so_far,
+            solutions: find_solutions(move, cost_so_far + move.last),
+          }
+        end
+        acc.concat(@cache[key][:solutions].map { |c| c + move.last })
       end
     end
   end
@@ -142,6 +147,7 @@ module Day23
     @costs = []
     solutions = find_solutions(input)
 
+    p @costs
     solutions.min
   end
 
