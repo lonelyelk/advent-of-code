@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# https://adventofcode.com/2021/day/23
 module Day23
   HALL = [0, 1, 3, 5, 7, 9, 10].freeze
   COSTS = {
@@ -145,12 +146,13 @@ module Day23
   def problem1(input)
     @cache = {}
     @costs = []
-    solutions = find_solutions(input)
-
-    p @costs
-    solutions.min
+    find_solutions(input).min
   end
 
   def problem2(input)
+    unfolded = input[0, 2] + [[:D, :C, :B, :A], [:D, :B, :A, :C]] + input[2..]
+    @cache = {}
+    @costs = []
+    find_solutions(unfolded).min
   end
 end
