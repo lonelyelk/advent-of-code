@@ -12,7 +12,6 @@ module Day24
       case instr
       in "inp", *args
         registers[args.first] = inp.shift.to_i
-        # puts "RUN: #{registers[args.first]} #{registers["z"]}"
       in "add", *args
         registers[args[0]] = registers[args[0]] + (registers[args[1]] || args[1].to_i)
       in "mul", *args
@@ -36,7 +35,6 @@ module Day24
     dz = [1,1,1,1,26,1,1,26,1,26,26,26,26,26]
     dw = [0,12,14,0,3,15,11,12,1,12,3,10,14,12]
     num.digits.reverse.each_with_index do |w, i|
-      # puts "CHECK: #{w} #{z}"
       x = z % 26 + dx[i]
       z /= dz[i]
       if w != x

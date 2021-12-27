@@ -59,13 +59,13 @@ mod w 2
     end
   end
 
-  describe "problem1" do
+  xdescribe "problem1" do
     it "returns 91_297_395_919_993 for real input" do
       expect(problem1(process_input(real_input))).to eq(91_297_395_919_993)
     end
   end
 
-  describe "problem2" do
+  xdescribe "problem2" do
     it "returns 71_131_151_917_891 for real input" do
       expect(problem2(process_input(real_input))).to eq(71_131_151_917_891)
     end
