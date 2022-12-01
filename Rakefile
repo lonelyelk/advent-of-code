@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require "date"
+
 def year
-  "2021"
+  Date.today.strftime("%Y")
 end
 
 def template_args(args, next_day: false)
