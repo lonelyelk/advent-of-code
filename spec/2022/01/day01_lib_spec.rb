@@ -2,7 +2,7 @@
 
 require_relative "../../../2022/01/lib"
 
-RSpec.describe Day01 do
+RSpec.describe Year2022::Day01 do
   include described_class
 
   let(:input) do

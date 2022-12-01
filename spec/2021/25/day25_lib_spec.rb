@@ -22,9 +22,11 @@ v.v..>>v.v
     it "consumes multiline string and returns processed input" do
       expect(process_input(input)).to match(a_hash_including(:east, :south))
     end
+
     it "places sea cucumbers facing east corretly" do
       expect(process_input(input)[:east].size).to eq(23)
     end
+
     it "places sea cucumbers facing south corretly" do
       expect(process_input(input)[:south].size).to eq(26)
     end

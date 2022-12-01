@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/23
+# rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 module Day23
   HALL = [0, 1, 3, 5, 7, 9, 10].freeze
   COSTS = {
@@ -86,9 +87,13 @@ module Day23
         next if d > 1 && (1...d).any? { |dd| !state[dd][i].nil? }
 
         place = (i + 1) * 2
-        next if HOMES[a] == place && (d == state.size - 2 || ((d + 1)..(state.size - 2)).all? { |dd| HOMES[state[dd][i]] == place })
+        if HOMES[a] == place && (d == state.size - 2 || ((d + 1)..(state.size - 2)).all? do |dd|
+                                   HOMES[state[dd][i]] == place
+                                 end)
+          next
+        end
 
-        [:left, :right].each do |dir|
+        %i[left right].each do |dir|
           MOVES_OUT[place][dir].each do |hall_pos, cost|
             break unless state[0][hall_pos].nil?
 
@@ -107,7 +112,7 @@ module Day23
 
       home = HOMES[a]
       pos = home / 2 - 1
-      next if !state[1][pos].nil?
+      next unless state[1][pos].nil?
       next if (2..(state.size - 2)).any? { |dd| state[dd][pos] != a && !state[dd][pos].nil? }
 
       path = state[0][([i + 1, home].min)..([i - 1, home].max)]
@@ -150,9 +155,10 @@ module Day23
   end
 
   def problem2(input)
-    unfolded = input[0, 2] + [[:D, :C, :B, :A], [:D, :B, :A, :C]] + input[2..]
+    unfolded = input[0, 2] + [%i[D C B A], %i[D B A C]] + input[2..]
     @cache = {}
     @costs = []
     find_solutions(unfolded).min
   end
 end
+# rubocop:enable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

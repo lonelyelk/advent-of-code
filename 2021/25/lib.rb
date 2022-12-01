@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/25
+# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 module Day25
   def process_input(str)
     lines = str.split("\n").reject(&:empty?)
@@ -19,12 +20,13 @@ module Day25
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def problem1(input)
     state = input
     frame = [@width, @height]
-    directions = [:east, :south]
+    directions = %i[east south]
     (1..).each do |move|
-      next_state = { east: {}, south: {}}
+      next_state = { east: {}, south: {} }
       moved = 0
       directions.each_with_index do |dir, i|
         state[dir].each do |coord, _|
@@ -32,7 +34,7 @@ module Day25
           new_coord[i] += 1
           new_coord[i] = 0 if new_coord[i] >= frame[i]
           if (directions[i + 1] && state.any? { |_, places| places[new_coord] }) ||
-              (i > 0 && (state[directions[i]][new_coord] || next_state[directions[i - 1]][new_coord]))
+             (i.positive? && (state[directions[i]][new_coord] || next_state[directions[i - 1]][new_coord]))
             next_state[dir][coord] = true
           else
             moved += 1
@@ -41,9 +43,11 @@ module Day25
         end
       end
 
-      return move if moved == 0
+      return move if moved.zero?
 
       state = next_state
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
+# rubocop:enable Metrics/MethodLength, Metrics/AbcSize

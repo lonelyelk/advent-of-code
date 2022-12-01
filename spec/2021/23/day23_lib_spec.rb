@@ -2,6 +2,7 @@
 
 require_relative "../../../2021/23/lib"
 
+# rubocop:disable Style/SymbolArray
 RSpec.describe Day23 do
   include described_class
 
@@ -96,15 +97,16 @@ RSpec.describe Day23 do
     end
   end
 
-  xdescribe "problem1" do
+  describe "problem1" do
     it "returns 12_521 for test input" do
       expect(problem1(processed_input)).to eq(12_521)
     end
   end
 
-  xdescribe "problem2" do
+  describe "problem2" do
     it "returns 44_169 for test input" do
       expect(problem2(processed_input)).to eq(44_169)
     end
   end
 end
+# rubocop:enable Style/SymbolArray
