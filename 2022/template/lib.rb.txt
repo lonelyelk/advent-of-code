@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+# https://adventofcode.com/%<year>04d/day/%<day>d
+module Year%<year>04d
+  module Day%<day>02d
+    def process_input(str)
+    end
+
+    def problem1(input)
+    end
+
+    def problem2(input)
+    end
+  end
+end
