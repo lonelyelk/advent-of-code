@@ -59,8 +59,8 @@ module Day11
   def sub_step_flash(pool, flashes)
     next_pool = pool.map(&:dup)
     next_flashes = flashes.dup
-    (0..9).each do |x|
-      (0..9).each do |y|
+    10.times do |x|
+      10.times do |y|
         next unless next_pool[x][y] > 9 && !next_flashes.include?([x, y])
 
         next_flashes.push([x, y])

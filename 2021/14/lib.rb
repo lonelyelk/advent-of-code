@@ -4,7 +4,7 @@
 module Day14
   def process_input(str)
     template, rules = str.split("\n\n").reject(&:empty?)
-    [template, rules.split("\n").reject(&:empty?).map { |l| l.split(" -> ") }.to_h]
+    [template, rules.split("\n").reject(&:empty?).to_h { |l| l.split(" -> ") }]
   end
 
   def problem1(input)

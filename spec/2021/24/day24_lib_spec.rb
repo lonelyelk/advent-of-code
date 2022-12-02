@@ -54,7 +54,7 @@ mod w 2
     10.times do
       it "does the same thing as running of the input program" do
         inp = Array.new(14) { rand(1..9) }
-        expect(serial_check(inp.join.to_i)).to eq(run(process_input(real_input), inp: inp)["z"])
+        expect(serial_check(inp.join.to_i)).to eq(run(process_input(real_input), inp:)["z"])
       end
     end
   end

@@ -23,7 +23,6 @@ module Day19
         (0...input.size).each do |index|
           next if accounted.key?(index)
 
-          p [base_index, index, accounted.keys.size]
           transformation, diff = best_transformation_from(accounted[base_index], input, index)
           if transformation
             accounted[index] = transformation
@@ -45,7 +44,7 @@ module Day19
 
   def rotation_matrices
     @rotation_matrices ||= [1, -1].each_with_object([]) do |c0, acc|
-      (0..2).each do |i|
+      3.times do |i|
         column0 = Array.new(3, 0)
         column0[i] = c0
         [1, -1].each do |c1|
@@ -72,7 +71,7 @@ module Day19
   end
 
   def best_transformation_from(base_scanner, input, index)
-    (0...24).each do |r|
+    24.times do |r|
       rotated = rotation(input, index, r)
       translation = find_translation(base_scanner, rotated)
       return translation if translation

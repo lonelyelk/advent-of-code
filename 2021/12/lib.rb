@@ -32,11 +32,11 @@ module Day12
     end
   end
 
-  def explore_and_reject(input, &block)
+  def explore_and_reject(input, &)
     paths = input["start"].map { |cave| ["start", cave] }
     while paths.any? { |path| path.last != "end" }
       paths = expand_paths(paths, input)
-      paths = paths.reject(&block)
+      paths = paths.reject(&)
     end
     paths.size
   end

@@ -9,7 +9,7 @@ def year
 end
 
 def template_args(args, next_day: false)
-  t_args = { day: args.day.to_i, year: year }
+  t_args = { day: args.day.to_i, year: }
   if t_args[:day].zero?
     t_args[:day] = Dir.children(year).map(&:to_i).max
     t_args[:day] += 1 if next_day
@@ -30,22 +30,17 @@ task :next_day, [:day] do |_t, args|
   mkdir_p path
   mkdir_p spec_path
   %w[lib.rb run.rb].each do |name|
-    File.open(File.join(path, name), "w") do |f|
-      f.write format(File.read(File.join(template_path, "#{name}.txt")), t_args)
-    end
+    File.write(File.join(path, name), format(File.read(File.join(template_path, "#{name}.txt")), t_args))
   end
-  File.open(File.join(spec_path, format("day%<day>02d_lib_spec.rb", t_args)), "w") do |f|
-    f.write format(File.read(File.join(template_path, "lib_spec.rb.txt")), t_args)
-  end
+  File.write(File.join(spec_path, format("day%<day>02d_lib_spec.rb", t_args)),
+             format(File.read(File.join(template_path, "lib_spec.rb.txt")), t_args))
   uri = URI(format("https://adventofcode.com/%<year>s/day/%<day>d/input", t_args))
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
     request = Net::HTTP::Get.new(uri)
     session_cookie = CGI::Cookie.new("session", session)
     request["Cookie"] = session_cookie.to_s
     response = http.request(request)
-    File.open(File.join(path, "input.txt"), "w") do |f|
-      f.write(response.body)
-    end
+    File.write(File.join(path, "input.txt"), response.body)
   end
 end
 
@@ -70,7 +65,7 @@ begin
 
   namespace :rc do
     desc "Short version of rc:auto_correct"
-    task a: [:auto_correct]
+    task a: [:autocorrect_all]
   end
 rescue LoadError
   puts "Failed to load rubocop task"

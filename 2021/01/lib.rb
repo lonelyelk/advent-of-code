@@ -17,7 +17,7 @@ module Day01
   end
 
   def problem2(input)
-    input.each_cons(3).each_with_object({ last: nil, count: 0 }) do |m, obj|
+    input.each_cons(3).with_object({ last: nil, count: 0 }) do |m, obj|
       measurement = m.inject(:+)
       obj[:count] += 1 if !obj[:last].nil? && obj[:last] < measurement
       obj[:last] = measurement
