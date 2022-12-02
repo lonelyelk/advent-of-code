@@ -7,10 +7,17 @@ RSpec.describe Year2022::Day02 do
 
   let(:input) do
     %(
+A Y
+B X
+C Z
 )
   end
   let(:processed_input) do
-    nil
+    [
+      %w[A Y],
+      %w[B X],
+      %w[C Z],
+    ]
   end
 
   describe "process_input" do
@@ -20,14 +27,14 @@ RSpec.describe Year2022::Day02 do
   end
 
   describe "problem1" do
-    it "returns nil for test input" do
-      expect(problem1(processed_input)).to eq(nil)
+    it "returns 15 for test input" do
+      expect(problem1(processed_input)).to eq(15)
     end
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+    it "returns 12 for test input" do
+      expect(problem2(processed_input)).to eq(12)
     end
   end
 end
