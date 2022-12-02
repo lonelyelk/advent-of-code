@@ -17,8 +17,7 @@ end
 
 desc "Generate solution template for the day passed as single integer argument or for the next day"
 task :next_day, [:day] do |_t, args|
-  template_path = File.join(year, "template")
-  spec_template_path = File.join("spec", year, "template")
+  template_path = File.join("template")
   t_args = template_args(args, next_day: true)
   path = File.join(year, format("%<day>02d", t_args))
   spec_path = File.join("spec", year, format("%<day>02d", t_args))
@@ -30,7 +29,7 @@ task :next_day, [:day] do |_t, args|
     end
   end
   File.open(File.join(spec_path, format("day%<day>02d_lib_spec.rb", t_args)), "w") do |f|
-    f.write format(File.read(File.join(spec_template_path, "lib_spec.rb.txt")), t_args)
+    f.write format(File.read(File.join(template_path, "lib_spec.rb.txt")), t_args)
   end
 end
 
