@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "../../../%<year>04d/%<day>02d/lib"
+require_relative "../../../%<year>s/%<day>02d/lib"
 
-RSpec.describe Year%<year>04d::Day%<day>02d do
+RSpec.describe Year%<year>s::Day%<day>02d do
   include described_class
 
   let(:input) do

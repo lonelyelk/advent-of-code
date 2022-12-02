@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# https://adventofcode.com/%<year>04d/day/%<day>d
-module Year%<year>04d
+# https://adventofcode.com/%<year>s/day/%<day>d
+module Year%<year>s
   module Day%<day>02d
     def process_input(str)
     end

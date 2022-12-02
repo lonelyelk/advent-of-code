@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "net/http"
+require "cgi"
 require "date"
 
 def year
@@ -13,6 +15,10 @@ def template_args(args, next_day: false)
     t_args[:day] += 1 if next_day
   end
   t_args
+end
+
+def session
+  File.read(".session").chomp
 end
 
 desc "Generate solution template for the day passed as single integer argument or for the next day"
@@ -30,6 +36,16 @@ task :next_day, [:day] do |_t, args|
   end
   File.open(File.join(spec_path, format("day%<day>02d_lib_spec.rb", t_args)), "w") do |f|
     f.write format(File.read(File.join(template_path, "lib_spec.rb.txt")), t_args)
+  end
+  uri = URI(format("https://adventofcode.com/%<year>s/day/%<day>d/input", t_args))
+  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
+    request = Net::HTTP::Get.new(uri)
+    session_cookie = CGI::Cookie.new("session", session)
+    request["Cookie"] = session_cookie.to_s
+    response = http.request(request)
+    File.open(File.join(path, "input.txt"), "w") do |f|
+      f.write(response.body)
+    end
   end
 end
 
