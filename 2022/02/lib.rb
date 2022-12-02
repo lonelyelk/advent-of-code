@@ -2,42 +2,46 @@
 
 # https://adventofcode.com/2022/day/2
 module Year2022
-  VALUES = {
-    rock: 1,
-    paper: 2,
-    scissors: 3,
-  }.freeze
-  RULES = {
-    rock: {
-      rock: 3,
-      paper: 6,
-      scissors: 0,
-    },
-    paper: {
-      rock: 0,
-      paper: 3,
-      scissors: 6,
-    },
-    scissors: {
-      rock: 6,
-      paper: 0,
-      scissors: 3,
-    },
-  }.freeze
-  MAP = {
-    "A" => :rock,
-    "B" => :paper,
-    "C" => :scissors,
-    "X" => :rock,
-    "Y" => :paper,
-    "Z" => :scissors,
-  }.freeze
-  STRAT = {
-    "X" => 0,
-    "Y" => 3,
-    "Z" => 6,
-  }.freeze
   module Day02
+    WIN = 6
+    DRAW = 3
+    LOSE = 0
+    VALUES = {
+      rock: 1,
+      paper: 2,
+      scissors: 3,
+    }.freeze
+    RULES = {
+      rock: {
+        rock: DRAW,
+        paper: WIN,
+        scissors: LOSE,
+      },
+      paper: {
+        rock: LOSE,
+        paper: DRAW,
+        scissors: WIN,
+      },
+      scissors: {
+        rock: WIN,
+        paper: LOSE,
+        scissors: DRAW,
+      },
+    }.freeze
+    MAP = {
+      "A" => :rock,
+      "B" => :paper,
+      "C" => :scissors,
+      "X" => :rock,
+      "Y" => :paper,
+      "Z" => :scissors,
+    }.freeze
+    STRAT = {
+      "X" => LOSE,
+      "Y" => DRAW,
+      "Z" => WIN,
+    }.freeze
+
     def process_input(str)
       str.split("\n").reject(&:empty?).map(&:split)
     end
