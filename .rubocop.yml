@@ -38,3 +38,6 @@ RSpec/FilePath:
 
 Style/Documentation:
   Enabled: No
+
+Style/CharacterLiteral:
+  Enabled: No
