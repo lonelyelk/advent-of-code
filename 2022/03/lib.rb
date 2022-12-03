@@ -16,8 +16,8 @@ module Year2022
     end
 
     def problem2(input)
-      groups(input).inject(0) do |acc, slice|
-        badge = slice.first.detect { |c| slice[1..].all? { |l| l.include?(c) } }
+      groups(input).inject(0) do |acc, group|
+        badge = group.first.detect { |c| group[1..].all? { |l| l.include?(c) } }
         acc + priority(badge)
       end
     end
