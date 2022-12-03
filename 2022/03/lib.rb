@@ -35,7 +35,7 @@ module Year2022
     end
 
     def groups(input)
-      input.map { |l| l.chars.uniq.sort }.each_slice(3)
+      input.map { |l| l.chars.uniq }.each_slice(3)
     end
   end
 end
