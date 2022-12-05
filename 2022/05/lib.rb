@@ -26,9 +26,7 @@ module Year2022
     protected
 
     def process_stacks(stacks)
-      stacks.split("\n").reject(&:empty?).reverse.each_with_object([]) do |line, acc|
-        next if line =~ /\d/
-
+      stacks.split("\n").reject(&:empty?).reverse[1..].each_with_object([]) do |line, acc|
         line.chars.each_slice(4).with_index do |crate, index|
           acc[index] ||= []
           acc[index].push(crate[1]) unless crate[1] == " "
