@@ -8,14 +8,18 @@ module Year2022
     end
 
     def problem1(input)
-      (3...input.size).each do |i|
-        return i + 1 if input[(i - 3)..i].chars.uniq.size == 4
-      end
+      packet_offset(input, 4)
     end
 
     def problem2(input)
-      (13...input.size).each do |i|
-        return i + 1 if input[(i - 13)..i].chars.uniq.size == 14
+      packet_offset(input, 14)
+    end
+
+    protected
+
+    def packet_offset(input, packet_size)
+      (packet_size...input.size).detect do |i|
+        input[(i - packet_size)...i].chars.uniq.size == packet_size
       end
     end
   end
