@@ -6,7 +6,7 @@ module Year2022
     def process_input(str)
       current_path = []
       lines(str).each_with_object({}) do |line, acc|
-        current_path = update_path(current_path, line)
+        update_path(current_path, line)
 
         if (md = line.match(/^dir (.+)/))
           current_path.inject(acc, &:[])[md[1]] = {}
@@ -39,18 +39,17 @@ module Year2022
       elsif (md = cmd.match(/^\$ cd (.+)/))
         path.push(md[1])
       end
-      path
     end
 
     def get_dir_sizes(input, accumulator = {}, prefix = "/")
+      accumulator[prefix] ||= 0
       input.each_with_object(accumulator) do |(name, value), acc|
         if value.is_a?(Numeric)
-          acc[prefix] ||= 0
           acc[prefix] += value
         else
-          get_dir_sizes(value, acc, "#{prefix}#{name}/")
-          acc[prefix] ||= 0
-          acc[prefix] += acc["#{prefix}#{name}/"]
+          next_prefix = "#{prefix}#{name}/"
+          get_dir_sizes(value, acc, next_prefix)
+          acc[prefix] += acc[next_prefix]
         end
       end
     end
