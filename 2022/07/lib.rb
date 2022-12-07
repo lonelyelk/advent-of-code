@@ -8,11 +8,10 @@ module Year2022
       lines(str).each_with_object({}) do |line, acc|
         update_path(current_path, line)
 
-        if (md = line.match(/^dir (.+)/))
-          current_path.inject(acc, &:[])[md[1]] = {}
-        elsif (md = line.match(/^(\d+) (.+)/))
-          current_path.inject(acc, &:[])[md[2]] = md[1].to_i
-        end
+        md = line.match(/^(dir|\d+) (.+)/)
+        next if md.nil?
+
+        current_path.inject(acc, &:[])[md[2]] = md[1] == "dir" ? {} : md[1].to_i
       end
     end
 
