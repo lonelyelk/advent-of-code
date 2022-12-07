@@ -34,9 +34,12 @@ module Year2022
     end
 
     def update_path(path, cmd)
-      if cmd =~ /^\$ cd \.\./
+      md = cmd.match(/^\$ cd (.+)/)
+      return if md.nil?
+
+      if md[1] == ".."
         path.pop
-      elsif (md = cmd.match(/^\$ cd (.+)/))
+      else
         path.push(md[1])
       end
     end
