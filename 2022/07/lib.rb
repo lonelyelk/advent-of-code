@@ -26,24 +26,23 @@ module Year2022
     end
 
     def problem2(input)
+      dir_sizes = get_dir_sizes(input)
+      to_free = 30000000 - (70000000 - dir_sizes["/"])
+      dir_sizes.values.reject { |v| v < to_free }.min
     end
 
     protected
 
-    def get_dir_sizes(input, accumulator = {}, prefix = "")
+    def get_dir_sizes(input, accumulator = {}, prefix = "/")
       input.each_with_object(accumulator) do |(name, value), acc|
 
         if value.is_a?(Numeric)
-          next if prefix.empty?
-
           acc[prefix] ||= 0
           acc[prefix] += value
         else
-          get_dir_sizes(value, acc, "#{prefix}/#{name}")
-          next if prefix.empty?
-
+          get_dir_sizes(value, acc, "#{prefix}#{name}/")
           acc[prefix] ||= 0
-          acc[prefix] += acc["#{prefix}/#{name}"]
+          acc[prefix] += acc["#{prefix}#{name}/"]
         end
       end
     end
