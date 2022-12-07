@@ -22,12 +22,12 @@ module Year2022
 
     def problem1(input)
       sizes = get_dir_sizes(input).values
-      sizes.reject { |v| v > 100000 }.inject(&:+)
+      sizes.reject { |v| v > 100_000 }.inject(&:+)
     end
 
     def problem2(input)
       dir_sizes = get_dir_sizes(input)
-      to_free = 30000000 - (70000000 - dir_sizes["/"])
+      to_free = 30_000_000 - (70_000_000 - dir_sizes["/"])
       dir_sizes.values.reject { |v| v < to_free }.min
     end
 
@@ -35,7 +35,6 @@ module Year2022
 
     def get_dir_sizes(input, accumulator = {}, prefix = "/")
       input.each_with_object(accumulator) do |(name, value), acc|
-
         if value.is_a?(Numeric)
           acc[prefix] ||= 0
           acc[prefix] += value

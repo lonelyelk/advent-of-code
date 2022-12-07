@@ -33,20 +33,20 @@ $ ls
   end
   let(:processed_input) do
     {
-      'a' => {
-        'e' => { 'i' => 584 },
-        'f' => 29116,
-        'g' => 2557,
-        'h.lst' => 62596,
+      "a" => {
+        "e" => { "i" => 584 },
+        "f" => 29_116,
+        "g" => 2557,
+        "h.lst" => 62_596,
       },
-      'b.txt' => 14848514,
-      'c.dat' => 8504156,
-      'd' => {
-        'j' => 4060174,
-        'd.log' => 8033020,
-        'd.ext' => 5626152,
-        'k' => 7214296,
-      }
+      "b.txt" => 14_848_514,
+      "c.dat" => 8_504_156,
+      "d" => {
+        "j" => 4_060_174,
+        "d.log" => 8_033_020,
+        "d.ext" => 5_626_152,
+        "k" => 7_214_296,
+      },
     }
   end
 
@@ -58,13 +58,13 @@ $ ls
 
   describe "problem1" do
     it "returns 95437 for test input" do
-      expect(problem1(processed_input)).to eq(95437)
+      expect(problem1(processed_input)).to eq(95_437)
     end
   end
 
   describe "problem2" do
     it "returns 24933642 for test input" do
-      expect(problem2(processed_input)).to eq(24933642)
+      expect(problem2(processed_input)).to eq(24_933_642)
     end
   end
 end
