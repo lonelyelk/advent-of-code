@@ -5,17 +5,13 @@ module Year2022
   module Day07
     def process_input(str)
       current_path = []
-      str.split("\n").reject(&:empty?)[1..].each_with_object({}) do |line, acc|
-        if line[0] == ?$
-          if (md = line.match(/\$ cd \.\./))
-            current_path.pop
-          elsif (md = line.match(/\$ cd (.+)/))
-            current_path.push(md[1])
-          end
-        elsif (md = line.match(/dir (.+)/))
-          current_path.inject(acc) { |a, n| a[n] }[md[1]] = {}
-        elsif (md = line.match(/(\d+) (.+)/))
-          current_path.inject(acc) { |a, n| a[n] }[md[2]] = md[1].to_i
+      lines(str).each_with_object({}) do |line, acc|
+        current_path = update_path(current_path, line)
+
+        if (md = line.match(/^dir (.+)/))
+          current_path.inject(acc, &:[])[md[1]] = {}
+        elsif (md = line.match(/^(\d+) (.+)/))
+          current_path.inject(acc, &:[])[md[2]] = md[1].to_i
         end
       end
     end
@@ -32,6 +28,19 @@ module Year2022
     end
 
     protected
+
+    def lines(str)
+      str.split("\n").reject(&:empty?)[1..]
+    end
+
+    def update_path(path, cmd)
+      if cmd =~ /^\$ cd \.\./
+        path.pop
+      elsif (md = cmd.match(/^\$ cd (.+)/))
+        path.push(md[1])
+      end
+      path
+    end
 
     def get_dir_sizes(input, accumulator = {}, prefix = "/")
       input.each_with_object(accumulator) do |(name, value), acc|
