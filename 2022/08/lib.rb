@@ -12,7 +12,7 @@ module Year2022
       in_lines(input) do |line, x, key|
         visible[key] ||= (line[...x].max < line[x] || line[(x + 1)..].max < line[x])
       end
-      visible.count { |_k, v| v } + input.size * 4 - 4
+      visible.count { |_k, v| v } + perimeter(input)
     end
 
     def problem2(input)
@@ -24,6 +24,10 @@ module Year2022
     end
 
     private
+
+    def perimeter(input)
+      (input.size + input.first.size) * 2 - 4
+    end
 
     def in_lines(input)
       [input, input.transpose].each_with_index do |inp, i|
