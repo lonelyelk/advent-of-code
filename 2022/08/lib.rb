@@ -8,17 +8,15 @@ module Year2022
     end
 
     def problem1(input)
-      visible = {}
-      in_lines(input) do |line, x, key|
-        visible[key] ||= (line[...x].max < line[x] || line[(x + 1)..].max < line[x])
+      visible = inside_in_lines(input).each_with_object({}) do |(line, x, key), acc|
+        acc[key] ||= (line[...x].max < line[x] || line[(x + 1)..].max < line[x])
       end
       visible.count { |_k, v| v } + perimeter(input)
     end
 
     def problem2(input)
-      scores = Hash.new(1)
-      in_lines(input) do |line, x, key|
-        scores[key] *= visibility_distances(line, x).inject(:*)
+      scores = inside_in_lines(input).each_with_object(Hash.new(1)) do |(line, x, key), acc|
+        acc[key] *= visibility_distances(line, x).inject(:*)
       end
       scores.values.max
     end
@@ -29,7 +27,9 @@ module Year2022
       (input.size + input.first.size) * 2 - 4
     end
 
-    def in_lines(input)
+    def inside_in_lines(input)
+      return to_enum(__method__, input) unless block_given?
+
       [input, input.transpose].each_with_index do |inp, i|
         (1...(inp.size - 1)).each do |y|
           (1...(inp[y].size - 1)).each do |x|
@@ -41,10 +41,10 @@ module Year2022
 
     def visibility_distances(line, pos)
       index_dir_left = line[...pos].rindex { |e| e >= line[pos] }
-      dir_left = index_dir_left.nil? ? pos : pos - index_dir_left
+      visible_left = index_dir_left.nil? ? pos : pos - index_dir_left
       index_dir_right = line[(pos + 1)..].index { |e| e >= line[pos] }
-      dir_right = index_dir_right.nil? ? line.size - pos - 1 : index_dir_right + 1
-      [dir_left, dir_right]
+      visible_right = index_dir_right.nil? ? line.size - pos - 1 : index_dir_right + 1
+      [visible_left, visible_right]
     end
   end
 end
