@@ -9,42 +9,38 @@ module Year2022
 
     def problem1(input)
       visible = {}
-      (1...(input.size - 1)).each do |y|
-        (1...(input[y].size - 1)).each do |x|
-          if input[y][...x].max < input[y][x] || input[y][(x + 1)..].max < input[y][x]
-            visible["#{x},#{y}"] = true
-          end
-        end
+      in_lines(input) do |line, x, key|
+        visible[key] ||= (line[...x].max < line[x] || line[(x + 1)..].max < line[x])
       end
-      input = input.transpose
-      (1...(input.size - 1)).each do |y|
-        (1...(input[y].size - 1)).each do |x|
-          if input[y][...x].max < input[y][x] || input[y][(x + 1)..].max < input[y][x]
-            visible["#{y},#{x}"] = true
-          end
-        end
-      end
-      visible.keys.length + input.size * 2 + (input.first.size - 2) * 2
+      visible.count { |_k, v| v } + input.size * 4 - 4
     end
 
     def problem2(input)
-      scores = {}
-      (1...(input.size - 1)).each do |y|
-        (1...(input[y].size - 1)).each do |x|
-          dir1 = (x - (input[y][...x].rindex { |e| e >= input[y][x] } || 0))
-          dir2 = ((input[y][(x + 1)..].index { |e| e >= input[y][x] } || input[y].size - x - 2) + 1)
-          scores["#{x},#{y}"] = dir1 * dir2
-        end
-      end
-      input = input.transpose
-      (1...(input.size - 1)).each do |y|
-        (1...(input[y].size - 1)).each do |x|
-          dir1 = (x - (input[y][...x].rindex { |e| e >= input[y][x] } || 0))
-          dir2 = ((input[y][(x + 1)..].index { |e| e >= input[y][x] } || input[y].size - x - 2) + 1)
-          scores["#{y},#{x}"] *= dir1 * dir2
-        end
+      scores = Hash.new(1)
+      in_lines(input) do |line, x, key|
+        scores[key] *= visibility_distances(line, x).inject(:*)
       end
       scores.values.max
+    end
+
+    private
+
+    def in_lines(input)
+      [input, input.transpose].each_with_index do |inp, i|
+        (1...(inp.size - 1)).each do |y|
+          (1...(inp[y].size - 1)).each do |x|
+            yield(inp[y], x, i.zero? ? "#{x},#{y}" : "#{y},#{x}")
+          end
+        end
+      end
+    end
+
+    def visibility_distances(line, pos)
+      index_dir_left = line[...pos].rindex { |e| e >= line[pos] }
+      dir_left = index_dir_left.nil? ? pos : pos - index_dir_left
+      index_dir_right = line[(pos + 1)..].index { |e| e >= line[pos] }
+      dir_right = index_dir_right.nil? ? line.size - pos - 1 : index_dir_right + 1
+      [dir_left, dir_right]
     end
   end
 end
