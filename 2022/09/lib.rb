@@ -28,15 +28,15 @@ module Year2022
           h += DIR_MAP[dir]
           next if (t - h).abs < 2
 
-          if t.real == h.real || t.imaginary == h.imaginary
-            move = STRAIGHT_MOVES.min_by { |e| (t + e - h).abs }
-            t += move
-            history.push(t)
-          else
-            move = DIAG_MOVES.min_by { |e| (t + e - h).abs }
-            t += move
-            history.push(t)
-          end
+          moves =
+            if t.real == h.real || t.imaginary == h.imaginary
+              STRAIGHT_MOVES
+            else
+              DIAG_MOVES
+            end
+          move = moves.min_by { |e| (t + e - h).abs }
+          t += move
+          history.push(t)
         end
       end
       history.uniq.length
