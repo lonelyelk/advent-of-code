@@ -32,18 +32,26 @@ module Year2022
       rope = Array.new(length, 0i)
       history = [0i]
       input.each do |(dir, num)|
-        num.times do
-          rope[0] += DIR_MAP[dir]
-          (1...rope.size).each do |i|
-            next if (rope[i] - rope[i - 1]).abs < 2
-
-            move = MOVES.min_by { |e| (rope[i] + e - rope[i - 1]).abs }
-            rope[i] += move
-          end
-          history.push(rope[-1])
-        end
+        process_command(dir, num, rope, history)
       end
       history.uniq.size
+    end
+
+    def process_command(dir, num, rope, history)
+      num.times do
+        rope[0] += DIR_MAP[dir]
+        (1...rope.size).each do |i|
+          rope[i] = maybe_move_section(rope[i], rope[i - 1])
+        end
+        history.push(rope[-1])
+      end
+    end
+
+    def maybe_move_section(current, prev)
+      return current if (current - prev).abs < 2
+
+      move = MOVES.min_by { |e| (current + e - prev).abs }
+      current + move
     end
   end
 end
