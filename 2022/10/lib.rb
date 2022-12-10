@@ -11,52 +11,46 @@ module Year2022
     end
 
     def problem1(input)
-      strength = []
-      x = 1
-      dx = 0
-      c = 0
-      input.each do |(op, arg)|
-        x += dx
-        dx = 0
-        if op == "noop"
-          c += 1
-          strength.push(x * c) if c % 40 == 20
-        else
-          c += 2
-          dx = arg
-          strength.push(x * c) if c % 40 == 20
-          strength.push(x * (c - 1)) if c % 40 == 21
+      cpu_state = input.each_with_object({ x: 1, dx: 0, c: 0, str: [] }) do |(op, arg), state|
+        state[:x] += state[:dx]
+        state[:dx] = arg.to_i
+        each_cycle(state, op) do
+          check_strength(state)
         end
       end
-      strength.inject(&:+)
+      cpu_state[:str].inject(&:+)
     end
 
     def problem2(input)
-      out = []
-      x = 1
-      dx = 0
-      c = 0
-      input.each do |(op, arg)|
-        x += dx
-        dx = 0
-        if op == "noop"
-          c += 1
-          row = (c - 1) / 40
-          col = (c - 1) % 40
-          out[row] ||= []
-          out[row][col] = (x - col).abs < 2 ? '#' : '.'
-        else
-          dx = arg
-          2.times do
-            c += 1
-            row = (c - 1) / 40
-            col = (c - 1) % 40
-            out[row] ||= []
-            out[row][col] = (x - col).abs < 2 ? '#' : '.'
-          end
+      cpu_state = input.each_with_object({ x: 1, dx: 0, c: 0, out: [] }) do |(op, arg), state|
+        state[:x] += state[:dx]
+        state[:dx] = arg.to_i
+        each_cycle(state, op) do
+          draw_pixel(state)
         end
       end
-      out.map(&:join)
+      cpu_state[:out].map(&:join)
+    end
+
+    private
+
+    def check_strength(state)
+      state[:str].push(state[:x] * state[:c]) if state[:c] % 40 == 20
+    end
+
+    def draw_pixel(state)
+      row, col = (state[:c] - 1).divmod(40)
+      state[:out][row] ||= []
+      state[:out][row][col] = (state[:x] - col).abs < 2 ? ?# : ?.
+    end
+
+    def each_cycle(state, operation)
+      if operation == "addx"
+        state[:c] += 1
+        yield
+      end
+      state[:c] += 1
+      yield
     end
   end
 end
