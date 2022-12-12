@@ -4,6 +4,7 @@
 module Year2022
   module Day12
     ELEVATION = (?a..?z).to_a
+
     def process_input(str)
       str.split("\n").reject(&:empty?).each_with_object({ field: [] }) do |line, state|
         if (start = line.index(?S))
@@ -16,23 +17,17 @@ module Year2022
       end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def problem1(input)
       paths = init_paths(input, input[:start])
       stepped = true
       while stepped
         stepped = false
-        paths.size.times do |y|
-          paths[y].size.times do |x|
-            next if paths[y][x].nil?
+        from_each_point_in_each_direction(paths) do |x, y, xx, yy|
+          next if too_steep?(input, xx, yy, x, y)
 
-            each_direction(x, y, 0...paths.first.size, 0...paths.size) do |xx, yy|
-              next if ELEVATION.index(input[:field][yy][xx]) - ELEVATION.index(input[:field][y][x]) > 1
-              next if paths[yy][xx] && paths[yy][xx] <= (paths[y][x] + 1)
-
-              paths[yy][xx] = paths[y][x] + 1
-              stepped = true
-            end
-          end
+          paths[yy][xx] = paths[y][x] + 1
+          stepped = true
         end
       end
       paths[input[:end][1]][input[:end][0]]
@@ -44,23 +39,17 @@ module Year2022
       stepped = true
       while stepped
         stepped = false
-        paths.size.times do |y|
-          paths[y].size.times do |x|
-            next if paths[y][x].nil?
+        from_each_point_in_each_direction(paths) do |x, y, xx, yy|
+          next if too_steep?(input, x, y, xx, yy)
 
-            each_direction(x, y, 0...paths.first.size, 0...paths.size) do |xx, yy|
-              next if ELEVATION.index(input[:field][y][x]) - ELEVATION.index(input[:field][yy][xx]) > 1
-              next if paths[yy][xx] && paths[yy][xx] <= (paths[y][x] + 1)
-
-              paths[yy][xx] = paths[y][x] + 1
-              path = paths[yy][xx] if input[:field][yy][xx] == ?a && paths[yy][xx] < path
-              stepped = true
-            end
-          end
+          paths[yy][xx] = paths[y][x] + 1
+          path = paths[yy][xx] if input[:field][yy][xx] == ?a && paths[yy][xx] < path
+          stepped = true
         end
       end
       path
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
@@ -77,6 +66,26 @@ module Year2022
       [y_pos - 1, y_pos + 1].select { |c| y_range.include?(c) }.each do |y|
         yield(x_pos, y)
       end
+    end
+
+    def from_each_point_in_each_direction(paths)
+      paths.size.times do |y|
+        paths[y].size.times do |x|
+          next if paths[y][x].nil?
+
+          each_direction(x, y, 0...paths.first.size, 0...paths.size) do |xx, yy|
+            yield(x, y, xx, yy) unless already_passed?(paths, xx, yy, x, y)
+          end
+        end
+      end
+    end
+
+    def too_steep?(input, x_high, y_high, x_low, y_low)
+      ELEVATION.index(input[:field][y_high][x_high]) - ELEVATION.index(input[:field][y_low][x_low]) > 1
+    end
+
+    def already_passed?(paths, x_next, y_next, x_curr, y_curr)
+      paths[y_next][x_next] && paths[y_next][x_next] <= paths[y_curr][x_curr] + 1
     end
   end
 end
