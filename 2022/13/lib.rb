@@ -53,11 +53,11 @@ module Year2022
 
     def compare_pattern(list_a, list_b)
       case [list_a, list_b]
-      in [nil, nil]
+      in [nil, nil] | [[], []]
         0
-      in [nil, *]
+      in [nil, *] | [[], [*]]
         -1
-      in [*, nil]
+      in [*, nil] | [[*], []]
         1
       in [Numeric, Numeric]
         list_a <=> list_b
@@ -65,12 +65,13 @@ module Year2022
         compare_pattern([list_a], list_b)
       in [Array, Numeric]
         compare_pattern(list_a, [list_b])
-      in [Array, Array]
-        extend_and_zip(list_a, list_b).each do |pair|
-          re = compare_pattern(*pair)
-          return re unless re.zero?
+      in [[a, *rest_a], [b, *rest_b]]
+        re = compare_pattern(a, b)
+        if re.zero?
+          compare_pattern(rest_a, rest_b)
+        else
+          re
         end
-        0
       end
     end
     # rubocop:enable Metrics/MethodLength
