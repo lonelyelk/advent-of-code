@@ -32,7 +32,7 @@ module Year2022
 
     private
 
-    # rubocop:disable Lint/UnusedBlockArgument, Security/Eval, Metrics/AbcSize
+    # rubocop:disable Lint/UnusedBlockArgument, Metrics/AbcSize
     def process_monkey1(code)
       md = code.match(PARSER_RE)
       {

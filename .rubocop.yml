@@ -41,3 +41,6 @@ Style/Documentation:
 
 Style/CharacterLiteral:
   Enabled: No
+
+Security/Eval:
+  Enabled: No
