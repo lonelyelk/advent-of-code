@@ -12,18 +12,19 @@ module Year2022
     def problem1(input)
       out = 0
       input.each_with_index do |(list_a, list_b), i|
-        out += i + 1 if compare(list_a, list_b).negative?
+        out += i + 1 if compare_pattern(list_a, list_b).negative?
       end
       out
     end
 
     def problem2(input)
-      data = [*input.flatten(1), [[2]], [[6]]].sort { |a, b| compare(a, b) }
+      data = [*input.flatten(1), [[2]], [[6]]].sort { |a, b| compare_pattern(a, b) }
       (1 + data.index([[2]])) * (1 + data.index([[6]]))
     end
 
     private
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
     def compare(list_a, list_b)
       if list_a.is_a?(Numeric)
         return 1 if list_b.nil?
@@ -48,6 +49,31 @@ module Year2022
 
       0
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def compare_pattern(list_a, list_b)
+      case [list_a, list_b]
+      in [nil, nil]
+        0
+      in [nil, *]
+        -1
+      in [*, nil]
+        1
+      in [Numeric, Numeric]
+        list_a <=> list_b
+      in [Numeric, Array]
+        compare_pattern([list_a], list_b)
+      in [Array, Numeric]
+        compare_pattern(list_a, [list_b])
+      in [Array, Array]
+        extend_and_zip(list_a, list_b).each do |pair|
+          re = compare_pattern(*pair)
+          return re unless re.zero?
+        end
+        0
+      end
+    end
+    # rubocop:enable Metrics/MethodLength
 
     def extend_and_zip(list_a, list_b)
       new_list_a =
