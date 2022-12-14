@@ -6,7 +6,7 @@ module Year2022
     class EndlessVoid < RuntimeError; end
 
     def process_input(str)
-      str.split("\n").reject(&:empty?).each_with_object(hash_2d) do |line, parsed|
+      str.split("\n").each_with_object(hash_2d) do |line, parsed|
         split_to_pairs(line).each_cons(2) do |(prev_x, prev_y), (x, y)|
           Range.new(*[y, prev_y].minmax).each do |yy|
             Range.new(*[x, prev_x].minmax).each do |xx|
@@ -63,8 +63,7 @@ module Year2022
     def drop(point, input)
       stone_under = find_stone_under(point, input) || raise(EndlessVoid)
 
-      x = [point[0] - 1, point[0] + 1].detect { |xx| input[xx][stone_under].nil? }
-      if x
+      if (x = possible_diagonal_x([point[0], stone_under], input))
         drop([x, stone_under], input)
       else
         input[point[0]][stone_under - 1] = ?o
@@ -76,11 +75,8 @@ module Year2022
       stone_under = find_stone_under(point, input)
       if stone_under.nil?
         input[point[0]][floor - 1] = ?o
-        return input
-      end
-
-      x = [point[0] - 1, point[0] + 1].detect { |xx| input[xx][stone_under].nil? }
-      if x
+        input
+      elsif (x = possible_diagonal_x([point[0], stone_under], input))
         drop_floor([x, stone_under], input, floor)
       else
         input[point[0]][stone_under - 1] = ?o
@@ -90,6 +86,10 @@ module Year2022
 
     def find_stone_under(point, input)
       input[point[0]].keys.sort.detect { |k| k > point[1] }
+    end
+
+    def possible_diagonal_x(point, input)
+      [point[0] - 1, point[0] + 1].detect { |xx| input[xx][point[1]].nil? }
     end
   end
 end
