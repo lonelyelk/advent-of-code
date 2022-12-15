@@ -18,10 +18,11 @@ module Year2022
         r = (line[:sensor][0] - dx)..(line[:sensor][0] + dx)
         excluded.push(r)
       end
-      occupied_xs = input.each_with_object([]) do |line, acc|
-        acc.push(line[:beacon][0]) if line[:beacon][1] == target_y
+      occupied_xs = input.each_with_object({}) do |line, acc|
+        acc[line[:beacon][0]] = true if line[:beacon][1] == target_y
       end
-      (excluded_xs.map(&:to_a).flatten.uniq - occupied_xs).size
+      merged = merge_ranges(excluded_xs)
+      merged.map(&:size).inject(&:+) - occupied_xs.keys.count { |x| merged.any? { |r| r.include?(x) } }
     end
 
     def problem2(input, max_coord = 4_000_000)
@@ -40,6 +41,18 @@ module Year2022
           xs.each do |x|
             return (x + 1) * 4_000_000 + target_y if excluded_xs.all? { |r| !r.cover?(x + 1) }
           end
+        end
+      end
+    end
+
+    private
+
+    def merge_ranges(ranges)
+      ranges.sort { |a, b| a.min <=> b.min }.each_with_object([]) do |r, acc|
+        if acc.last&.cover?(r.min)
+          acc[-1] = acc.last.min..r.max unless acc.last.cover?(r)
+        else
+          acc.push(r)
         end
       end
     end
