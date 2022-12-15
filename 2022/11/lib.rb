@@ -18,7 +18,6 @@ module Year2022
 
     def problem1(input)
       monkeys = input.map { |code| process_monkey1(code) }
-      @worry_down = 3
       20.times { monkey_round(monkeys) }
       monkeys.map { |m| m[:inspected] }.sort[-2..].inject(:*)
     end
@@ -32,28 +31,39 @@ module Year2022
 
     private
 
-    # rubocop:disable Lint/UnusedBlockArgument, Metrics/AbcSize
-    def process_monkey1(code)
+    def parse(code)
       md = code.match(PARSER_RE)
       {
         items: md[1].split(", ").map(&:to_i),
+        inspect_code: md[2],
+        divisible: md[3].to_i,
+        monkey_true: md[4].to_i,
+        monkey_false: md[5].to_i,
+      }
+    end
+
+    # rubocop:disable Lint/UnusedBlockArgument
+    def process_monkey1(code)
+      parsed = parse(code)
+      {
+        items: parsed[:items],
         inspected: 0,
-        inspect: ->(old) { eval(md[2]) / 3 },
-        throw: ->(item) { (item % md[3].to_i).zero? ? md[4].to_i : md[5].to_i },
+        inspect: ->(old) { eval(parsed[:inspect_code]) / 3 },
+        throw: ->(item) { (item % parsed[:divisible]).zero? ? parsed[:monkey_true] : parsed[:monkey_false] },
       }
     end
 
     def process_monkey2(code)
-      md = code.match(PARSER_RE)
+      parsed = parse(code)
       {
-        items: md[1].split(", ").map(&:to_i),
+        items: parsed[:items],
         inspected: 0,
-        divisible: md[3].to_i,
-        inspect: ->(old) { eval(md[2]) % @worry_down },
-        throw: ->(item) { (item % md[3].to_i).zero? ? md[4].to_i : md[5].to_i },
+        divisible: parsed[:divisible],
+        inspect: ->(old) { eval(parsed[:inspect_code]) % @worry_down },
+        throw: ->(item) { (item % parsed[:divisible]).zero? ? parsed[:monkey_true] : parsed[:monkey_false] },
       }
     end
-    # rubocop:enable Lint/UnusedBlockArgument, Security/Eval, Metrics/AbcSize
+    # rubocop:enable Lint/UnusedBlockArgument, Security/Eval
 
     def monkey_round(monkeys)
       monkeys.each do |monkey|
