@@ -5,14 +5,17 @@ module Year2022
   module Day15
     def process_input(str)
       str.scan(/Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)/).map do |(sx, sy, bx, by)|
-        { sensor: [sx.to_i, sy.to_i], beacon: [bx.to_i, by.to_i] }
+        {
+          sensor: [sx.to_i, sy.to_i],
+          beacon: [bx.to_i, by.to_i],
+          distance: (bx.to_i - sx.to_i).abs + (by.to_i - sy.to_i).abs,
+        }
       end
     end
 
     def problem1(input, target_y = 2_000_000)
       excluded_xs = input.each_with_object([]) do |line, excluded|
-        distance = (line[:beacon][0] - line[:sensor][0]).abs + (line[:beacon][1] - line[:sensor][1]).abs
-        dx = distance - (line[:sensor][1] - target_y).abs
+        dx = line[:distance] - (line[:sensor][1] - target_y).abs
         next if dx <= 0
 
         r = (line[:sensor][0] - dx)..(line[:sensor][0] + dx)
@@ -28,8 +31,7 @@ module Year2022
     def problem2(input, max_coord = 4_000_000)
       (0..max_coord).each do |target_y|
         excluded_xs = input.each_with_object([]) do |line, excluded|
-          distance = (line[:beacon][0] - line[:sensor][0]).abs + (line[:beacon][1] - line[:sensor][1]).abs
-          dx = distance - (line[:sensor][1] - target_y).abs
+          dx = line[:distance] - (line[:sensor][1] - target_y).abs
           next if dx <= 0
 
           r = ([line[:sensor][0] - dx, 0].max)..([line[:sensor][0] + dx, max_coord].min)

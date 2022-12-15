@@ -24,20 +24,20 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3
   end
   let(:processed_input) do
     [
-      { sensor: [2, 18], beacon: [-2, 15] },
-      { sensor: [9, 16], beacon: [10, 16] },
-      { sensor: [13, 2], beacon: [15, 3] },
-      { sensor: [12, 14], beacon: [10, 16] },
-      { sensor: [10, 20], beacon: [10, 16] },
-      { sensor: [14, 17], beacon: [10, 16] },
-      { sensor: [8, 7], beacon: [2, 10] },
-      { sensor: [2, 0], beacon: [2, 10] },
-      { sensor: [0, 11], beacon: [2, 10] },
-      { sensor: [20, 14], beacon: [25, 17] },
-      { sensor: [17, 20], beacon: [21, 22] },
-      { sensor: [16, 7], beacon: [15, 3] },
-      { sensor: [14, 3], beacon: [15, 3] },
-      { sensor: [20, 1], beacon: [15, 3] },
+      { sensor: [2, 18], beacon: [-2, 15], distance: 7 },
+      { sensor: [9, 16], beacon: [10, 16], distance: 1 },
+      { sensor: [13, 2], beacon: [15, 3], distance: 3 },
+      { sensor: [12, 14], beacon: [10, 16], distance: 4 },
+      { sensor: [10, 20], beacon: [10, 16], distance: 4 },
+      { sensor: [14, 17], beacon: [10, 16], distance: 5 },
+      { sensor: [8, 7], beacon: [2, 10], distance: 9 },
+      { sensor: [2, 0], beacon: [2, 10], distance: 10 },
+      { sensor: [0, 11], beacon: [2, 10], distance: 3 },
+      { sensor: [20, 14], beacon: [25, 17], distance: 8 },
+      { sensor: [17, 20], beacon: [21, 22], distance: 6 },
+      { sensor: [16, 7], beacon: [15, 3], distance: 5 },
+      { sensor: [14, 3], beacon: [15, 3], distance: 1 },
+      { sensor: [20, 1], beacon: [15, 3], distance: 7 },
     ]
   end
 
