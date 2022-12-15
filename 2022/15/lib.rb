@@ -17,7 +17,7 @@ module Year2022
     def problem1(input, target_y = 2_000_000)
       excluded_xs = input.each_with_object([]) do |line, excluded|
         dx = line[:distance] - (line[:sensor][1] - target_y).abs
-        next if dx <= 0
+        next if dx.negative?
 
         excluded.push((line[:sensor][0] - dx)..(line[:sensor][0] + dx))
       end
@@ -36,7 +36,7 @@ module Year2022
       while target_y <= max_coord
         excluded_xs = input.each_with_object([]) do |line, excluded|
           dx = line[:distance] - (line[:sensor][1] - target_y).abs
-          next if dx <= 0
+          next if dx.negative?
 
           r = ([line[:sensor][0] - dx, 0].max)..([line[:sensor][0] + dx, max_coord].min)
           excluded.push(r) if r.size.positive?
