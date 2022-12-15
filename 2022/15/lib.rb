@@ -18,8 +18,7 @@ module Year2022
         dx = line[:distance] - (line[:sensor][1] - target_y).abs
         next if dx <= 0
 
-        r = (line[:sensor][0] - dx)..(line[:sensor][0] + dx)
-        excluded.push(r)
+        excluded.push((line[:sensor][0] - dx)..(line[:sensor][0] + dx))
       end
       occupied_xs = input.each_with_object({}) do |line, acc|
         acc[line[:beacon][0]] = true if line[:beacon][1] == target_y
@@ -29,7 +28,12 @@ module Year2022
     end
 
     def problem2(input, max_coord = 4_000_000)
-      (0..max_coord).each do |target_y|
+      key_ys = input.each_with_object(input.map { |l| l[:sensor][1] }) do |line, ys|
+        ys.push(line[:sensor][1] - line[:distance], line[:sensor][1] + line[:distance])
+      end
+      key_ys = key_ys.sort.uniq
+      target_y = 0
+      while target_y <= max_coord
         excluded_xs = input.each_with_object([]) do |line, excluded|
           dx = line[:distance] - (line[:sensor][1] - target_y).abs
           next if dx <= 0
@@ -38,11 +42,21 @@ module Year2022
           excluded.push(r) if r.size.positive?
         end
         mins, maxs = excluded_xs.map(&:minmax).transpose.map(&:uniq)
-        mins.each do |min|
-          xs = maxs.select { |max| min - max == 2 }
-          xs.each do |x|
-            return (x + 1) * 4_000_000 + target_y if excluded_xs.all? { |r| !r.cover?(x + 1) }
+        gaps = mins.each_with_object([]) do |min, acc|
+          maxs.each do |max|
+            acc.push([min - max, max + 1]) if min > max && (min - max) % 2 == 0
           end
+        end
+        merged = merge_ranges(excluded_xs)
+        gaps.select { |(diff, _)| diff == 2 }.each do |(_, x)|
+          return x * 4_000_000 + target_y if merged.all? { |r| !r.cover?(x) }
+        end
+        min_gap = gaps.min_by(&:first)
+        if min_gap.nil?
+          target_y += 1
+        else
+          diff = [(min_gap.first - 2) / 2, 1].max
+          target_y = [target_y + diff, key_ys.detect { |x| x > target_y }].min
         end
       end
     end
