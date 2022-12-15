@@ -55,7 +55,7 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3
 
   describe "problem2" do
     it "returns 56000011 for test input" do
-      expect(problem2(processed_input, 20)).to eq(56000011)
+      expect(problem2(processed_input, 20)).to eq(56_000_011)
     end
   end
 end
