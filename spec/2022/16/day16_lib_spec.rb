@@ -20,16 +20,16 @@ Valve JJ has flow rate=21; tunnel leads to valve II
   end
   let(:processed_input) do
     {
-      'AA' => { rate: 0, valves: %w[DD II BB] },
-      'BB' => { rate: 13, valves: %w[CC AA] },
-      'CC' => { rate: 2, valves: %w[DD BB] },
-      'DD' => { rate: 20, valves: %w[CC AA EE] },
-      'EE' => { rate: 3, valves: %w[FF DD] },
-      'FF' => { rate: 0, valves: %w[EE GG] },
-      'GG' => { rate: 0, valves: %w[FF HH] },
-      'HH' => { rate: 22, valves: %w[GG] },
-      'II' => { rate: 0, valves: %w[AA JJ] },
-      'JJ' => { rate: 21, valves: %w[II] },
+      "AA" => { rate: 0, valves: %w[DD II BB] },
+      "BB" => { rate: 13, valves: %w[CC AA] },
+      "CC" => { rate: 2, valves: %w[DD BB] },
+      "DD" => { rate: 20, valves: %w[CC AA EE] },
+      "EE" => { rate: 3, valves: %w[FF DD] },
+      "FF" => { rate: 0, valves: %w[EE GG] },
+      "GG" => { rate: 0, valves: %w[FF HH] },
+      "HH" => { rate: 22, valves: %w[GG] },
+      "II" => { rate: 0, valves: %w[AA JJ] },
+      "JJ" => { rate: 21, valves: %w[II] },
     }
   end
 

@@ -10,7 +10,7 @@ RSpec.describe Year2022::Day17 do
 )
   end
   let(:processed_input) do
-    '>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>'
+    ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
   end
 
   describe "process_input" do
@@ -26,8 +26,8 @@ RSpec.describe Year2022::Day17 do
   end
 
   describe "problem2" do
-    it "returns 1514285714288 for test input" do
-      expect(problem2(processed_input)).to eq(1514285714288)
+    it "returns 1_514_285_714_288 for test input" do
+      expect(problem2(processed_input)).to eq(1_514_285_714_288)
     end
   end
 end

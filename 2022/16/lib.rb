@@ -10,14 +10,14 @@ module Year2022
     end
 
     def problem1(input)
-      state = { valve: 'AA', open: [], rate: 0, time: 0 }
+      state = { valve: "AA", open: [], rate: 0, time: 0 }
       openable = input.reject { |_, v| v[:rate].zero? }.keys
       state = make_move(input, state, openable)
       state[:rate]
     end
 
     def problem2(input)
-      state = { valve: 'AA', open: [], rate: 0, time: 0 }
+      state = { valve: "AA", open: [], rate: 0, time: 0 }
       openable = input.reject { |_, v| v[:rate].zero? }.keys
       rate = 0
       states = {}
@@ -35,7 +35,7 @@ module Year2022
     def make_graph(input, target, valve)
       @paths ||= {}
       if !@paths.key?(valve)
-        @paths[valve] = {valve => 0}
+        @paths[valve] = { valve => 0 }
         until input.keys.all? { |t| @paths[valve].keys.include?(t) } do
           @paths[valve] = @paths[valve].each_with_object(@paths[valve].dup) do |(vlv, dt), acc|
             input[vlv][:valves].each do |v|
