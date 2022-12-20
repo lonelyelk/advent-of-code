@@ -3,6 +3,8 @@
 # https://adventofcode.com/2022/day/19
 module Year2022
   module Day19
+    MAX_TIME = 24
+
     def process_input(str)
       str.scan(/Blueprint \d+.+?Each ore robot costs (\d+) ore.+?Each clay robot costs (\d+) ore.+?Each obsidian robot costs (\d+) ore and (\d+) clay.+?Each geode robot costs (\d+) ore and (\d+) obsidian/m).map do |a, b, c, d, e, f|
         [[a.to_i], [b.to_i], [c.to_i, d.to_i], [e.to_i, 0, f.to_i]]
@@ -11,19 +13,11 @@ module Year2022
 
     def problem1(input)
       input.each_with_index.inject(0) do |acc, (costs, index)|
-        max_geodes = 0
-        max_target = []
+        @max_geodes = 0
+        robots = [1, 0, 0, 0]
+        ores = [0, 0, 0, 0]
 
-        each_buy_strategy do |target|
-          f = fitness(costs, target)
-          if f > max_geodes
-            max_geodes = f
-            max_target = target
-          end
-        end
-        p max_geodes
-        p max_target
-        acc + max_geodes * (index + 1)
+        # acc + recursive_solve(0 ) * (index + 1)
       end
     end
 
@@ -31,6 +25,30 @@ module Year2022
     end
 
     private
+
+    def recursive_solve(time, costs, robots, ores)
+      if time == MAX_TIME
+        return @max_geodes = [ores.last, @max_geodes].max
+      end
+
+      if ores.last + (1..(MAX_TIME - time)).inject(0) { |acc, n| n + robots.last } < @max_geodes
+        return 0
+      end
+
+      costs.each_with_index.map do |cost, i|
+        if cost.each_with_index.all? { |price, ore_i| price.zero? || robots[ore_i].positive? }
+          need_time = cost.each_with_index.map { |price, ore_i| [(price - ores[ore_i]).to_f / robots[ore_i], 0].max.ceil }.max + 1
+          recursive_solve(
+            time + need_time,
+            costs,
+            robots.each_with_index.map { |r, r_i| r_i == i ? r + 1 : r },
+            ores.each_with_index.map { |o, o_i| o - cost[o_i] + robots[o_i] * need_time }
+          )
+        else
+          0
+        end
+      end.max
+    end
 
     def can_buy_in(robots, ores, costs)
       costs.each_with_index.map do |cost, i|
