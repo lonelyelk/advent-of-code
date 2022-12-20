@@ -10,7 +10,7 @@ module Year2022
     end
 
     def problem1(input)
-      input.each do |costs|
+      input.each_with_index.inject(0) do |acc, (costs, index)|
         robots = [1, 0, 0, 0]
         ores = [0, 0, 0, 0]
         24.times do |time|
@@ -46,6 +46,7 @@ module Year2022
           p [ores, robots, current_prediction, possible_accelerate]
         end
         puts
+        acc + ores.last * (index + 1)
       end
     end
 
