@@ -38,7 +38,7 @@ Blueprint 2:
     end
   end
 
-  describe "problem2" do
+  xdescribe "problem2" do
     it "returns 62 * 56 for test input" do
       expect(problem2(processed_input)).to eq(62 * 56)
     end
