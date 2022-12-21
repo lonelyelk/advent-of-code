@@ -43,6 +43,7 @@ module Year2022
         @node = node.next_node while node.index != index
       end
 
+      # rubocop:disable Metrics/AbcSize
       def move(diff:)
         diff %= (length - 1)
         return if diff.zero?
@@ -56,6 +57,7 @@ module Year2022
         to_rotate.next_node = node
         go_further.next_node = gap_node
       end
+      # rubocop:enable Metrics/AbcSize
 
       def data_at(position:)
         pos = position % length
