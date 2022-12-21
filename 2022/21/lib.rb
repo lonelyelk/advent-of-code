@@ -21,8 +21,8 @@ module Year2022
 
     def problem2(input)
       h = {}
-      input = input.reject { |l| l[...8] == "h[:humn]" }
       lookup = "h[:humn]"
+      input = input.reject { |l| l[...lookup.size] == lookup }
       output = []
       loop do
         re = /^(\S+) = (\S+) (\S) (\S+)$/
