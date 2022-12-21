@@ -42,18 +42,16 @@ module Year2022
     private
 
     def recursive_solve(time, costs, robots, ores)
-      if time == @max_time
-        return @max_geodes = [ores.last, @max_geodes].max
-      end
+      return @max_geodes = [ores.last, @max_geodes].max if time == @max_time
 
-      if ores.last + (0..(@max_time - time)).inject(0) { |acc, n| acc + n + robots.last } < @max_geodes
-        return 0
-      end
+      return 0 if ores.last + (0..(@max_time - time)).inject(0) { |acc, n| acc + n + robots.last } < @max_geodes
 
       costs.each_with_index.map do |cost, i|
         if cost.each_with_index.all? { |price, ore_i| price.zero? || robots[ore_i].positive? } &&
-            robots[i] < @max_robots[i]
-          need_time = cost.each_with_index.map { |price, ore_i| [(price - ores[ore_i]).to_f / robots[ore_i], 0].max.ceil }.max + 1
+           robots[i] < @max_robots[i]
+          need_time = cost.each_with_index.map do |price, ore_i|
+            [(price - ores[ore_i]).to_f / robots[ore_i], 0].max.ceil
+          end.max + 1
           if need_time + time <= @max_time
             recursive_solve(
               time + need_time,

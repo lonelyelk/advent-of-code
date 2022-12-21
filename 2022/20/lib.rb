@@ -36,15 +36,11 @@ module Year2022
           find(index: i)
           move(diff: node.data)
         end
-        while !node.data.zero?
-          @node = node.next_node
-        end
+        @node = node.next_node until node.data.zero?
       end
 
       def find(index:)
-        while node.index != index
-          @node = node.next_node
-        end
+        @node = node.next_node while node.index != index
       end
 
       def move(diff:)
@@ -74,7 +70,7 @@ module Year2022
           s = n.to_s
           n = n.next_node
           s
-        end.join (", ")
+        end.join(", ")
       end
     end
 
@@ -91,7 +87,7 @@ module Year2022
     end
 
     def problem2(input)
-      code = CLinkedList.new(data_points: input.map { |n| n * 811589153 })
+      code = CLinkedList.new(data_points: input.map { |n| n * 811_589_153 })
 
       10.times { code.decrypt }
 

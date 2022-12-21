@@ -9,7 +9,7 @@ module Year2022
 
     def problem1(input)
       h = {}
-      while !input.empty?
+      until input.empty?
         input = input.each_with_object([]) do |l, left|
           eval(l)
         rescue TypeError, NoMethodError
@@ -44,20 +44,18 @@ module Year2022
               l += "#{md[1]} / #{md[4]}"
             end
           end
+        elsif md[1] == "h[:root]"
+          l += md[2]
         else
-          if md[1] == "h[:root]"
-            l += md[2]
-          else
-            case md[3]
-            when ?+
-              l += "#{md[1]} - #{md[2]}"
-            when ?-
-              l += "#{md[2]} - #{md[1]}"
-            when ?/
-              l += "#{md[2]} / #{md[1]}"
-            when ?*
-              l += "#{md[1]} / #{md[2]}"
-            end
+          case md[3]
+          when ?+
+            l += "#{md[1]} - #{md[2]}"
+          when ?-
+            l += "#{md[2]} - #{md[1]}"
+          when ?/
+            l += "#{md[2]} / #{md[1]}"
+          when ?*
+            l += "#{md[1]} / #{md[2]}"
           end
         end
         output.push(l)
@@ -65,7 +63,7 @@ module Year2022
         break if lookup == "h[:root]"
       end
       input += output
-      while !input.empty?
+      until input.empty?
         input = input.each_with_object([]) do |l, left|
           left.push(l) if eval(l).nil?
         rescue TypeError, NoMethodError
