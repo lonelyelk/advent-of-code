@@ -12,9 +12,7 @@ module Year2022
       board = {}
       field.each_line.with_index do |l, y|
         l.chars.each_with_index do |c, x|
-          if [?#, ?.].include?(c)
-            board[x + y * 1i] = c
-          end
+          board[x + y * 1i] = c if [?#, ?.].include?(c)
         end
       end
       [board, path.chomp]
@@ -25,7 +23,7 @@ module Year2022
       dir = 1
       pos = board.keys.select { |coord| coord.imag.zero? }.min_by(&:real)
       path.scan(/(\d+)?([RL])(\d+)/).each do |(pre, rot, mv)|
-        pre.to_i.times { pos = move_one(dir, pos, board) } if pre
+        pre&.to_i&.times { pos = move_one(dir, pos, board) }
         dir *= rot == ?R ? 1i : -1i
         mv.to_i.times { pos = move_one(dir, pos, board) }
       end
@@ -39,7 +37,7 @@ module Year2022
       dir = 1 + 0i
       pos = board.keys.select { |coord| coord.imag.zero? }.min_by(&:real)
       path.scan(/(\d+)?([RL])(\d+)/).each do |(pre, rot, mv)|
-        pre.to_i.times { dir, pos = move_one_cube(dir, pos, board) } if pre
+        pre&.to_i&.times { dir, pos = move_one_cube(dir, pos, board) }
         dir *= rot == ?R ? 1i : -1i
         mv.to_i.times { dir, pos = move_one_cube(dir, pos, board) }
       end
@@ -93,6 +91,7 @@ module Year2022
     def dir_to_pass(dir)
       (0..3).inject(1) do |d, i|
         return i if d == dir
+
         d * 1i
       end
     end

@@ -46,7 +46,7 @@ module Nets
       3 => {
         trans: ->(n, side) { (3 * side - 1) + (5 * side - 1 - n.real) * 1i },
         rot: -1i,
-      }
+      },
     },
     1i => {
       0 => {
@@ -64,9 +64,9 @@ module Nets
       3 => {
         trans: ->(n, side) { 0 + (5 * side - 1 - n.real) * 1i },
         rot: -1i,
-      }
+      },
     },
-  }
+  }.freeze
   NET2 = {
     -1 + 0i => {
       0 => {
@@ -102,7 +102,7 @@ module Nets
       3 => {
         trans: ->(n, side) { (n.imag - 2 * side) + (3 * side - 1) * 1i },
         rot: -1i,
-      }
+      },
     },
     -1i => {
       0 => {
@@ -124,13 +124,13 @@ module Nets
         rot: 1,
       },
       1 => {
-        trans: ->(n, side) { (side - 1) +  (2 * side + n.real) * 1i },
+        trans: ->(n, side) { (side - 1) + (2 * side + n.real) * 1i },
         rot: 1i,
       },
       2 => {
         trans: ->(n, side) { 2 * side - 1 + (n.real - side) * 1i },
         rot: 1i,
-      }
-    }
-  }
+      },
+    },
+  }.freeze
 end
