@@ -18,14 +18,11 @@ module Year2022
       [board, path.chomp]
     end
 
-    # rubocop:disable Metrics/AbcSize
     def problem1(input)
       board, path = input
-      dir = 1 + 0i
-      pos = board.keys.select { |coord| coord.imag.zero? }.min_by(&:real)
-      path.scan(/(\d+)?([RL])(\d+)/).each do |(pre, rot, mv)|
-        pre&.to_i&.times { pos = move_one(dir, pos, board) }
-        dir *= rot == ?R ? 1i : -1i
+      dir, pos = init(board)
+      path.scan(/([RL])?(\d+)/).each do |(rot, mv)|
+        dir = read_dir(dir, rot) if rot
         mv.to_i.times { pos = move_one(dir, pos, board) }
       end
       password(dir, pos)
@@ -33,12 +30,10 @@ module Year2022
 
     def problem2(input, test_net: false)
       board, path = input
-      init(board, test_net)
-      dir = 1 + 0i
-      pos = board.keys.select { |coord| coord.imag.zero? }.min_by(&:real)
-      path.scan(/(\d+)?([RL])(\d+)/).each do |(pre, rot, mv)|
-        pre&.to_i&.times { dir, pos = move_one_cube(dir, pos, board) }
-        dir *= rot == ?R ? 1i : -1i
+      init_cube(board, test_net)
+      dir, pos = init(board)
+      path.scan(/([RL])?(\d+)/).each do |(rot, mv)|
+        dir = read_dir(dir, rot) if rot
         mv.to_i.times { dir, pos = move_one_cube(dir, pos, board) }
       end
       password(dir, pos)
@@ -46,6 +41,7 @@ module Year2022
 
     private
 
+    # rubocop:disable Metrics/AbcSize
     def next_pos(dir, pos, board)
       return pos + dir if board.key?(pos + dir)
 
@@ -64,9 +60,24 @@ module Year2022
     end
     # rubocop:enable Metrics/AbcSize
 
-    def init(board, test_net)
+    def init(board)
+      dir = 1 + 0i
+      pos = board.keys.select { |coord| coord.imag.zero? }.min_by(&:real)
+      [dir, pos]
+    end
+
+    def init_cube(board, test_net)
       @net = test_net ? NET1 : NET2
       @side = Math.sqrt(board.keys.size / 6).to_i
+    end
+
+    def read_dir(dir, rot)
+      dir * case rot
+            when ?R
+              1i
+            when ?L
+              -1i
+            end
     end
 
     def move_one(dir, pos, board)

@@ -56,7 +56,7 @@ module Year2022
 
       # Super-optimistic prediction if we buy a new geode robot every minute and won't get more,
       # we have no chance either way. So we discard a solution that brings no hope.
-      return 0 if ores.last + (0...(@max_time - time)).inject(0) { |acc, n| acc + n + robots.last } < @max_geodes
+      return 0 if ores.last + (0...(@max_time - time)).inject(0) { |acc, n| acc + n + robots.last } <= @max_geodes
 
       costs.each_with_index.map do |cost, i|
         if cost.each_with_index.all? { |price, o_i| price.zero? || robots[o_i].positive? } &&

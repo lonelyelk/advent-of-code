@@ -3,6 +3,8 @@
 # https://adventofcode.com/2022/day/21
 module Year2022
   module Day21
+    ROOT = "h[:root]"
+
     def process_input(str)
       str.split("\n").reject(&:empty?).map { |l| l.sub(":", " =").gsub(/(\w{4})/, 'h[:\1]') }
     end
@@ -12,31 +14,18 @@ module Year2022
       h[:root]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def problem2(input)
       lookup = "h[:humn]"
       input = input.reject { |l| l[...lookup.size] == lookup }
       output = []
       loop do
-        re = /^(\S+) = (\S+) (\S) (\S+)$/
-        i = input.index { |l| l.match?(/=.+#{lookup[3, 4]}/) }
-        md = re.match(input.slice!(i))
-        l = "#{lookup} = " +
-            if md[2] == lookup
-              md[1] == "h[:root]" ? md[4] : extract_first(md[1], md[3], md[4])
-            elsif md[1] == "h[:root]"
-              md[2]
-            else
-              extract_second(md[1], md[3], md[2])
-            end
-        output.push(l)
-        lookup = md[1]
-        break if lookup == "h[:root]"
+        line, lookup = extract(input, lookup)
+        output.push(line)
+        break if lookup == ROOT
       end
       h = eval_to_h(input + output)
       h[:humn]
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
@@ -51,6 +40,21 @@ module Year2022
       end
       h
     end
+
+    # rubocop:disable Metrics/AbcSize
+    def extract(input, lookup)
+      re = /^(\S+) = (\S+) (\S) (\S+)$/
+      i = input.index { |l| l.match?(/=.+#{lookup[3, 4]}/) }
+      md = re.match(input.slice!(i))
+      line = "#{lookup} = " +
+             if md[2] == lookup
+               md[1] == ROOT ? md[4] : extract_first(md[1], md[3], md[4])
+             else
+               md[1] == ROOT ? md[2] : extract_second(md[1], md[3], md[2])
+             end
+      [line, md[1]]
+    end
+    # rubocop:enable Metrics/AbcSize
 
     def extract_first(left, operation, second)
       case operation
