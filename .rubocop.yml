@@ -44,3 +44,6 @@ Style/CharacterLiteral:
 
 Security/Eval:
   Enabled: No
+
+Style/ParallelAssignment:
+  Enabled: No

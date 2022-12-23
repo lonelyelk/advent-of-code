@@ -8,8 +8,9 @@ module Year2022
       1i => [-1 + 1i, 1i, 1 + 1i].freeze,
       -1 => [-1 - 1i, -1, -1 + 1i].freeze,
       1 => [1 - 1i, 1, 1 + 1i].freeze,
-    }
-    POS_AROUND = MOVE_CONDITIONS.values.flatten
+    }.freeze
+    POS_AROUND = MOVE_CONDITIONS.values.flatten.freeze
+
     def process_input(str)
       h = {}
       str.each_line.with_index do |l, y|
@@ -24,71 +25,20 @@ module Year2022
     end
 
     def problem1(input)
-      h = input.dup
-      a = [-1, 0, 1]
-      10.times do |rot|
-        next_busy = {}
-        next_no_no = {}
-        h.keys.each do |k|
-          next if POS_AROUND.all? { |dd| h[k + dd].nil? }
-
-          m = MOVE_CONDITIONS.keys.rotate(rot).detect { |d| MOVE_CONDITIONS[d].all? { |dd| h[k + dd].nil? } }
-          next if m.nil?
-
-          if next_busy[k + m]
-            next_no_no[k + m] = true
-          else
-            h[k] = k + m
-            next_busy[k + m] = true
-          end
-        end
-        h.keys.each do |k|
-          if next_no_no[h[k]]
-            h[k] = k
-          elsif h[k] != k
-            nk, h[k] = [h[k], nil]
-            h[nk] = nk
-          end
-        end
-        h.reject! { |_, v| v.nil? }
+      field = input.dup
+      10.times do |round|
+        one_round(field, round)
       end
-      x_min, x_max = h.keys.map(&:real).minmax
-      y_min, y_max = h.keys.map(&:imag).minmax
-      (x_max - x_min + 1) * (y_max - y_min + 1) - h.keys.size
+      x_min, x_max, y_min, y_max = field_size(field)
+      (x_max - x_min + 1) * (y_max - y_min + 1) - field.keys.size
     end
 
     def problem2(input)
-      h = input.dup
-      a = [-1, 0, 1]
+      field = input.dup
       round = 0
       loop do
-        next_busy = {}
-        next_no_no = {}
-        moved = 0
-        h.keys.each do |k|
-          next if POS_AROUND.all? { |dd| h[k + dd].nil? }
+        break if one_round(field, round).zero?
 
-          m = MOVE_CONDITIONS.keys.rotate(round).detect { |d| MOVE_CONDITIONS[d].all? { |dd| h[k + dd].nil? } }
-          next if m.nil?
-
-          if next_busy[k + m]
-            next_no_no[k + m] = true
-          else
-            h[k] = k + m
-            next_busy[k + m] = true
-          end
-        end
-        h.keys.each do |k|
-          if next_no_no[h[k]]
-            h[k] = k
-          elsif h[k] != k
-            moved += 1
-            nk, h[k] = [h[k], nil]
-            h[nk] = nk
-          end
-        end
-        h.reject! { |_, v| v.nil? }
-        break if moved == 0
         round += 1
       end
       round + 1
@@ -96,13 +46,56 @@ module Year2022
 
     private
 
-    def print_field(hash)
-      x_min, x_max = hash.keys.map(&:real).minmax
-      y_min, y_max = hash.keys.map(&:imag).minmax
+    def one_round(field, rotate_count)
+      next_set = first_half(field, rotate_count)
+      moved = second_half(field, next_set[:no_no])
+      field.compact!
+      moved
+    end
+
+    def first_half(field, rotate_count)
+      field.keys.each_with_object({ busy: {}, no_no: {} }) do |k, n_set|
+        m = move_to(field, rotate_count, k)
+        next if m.nil?
+
+        dk = k + m
+        if n_set[:busy][dk]
+          n_set[:no_no][dk] = true
+        else
+          n_set[:busy][field[k] = dk] = true
+        end
+      end
+    end
+
+    def move_to(field, rotate_count, pos)
+      return if POS_AROUND.all? { |dd| field[pos + dd].nil? }
+
+      MOVE_CONDITIONS.keys.rotate(rotate_count).detect { |d| MOVE_CONDITIONS[d].all? { |dd| field[pos + dd].nil? } }
+    end
+
+    def second_half(field, no_move_to)
+      field.keys.count do |k|
+        if field[k] != k && !no_move_to[field[k]]
+          nk, field[k] = [field[k], nil]
+          field[nk] = nk
+          true
+        else
+          field[k] = k
+          false
+        end
+      end
+    end
+
+    def field_size(field)
+      %i[real imag].map { |oper| field.keys.map(&oper).minmax }.flatten
+    end
+
+    def print_field(field)
+      x_min, x_max, y_min, y_max = field_size(field)
       puts
       (y_min..y_max).each do |y|
         (x_min..x_max).each do |x|
-          print(hash[Complex(x, y)] ? ?# : ?.)
+          print(field[Complex(x, y)] ? ?# : ?.)
         end
         puts
       end
