@@ -62,7 +62,7 @@ RSpec.describe Year2022::Day22 do
 
   describe "problem2" do
     it "returns 5031 for test input" do
-      expect(problem2(process_input(input), true)).to eq(5031)
+      expect(problem2(process_input(input), test_net: true)).to eq(5031)
     end
 
     it "returns n for empty input" do

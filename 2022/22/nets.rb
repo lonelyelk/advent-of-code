@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module Nets
   NET1 = {
     -1 + 0i => {
@@ -134,3 +135,4 @@ module Nets
     },
   }.freeze
 end
+# rubocop:enable Metrics/ModuleLength
