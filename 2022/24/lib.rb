@@ -16,19 +16,23 @@ module Year2022
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def problem1(input, start: START, goal: @end, start_time: 0)
       paths = [[start]]
       time = start_time
       loop do
         time += 1
-        paths = paths.each_with_object([]) do |path, next_paths|
-          moves = good_moves(path, next_paths, input[time % @period])
-          return time if moves.include?(goal)
+        paths, = paths.each_with_object([[], []]) do |path, (next_paths, other_moves)|
+          good_moves(path, other_moves, input[time % @period]).each do |pos|
+            return time if pos == goal
 
-          moves.each { |pos| next_paths.push([*path, pos]) }
+            next_paths.push([*path, pos])
+            other_moves.push(pos)
+          end
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def problem2(input)
       time_fw = problem1(input)
@@ -91,14 +95,13 @@ module Year2022
       [pos] + DIFFS.map { |diff| pos + diff }
     end
 
-    def bad_move?(pos, path, other_paths)
-      (path.size == @period - 1 && path[-@period + 1] == pos) ||
-        (other_paths.any? { |pth| pth.last == pos })
+    def bad_move?(pos, path, other_moves)
+      (path.size == @period - 1 && path[-@period + 1] == pos) || other_moves.include?(pos)
     end
 
-    def good_moves(path, other_paths, free_now)
+    def good_moves(path, other_moves, free_now)
       possible_moves(path.last).reject do |pos|
-        !free_now[pos] || bad_move?(pos, path, other_paths)
+        !free_now[pos] || bad_move?(pos, path, other_moves)
       end
     end
   end
