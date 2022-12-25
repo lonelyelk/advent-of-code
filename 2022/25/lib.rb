@@ -17,8 +17,7 @@ module Year2022
 
     def problem1(input)
       input.inject(0) do |acc, num|
-        n = num.chars.reverse.each_with_index.inject(0) { |n_acc, (c, i)| n_acc + DIGIT_MAP[c] * (5**i) }
-        acc + n
+        acc + num.chars.reverse.each_with_index.inject(0) { |n_acc, (c, i)| n_acc + DIGIT_MAP[c] * (5**i) }
       end
     end
 
