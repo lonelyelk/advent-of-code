@@ -23,9 +23,8 @@ module Year2022
     end
 
     def problem2(input)
-      out = ""
       tmp = []
-      while input >= 5
+      while input > 2
         input, rem = input.divmod(5)
         if rem > 2
           input += 1
@@ -33,13 +32,7 @@ module Year2022
         end
         tmp.push(rem)
       end
-      if input > 2
-        tmp.push(input - 5)
-        tmp.push(1)
-      else
-        tmp.push(input)
-      end
-      tmp.reverse.map { |n| DIGIT_MAP.key(n) }.join
+      tmp.push(input).reverse.map { |n| DIGIT_MAP.key(n) }.join
     end
   end
 end

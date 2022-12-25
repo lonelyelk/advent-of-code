@@ -50,7 +50,7 @@ RSpec.describe Year2022::Day25 do
       expect(problem1(processed_input)).to eq(4890)
     end
 
-    it "returns 4890 for test input" do
+    it "returns 4890 for converted test input" do
       expect(problem1(%w[2=-1=0])).to eq(4890)
     end
   end
