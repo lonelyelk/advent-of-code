@@ -11,7 +11,7 @@ end
 def template_args(args, next_day: false)
   t_args = { day: args.day.to_i, year: }
   if t_args[:day].zero?
-    t_args[:day] = Dir.children(year).map(&:to_i).max
+    t_args[:day] = Dir.children(year).map(&:to_i).max || 0
     t_args[:day] += 1 if next_day
   end
   t_args
