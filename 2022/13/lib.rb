@@ -49,7 +49,7 @@ module Year2022
 
       0
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/AbcSize
 
     def compare_pattern(list_a, list_b)
       case [list_a, list_b]
@@ -74,7 +74,7 @@ module Year2022
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
     def extend_and_zip(list_a, list_b)
       new_list_a =
