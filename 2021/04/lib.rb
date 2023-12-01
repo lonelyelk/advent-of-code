@@ -43,7 +43,7 @@ module Day04
 
   def winner_sum(boards)
     winning_board = boards.detect { |board| board.any?(&:empty?) }
-    return unmarked_board_sum(winning_board) if winning_board
+    unmarked_board_sum(winning_board) if winning_board
   end
 
   def unmarked_board_sum(board)

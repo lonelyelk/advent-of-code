@@ -36,7 +36,7 @@ module Day19
     max_distance = (0...(scanners.size - 1)).inject(0) do |acc, i|
       ((i + 1)...scanners.size).inject(acc) do |m, j|
         distance = (0..2).map { |n| (scanners[i][n] - scanners[j][n]).abs }.inject(&:+)
-        distance > m ? distance : m
+        [distance, m].max
       end
     end
     [beacons.size, max_distance]

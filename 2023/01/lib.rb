@@ -14,7 +14,7 @@ module Year2023
       "eight" => "8",
       "nine" => "9",
       "zero" => "0",
-    }
+    }.freeze
     def process_input(str)
       str.split("\n").reject(&:empty?)
     end
