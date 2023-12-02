@@ -34,7 +34,7 @@ module Year2023
       end
     end
 
-  private
+    private
 
     def calibration_value(digits)
       digits.first * 10 + digits.last
