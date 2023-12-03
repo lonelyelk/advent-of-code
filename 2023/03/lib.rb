@@ -10,16 +10,8 @@ module Year2023
     def problem1(input)
       sum = 0
       input.each_with_index do |line, row|
-        num = ""
-        (line.size + 1).times do |col|
-          if line[col]&.match?(/\d/)
-            num += line[col]
-            next
-          end
-          next if num.empty?
-
-          sum += num.to_i if part?(input, num, row, col)
-          num = ""
+        find_numbers(line).each do |(num, col)|
+          sum += num if part?(input, num.to_s, row, col)
         end
       end
       sum
@@ -39,6 +31,16 @@ module Year2023
     end
 
     private
+
+    def find_numbers(line)
+      offset = 0
+      numbers = []
+      while (index = line.index(/\d/, offset))
+        offset = line.index(/\D/, index) || line.size
+        numbers.push([line[index...offset].to_i, offset])
+      end
+      numbers
+    end
 
     def part?(input, num_str, row, col)
       col_min = [0, col - num_str.size - 1].max
