@@ -10,26 +10,20 @@ module Year2023
     def problem1(input)
       sum = 0
       input.each_with_index do |line, row|
-        num = ''
+        num = ""
         line.chars.each_with_index do |char, col|
           if char.match?(/\d/)
             num += char
-          else
-            if !num.empty?
-              is_part = (([0, row - 1].max)..([input.size - 1, row + 1].min)).any? do |r|
-                (([0, col - num.size - 1].max)..col).any? { |c| !input[r][c].match?(/[0-9]|\./) }
-              end
-              sum += num.to_i if is_part
-              num = ''
-            end
+            next
           end
+          next if num.empty?
+
+          sum += num.to_i if part?(input, num, row, col)
+          num = ""
         end
-        if !num.empty?
-          is_part = (([0, row - 1].max)..([input.size - 1, row + 1].min)).any? do |r|
-            (([0, line.size - num.size - 2].max)..(line.size - 1)).any? { |c| !input[r][c].match?(/[0-9]|\./) }
-          end
-          sum += num.to_i if is_part
-        end
+        next if num.empty?
+
+        sum += num.to_i if part?(input, num, row, line.size - 1)
       end
       sum
     end
@@ -40,16 +34,27 @@ module Year2023
         line.chars.each_with_index do |char, col|
           next unless char == "*"
 
-          numbers = []
-          (([0, row - 1].max)..([input.size - 1, row + 1].min)).each do |r|
-            col_min = col == 0 ? col : input[r].rindex(/\D/, col - 1)
-            col_max = col == line.size - 1 ? col : input[r].index(/\D/, col + 1)
-            numbers += input[r][col_min..col_max].scan(/\d+/).map(&:to_i)
-          end
+          numbers = gear_parts(input, row, [0, col - 1].max, [line.size - 1, col + 1].min)
           sum += numbers.inject(&:*) if numbers.size == 2
         end
       end
       sum
+    end
+
+    private
+
+    def part?(input, num_str, row, col)
+      (([0, row - 1].max)..([input.size - 1, row + 1].min)).any? do |r|
+        (([0, col - num_str.size - 1].max)..col).any? { |c| !input[r][c].match?(/[0-9]|\./) }
+      end
+    end
+
+    def gear_parts(input, row, col_before, col_after)
+      (([0, row - 1].max)..([input.size - 1, row + 1].min)).each_with_object([]) do |r, numbers|
+        col_min = input[r].rindex(/\D/, col_before)
+        col_max = input[r].index(/\D/, col_after)
+        numbers.push(*input[r][col_min..col_max].scan(/\d+/).map(&:to_i))
+      end
     end
   end
 end

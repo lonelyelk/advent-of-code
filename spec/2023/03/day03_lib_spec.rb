@@ -47,7 +47,7 @@ RSpec.describe Year2023::Day03 do
 
   describe "problem2" do
     it "returns 467835 for test input" do
-      expect(problem2(processed_input)).to eq(467835)
+      expect(problem2(processed_input)).to eq(467_835)
     end
   end
 end
