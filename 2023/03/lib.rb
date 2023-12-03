@@ -11,9 +11,9 @@ module Year2023
       sum = 0
       input.each_with_index do |line, row|
         num = ""
-        line.chars.each_with_index do |char, col|
-          if char.match?(/\d/)
-            num += char
+        (line.size + 1).times do |col|
+          if line[col]&.match?(/\d/)
+            num += line[col]
             next
           end
           next if num.empty?
@@ -21,9 +21,6 @@ module Year2023
           sum += num.to_i if part?(input, num, row, col)
           num = ""
         end
-        next if num.empty?
-
-        sum += num.to_i if part?(input, num, row, line.size - 1)
       end
       sum
     end
@@ -44,9 +41,8 @@ module Year2023
     private
 
     def part?(input, num_str, row, col)
-      (([0, row - 1].max)..([input.size - 1, row + 1].min)).any? do |r|
-        (([0, col - num_str.size - 1].max)..col).any? { |c| !input[r][c].match?(/[0-9]|\./) }
-      end
+      col_min = [0, col - num_str.size - 1].max
+      (([0, row - 1].max)..([input.size - 1, row + 1].min)).any? { |r| input[r][col_min..col].match?(/[^\d.]/) }
     end
 
     def gear_parts(input, row, col_before, col_after)
