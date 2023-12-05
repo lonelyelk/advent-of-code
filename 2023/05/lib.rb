@@ -4,7 +4,7 @@
 module Year2023
   module Day05
     def process_input(str)
-      result = {maps: []}
+      result = { maps: [] }
       seeds, *maps = str.split("\n\n")
       result[:seed] = seeds.split(":")[1].split.map(&:to_i)
       maps.each_with_object(result) do |map_rep, res|
@@ -21,12 +21,11 @@ module Year2023
       while source != :location
         map = input[:maps].detect { |m| m[0][0] == source }
         raise "Map not found #{map}" unless map
+
         answer = answer.map do |num|
           dest_num = nil
           map[1..].each do |m|
-            if num >= m[1] && num < m[1] + m[2]
-              dest_num = m[0] + num - m[1]
-            end
+            dest_num = m[0] + num - m[1] if num >= m[1] && num < m[1] + m[2]
           end
           dest_num || num
         end
@@ -63,9 +62,7 @@ module Year2023
           source_ranges.each_slice(2).flat_map do |(num, sz)|
             dest_num = nil
             map[1..].each do |m|
-              if num >= m[1] && num < m[1] + m[2]
-                dest_num = m[0] + num - m[1]
-              end
+              dest_num = m[0] + num - m[1] if num >= m[1] && num < m[1] + m[2]
             end
             [dest_num || num, sz]
           end
