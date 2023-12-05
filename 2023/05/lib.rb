@@ -4,7 +4,7 @@
 module Year2023
   module Day05
     def process_input(str)
-      result = { maps: [] }
+      result = {}
       seeds, *maps = str.split("\n\n")
       result[:seed] = seeds.split(":")[1].split.map(&:to_i)
       result[:maps] = process_maps(maps)
@@ -15,29 +15,22 @@ module Year2023
       source = :seed
       answer = input[source]
       while source != :location
-        map = input[:maps].detect { |m| m[0][0] == source }
-        raise "Map not found #{map}" unless map
-
-        answer = answer.map { |num| map_to_dest(num, map) }
-        source = map[0][1]
+        vmap, source = next_map_source(input[:maps], source)
+        answer = answer.map { |num| map_to_dest(num, vmap) }
       end
       answer.min
     end
 
     def problem2(input)
       source = :seed
-      answer = input[source]
+      answer = input[source].each_slice(2).to_a
       while source != :location
-        map = input[:maps].detect { |m| m[0][0] == source }
-        raise "Map not found #{map}" unless map
-
-        answer = answer.each_slice(2).flat_map do |source_range|
-          source_ranges = split_range_for_map(source_range, map)
-          source_ranges.each_slice(2).flat_map { |(num, size)| [map_to_dest(num, map), size] }
+        vmap, source = next_map_source(input[:maps], source)
+        answer = answer.inject([]) do |acc, source_range|
+          acc + split_range_for_map(source_range, vmap).map { |(num, size)| [map_to_dest(num, vmap), size] }
         end
-        source = map[0][1]
       end
-      answer.each_slice(2).map(&:first).min
+      answer.map(&:first).min
     end
 
     private
@@ -51,31 +44,39 @@ module Year2023
       end
     end
 
-    def map_to_dest(num, map)
+    def next_map_source(maps, source)
+      map = maps.detect { |m| m[0][0] == source }
+      raise("Map not found #{source}") unless map
+
+      [map[1..], map[0][1]]
+    end
+
+    def map_to_dest(num, vmap)
       dest_num = nil
-      map[1..].each do |m|
-        dest_num = m[0] + num - m[1] if num >= m[1] && num < m[1] + m[2]
+      vmap.each do |(dest_st, src_st, sz)|
+        dest_num = dest_st + num - src_st if num >= src_st && num < src_st + sz
       end
       dest_num || num
     end
 
-    def split_range_for_map(source_range, map)
-      map[1..].inject(source_range) do |ranges, m|
-        ranges.each_slice(2).flat_map do |(start, size)|
-          re = []
-          if start < m[1] && start + size > m[1]
-            re.push(start, m[1] - start)
-            size = start + size - m[1]
-            start = m[1]
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def split_range_for_map(source_range, vmap)
+      vmap.inject([source_range]) do |ranges, (_, st, sz)|
+        ranges.each_with_object([]) do |(start, size), re|
+          if start < st && start + size > st
+            re.push([start, st - start])
+            size = start + size - st
+            start = st
           end
-          if start < m[1] + m[2] && start + size > m[1] + m[2]
-            re.push(start, m[1] + m[2] - start)
-            size = size + start - m[1] - m[2]
-            start = m[1] + m[2]
+          if start < st + sz && start + size > st + sz
+            re.push([start, st + sz - start])
+            size = size + start - st - sz
+            start = st + sz
           end
-          re.push(start, size)
+          re.push([start, size])
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end
