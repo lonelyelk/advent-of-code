@@ -7,28 +7,18 @@ module Year2023
       result = { maps: [] }
       seeds, *maps = str.split("\n\n")
       result[:seed] = seeds.split(":")[1].split.map(&:to_i)
-      maps.each_with_object(result) do |map_rep, res|
-        name, *ms = map_rep.split("\n").reject(&:empty?)
-        names = name.split.first.strip.split("-to-").map(&:to_sym)
-        ranges = ms.map { |m| m.split.map(&:to_i) }
-        res[:maps].push([names, *ranges])
-      end
+      result[:maps] = process_maps(maps)
+      result
     end
 
     def problem1(input)
       source = :seed
-      answer = input[:seed]
+      answer = input[source]
       while source != :location
         map = input[:maps].detect { |m| m[0][0] == source }
         raise "Map not found #{map}" unless map
 
-        answer = answer.map do |num|
-          dest_num = nil
-          map[1..].each do |m|
-            dest_num = m[0] + num - m[1] if num >= m[1] && num < m[1] + m[2]
-          end
-          dest_num || num
-        end
+        answer = answer.map { |num| map_to_dest(num, map) }
         source = map[0][1]
       end
       answer.min
@@ -36,40 +26,56 @@ module Year2023
 
     def problem2(input)
       source = :seed
-      answer = input[:seed]
+      answer = input[source]
       while source != :location
         map = input[:maps].detect { |m| m[0][0] == source }
         raise "Map not found #{map}" unless map
 
-        answer = answer.each_slice(2).flat_map do |(start, size)|
-          source_ranges = [start, size]
-          map[1..].each do |m|
-            source_ranges = source_ranges.each_slice(2).flat_map do |(st, sz)|
-              re = []
-              if st < m[1] && st + sz > m[1]
-                re.push(st, m[1] - st)
-                sz = st + sz - m[1]
-                st = m[1]
-              end
-              if st < m[1] + m[2] && st + sz > m[1] + m[2]
-                re.push(st, m[1] + m[2] - st)
-                sz = sz + st - m[1] - m[2]
-                st = m[1] + m[2]
-              end
-              re.push(st, sz)
-            end
-          end
-          source_ranges.each_slice(2).flat_map do |(num, sz)|
-            dest_num = nil
-            map[1..].each do |m|
-              dest_num = m[0] + num - m[1] if num >= m[1] && num < m[1] + m[2]
-            end
-            [dest_num || num, sz]
-          end
+        answer = answer.each_slice(2).flat_map do |source_range|
+          source_ranges = split_range_for_map(source_range, map)
+          source_ranges.each_slice(2).flat_map { |(num, size)| [map_to_dest(num, map), size] }
         end
         source = map[0][1]
       end
       answer.each_slice(2).map(&:first).min
+    end
+
+    private
+
+    def process_maps(maps)
+      maps.map do |map|
+        name, *ms = map.split("\n").reject(&:empty?)
+        names = name.split.first.strip.split("-to-").map(&:to_sym)
+        ranges = ms.map { |m| m.split.map(&:to_i) }
+        [names, *ranges]
+      end
+    end
+
+    def map_to_dest(num, map)
+      dest_num = nil
+      map[1..].each do |m|
+        dest_num = m[0] + num - m[1] if num >= m[1] && num < m[1] + m[2]
+      end
+      dest_num || num
+    end
+
+    def split_range_for_map(source_range, map)
+      map[1..].inject(source_range) do |ranges, m|
+        ranges.each_slice(2).flat_map do |(start, size)|
+          re = []
+          if start < m[1] && start + size > m[1]
+            re.push(start, m[1] - start)
+            size = start + size - m[1]
+            start = m[1]
+          end
+          if start < m[1] + m[2] && start + size > m[1] + m[2]
+            re.push(start, m[1] + m[2] - start)
+            size = size + start - m[1] - m[2]
+            start = m[1] + m[2]
+          end
+          re.push(start, size)
+        end
+      end
     end
   end
 end
