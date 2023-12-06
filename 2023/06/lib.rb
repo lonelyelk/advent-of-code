@@ -21,6 +21,8 @@ module Year2023
       count_ways_to_win(*input)
     end
 
+    # Solving quadratic inequality (t_tot - t_hold) * t_hold > record
+    #                               ^^ rem time       ^^ speed
     def count_ways_to_win(time, record)
       disc = Math.sqrt(time**2 - 4 * record)
       x1 = (time - disc) / 2
