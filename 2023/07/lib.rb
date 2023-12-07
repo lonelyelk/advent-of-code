@@ -29,61 +29,47 @@ module Year2023
     def problem1(input)
       sorted = input.sort do |(cards1, _bet1), (cards2, _bet2)|
         cmp_type = type(cards1) <=> type(cards2)
-        if cmp_type.zero?
-          cmp_card = cards1.chars.zip(cards2.chars).map { |c1, c2| CARDS[c1] <=> CARDS[c2] }
-          cmp_card.detect { |cmp| !cmp.zero? }
-        else
-          cmp_type
-        end
+        cmp_type.zero? ? compare_by_value(cards1, cards2) { |c| CARDS[c] } : cmp_type
       end
-      sorted.each_with_index.inject(0) do |acc, ((_cards, bet), index)|
-        acc + bet * (index + 1)
-      end
+      winnings(sorted)
     end
 
     def problem2(input)
       sorted = input.sort do |(cards1, _bet1), (cards2, _bet2)|
         cmp_type = type_j(cards1) <=> type_j(cards2)
-        if cmp_type.zero?
-          cmp_card = cards1.chars.zip(cards2.chars).map { |c1, c2| value(c1) <=> value(c2) }
-          cmp_card.detect { |cmp| !cmp.zero? }
-        else
-          cmp_type
-        end
+        cmp_type.zero? ? compare_by_value(cards1, cards2) { |c| value_j(c) } : cmp_type
       end
-      sorted.each_with_index.inject(0) do |acc, ((_cards, bet), index)|
-        acc + bet * (index + 1)
-      end
+      winnings(sorted)
     end
 
     private
 
+    # Comparing 50000, 41000, 32000, 31100 and so on makes for a compact method whereas pattern
+    # matching makes rubobop unhappy about method length.
     def type(cards)
-      case cards.chars.tally.values.sort
-      in [5]
-        7
-      in [*, 4]
-        6
-      in [2, 3]
-        5
-      in [*, 3]
-        4
-      in [*, 2, 2]
-        3
-      in [*, 2]
-        2
-      else
-        1
+      "#{cards.chars.tally.values.sort.reverse.join}0000"[..4]
+    end
+
+    def compare_by_value(cards1, cards2)
+      cmp_card = cards1.chars.zip(cards2.chars).map do |c1, c2|
+        yield(c1) <=> yield(c2)
+      end
+      cmp_card.detect { |cmp| !cmp.zero? }
+    end
+
+    def winnings(sorted)
+      sorted.each_with_index.sum do |(_, bet), index|
+        bet * (index + 1)
       end
     end
 
-    def value(card)
+    def value_j(card)
       card == "J" ? 0 : CARDS[card]
     end
 
     def type_j(cards)
       default_type = type(cards)
-      return default_type if !cards.include?("J") || default_type == 7
+      return default_type if !cards.include?("J") || cards == "JJJJJ"
 
       substitutes = cards.chars.uniq.reject { |c| c == "J" }
       substitutes.map { |c| type_j(cards.sub("J", c)) }.max
