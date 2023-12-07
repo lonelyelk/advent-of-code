@@ -47,7 +47,7 @@ module Year2023
     # Comparing 50000, 41000, 32000, 31100 and so on makes for a compact method whereas pattern
     # matching makes rubobop unhappy about method length.
     def type(cards)
-      "#{cards.chars.tally.values.sort.reverse.join}0000"[..4]
+      "#{cards.chars.tally.values.sort.reverse.join}0000"[..4].to_i
     end
 
     def compare_by_value(cards1, cards2)
