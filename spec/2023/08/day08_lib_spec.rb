@@ -28,7 +28,7 @@ ZZZ = (ZZZ, ZZZ)
         "EEE" => %w[EEE EEE],
         "GGG" => %w[GGG GGG],
         "ZZZ" => %w[ZZZ ZZZ],
-      }
+      },
     }
   end
 

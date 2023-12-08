@@ -14,10 +14,10 @@ module Year2023
       response
     end
 
-    def problem1(input)
+    def problem1(input, start_pos = "AAA")
       count = 0
-      pos = "AAA"
-      while pos != "ZZZ"
+      pos = start_pos
+      while block_given? ? yield(pos) : pos != "ZZZ"
         instruction = input[:instructions][count % input[:instructions].size]
         pos = input[:map][pos]["LR" =~ /#{instruction}/]
         count += 1
@@ -26,16 +26,10 @@ module Year2023
     end
 
     def problem2(input)
-      input[:map].keys.select { |k| k[-1] == "A" }.map do |start_pos|
-        count = 0
-        pos = start_pos
-        while pos[-1] != "Z"
-          instruction = input[:instructions][count % input[:instructions].size]
-          pos = input[:map][pos]["LR" =~ /#{instruction}/]
-          count += 1
-        end
-        count
-      end.inject { |acc, num| acc.lcm(num) }
+      counts = input[:map].keys.select { |k| k[-1] == "A" }.map do |start_pos|
+        problem1(input, start_pos) { |pos| pos[-1] != "Z" }
+      end
+      counts.inject { |acc, num| acc.lcm(num) }
     end
   end
 end
