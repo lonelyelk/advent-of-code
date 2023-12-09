@@ -10,20 +10,18 @@ module Year2023
     def problem1(input)
       input.sum do |nums|
         diffs = find_diffs(nums)
-        (1...diffs.size).each do |i|
-          diffs[-1 - i].push(diffs[-1 - i].last + diffs[-i].last)
+        (diffs.size - 2).downto(0).inject(0) do |acc, i|
+          diffs[i].push(diffs[i].last + acc).last
         end
-        diffs.first.last
       end
     end
 
     def problem2(input)
       input.sum do |nums|
         diffs = find_diffs(nums)
-        (1...diffs.size).each do |i|
-          diffs[-1 - i].unshift(diffs[-1 - i].first - diffs[-i].first)
+        (diffs.size - 2).downto(0).inject(0) do |acc, i|
+          diffs[i].unshift(diffs[i].first - acc).first
         end
-        diffs.first.first
       end
     end
 
@@ -31,7 +29,7 @@ module Year2023
 
     def find_diffs(nums)
       diffs = [nums]
-      diffs.push(diffs.last.each_cons(2).map { |a, b| b - a }) while diffs.last.any? { |n| !n.zero? }
+      diffs.push(diffs.last.each_cons(2).map { |a, b| b - a }) until diffs.last.all?(&:zero?)
       diffs
     end
   end
