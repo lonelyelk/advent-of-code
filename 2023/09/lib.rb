@@ -11,7 +11,7 @@ module Year2023
       input.sum do |nums|
         diffs = find_diffs(nums)
         (diffs.size - 2).downto(0).inject(0) do |acc, i|
-          diffs[i].push(diffs[i].last + acc).last
+          diffs[i].last + acc
         end
       end
     end
@@ -20,7 +20,7 @@ module Year2023
       input.sum do |nums|
         diffs = find_diffs(nums)
         (diffs.size - 2).downto(0).inject(0) do |acc, i|
-          diffs[i].unshift(diffs[i].first - acc).first
+          diffs[i].first - acc
         end
       end
     end
