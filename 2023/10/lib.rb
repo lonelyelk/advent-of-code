@@ -28,18 +28,12 @@ module Year2023
     def problem2(input)
       pos = find_start_pos(input)
       pipes = replace_start(input)
-      path_left, path_right = find_loop(pipes, pos)
-      pipes = remove_non_loop(pipes, path_left.merge(path_right))
+      pipes = remove_non_loop(pipes, find_loop(pipes, pos).inject(&:merge))
       pipes.each_with_index do |line, y|
         line.each_with_index do |c, x|
           next unless c == "."
 
-          if x.zero? || y.zero? || pipes[y - 1][x] == "O" || pipes[y][x - 1] == "O"
-            pipes[y][x] = "O"
-          else
-            cut = pipes[y][...x].join.scan(/\||L-*7|F-*J/).size
-            pipes[y][x] = cut.even? ? "O" : "I"
-          end
+          pipes[y][x] = outside?(pipes, y, x) ? "O" : "I"
         end
       end
       pipes.sum { |line| line.count("I") }
@@ -64,43 +58,45 @@ module Year2023
     def replace_start(input)
       input.map.with_index do |line, y|
         line.chars.map.with_index do |c, x|
-          if c == "S"
-            dirs = DIRECTIONS.map.with_index do |dir, d|
-              y_d, x_d = [y, x].zip(dir).map(&:sum)
-              (0...input.size).include?(y_d) && (0...line.length).include?(x_d) &&
-                PIPES[input[y_d][x_d]][(d + 2) % 4]
-            end
-            PIPES.key(dirs)
-          else
-            c
-          end
+          c == "S" ? PIPES.key(possible_directions(input, [y, x])) : c
         end
       end
     end
 
+    def possible_directions(input, pos)
+      DIRECTIONS.map.with_index do |dir, d|
+        y_d, x_d = pos.zip(dir).map(&:sum)
+        (0...input.size).include?(y_d) && (0...input[y_d].size).include?(x_d) &&
+          PIPES[input[y_d][x_d]][(d + 2) % 4]
+      end
+    end
+
+    # rubocop:disable Metrics/MethodLength
     def find_loop(pipes, pos)
       next_left, next_right = next_positions(pipes, pos)
       path_left = { pos => true, next_left => true }
       path_right = { pos => true, next_right => true }
       loop do
-        next_left = next_positions(pipes, next_left).reject { |ps| path_left[ps] || path_right[ps] }.first
+        next_left = next_positions(pipes, next_left, path_left, path_right).first
         break if next_left.nil?
 
         path_left[next_left] = true
-        next_right = next_positions(pipes, next_right).reject { |ps| path_left[ps] || path_right[ps] }.first
+        next_right = next_positions(pipes, next_right, path_left, path_right).first
         break if next_right.nil?
 
         path_right[next_right] = true
       end
       [path_left, path_right]
     end
+    # rubocop:enable Metrics/MethodLength
 
-    def next_positions(pipes, pos)
+    def next_positions(pipes, pos, *paths)
       dirs = []
       DIRECTIONS.each_with_index do |dir, d|
         next unless PIPES[pipes[pos[0]][pos[1]]][d]
 
-        dirs.push(pos.zip(dir).map(&:sum))
+        next_pos = pos.zip(dir).map(&:sum)
+        dirs.push(next_pos) unless paths.any? { |pt| pt[next_pos] }
       end
       dirs
     end
@@ -111,6 +107,11 @@ module Year2023
           path[[y, x]] ? c : "."
         end
       end
+    end
+
+    def outside?(pipes, row, col)
+      [row, col].include?(0) || pipes[row - 1][col] == "O" || pipes[row][col - 1] == "O" ||
+        pipes[row][...col].join.scan(/\||L-*7|F-*J/).size.even?
     end
   end
 end
