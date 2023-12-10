@@ -19,6 +19,18 @@ module Year2023
     end
 
     def problem1(input)
+      pos = find_start_pos(input)
+      pipes = replace_start(input)
+      path_left, path_right = find_loop(pipes, pos)
+      [path_left.size, path_right.size].max - 1
+    end
+
+    def problem2(input)
+    end
+
+    private
+
+    def find_start_pos(input)
       pos = nil
       input.each_with_index do |line, y|
         line.chars.each_with_index do |c, x|
@@ -29,27 +41,8 @@ module Year2023
         end
         break unless pos.nil?
       end
-      pipes = replace_start(input)
-      next_left, next_right = next_positions(pipes, pos)
-      path_left = {pos => true, next_left => true}
-      path_right = {pos => true, next_right => true}
-      loop do
-        next_left = next_positions(pipes, next_left).reject { |ps| path_left[ps] || path_right[ps] }.first
-        break if next_left.nil?
-
-        path_left[next_left] = true
-        next_right = next_positions(pipes, next_right).reject { |ps| path_left[ps] || path_right[ps] }.first
-        break if next_right.nil?
- 
-        path_right[next_right] = true
-      end
-      [path_left.size, path_right.size].max - 1
+      pos
     end
-
-    def problem2(input)
-    end
-
-    private
 
     def replace_start(input)
       input.map.with_index do |line, y|
@@ -68,6 +61,23 @@ module Year2023
       end
     end
 
+    def find_loop(pipes, pos)
+      next_left, next_right = next_positions(pipes, pos)
+      path_left = {pos => true, next_left => true}
+      path_right = {pos => true, next_right => true}
+      loop do
+        next_left = next_positions(pipes, next_left).reject { |ps| path_left[ps] || path_right[ps] }.first
+        break if next_left.nil?
+
+        path_left[next_left] = true
+        next_right = next_positions(pipes, next_right).reject { |ps| path_left[ps] || path_right[ps] }.first
+        break if next_right.nil?
+ 
+        path_right[next_right] = true
+      end
+      [path_left, path_right]
+    end
+
     def next_positions(pipes, pos)
       dirs = []
       DIRECTIONS.each_with_index do |dir, d|
@@ -76,22 +86,6 @@ module Year2023
         dirs.push(pos.zip(dir).map(&:sum))
       end
       dirs
-    end
-
-    def connect_north(c)
-      PIPES[c][0]
-    end
-
-    def connect_east(c)
-      PIPES[c][1]
-    end
-
-    def connect_south(c)
-      PIPES[c][2]
-    end
-
-    def connect_west(c)
-      PIPES[c][3]
     end
   end
 end
