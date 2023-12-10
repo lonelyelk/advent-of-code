@@ -34,9 +34,7 @@ module Year2023
         line.each_with_index do |c, x|
           next unless c == "."
 
-          if x.zero? || y.zero?
-            pipes[y][x] = "O"
-          elsif pipes[y-1][x] == "O" || pipes[y][x-1] == "O"
+          if x.zero? || y.zero? || pipes[y - 1][x] == "O" || pipes[y][x - 1] == "O"
             pipes[y][x] = "O"
           else
             cut = pipes[y][...x].join.scan(/\||L-*7|F-*J/).size
@@ -82,8 +80,8 @@ module Year2023
 
     def find_loop(pipes, pos)
       next_left, next_right = next_positions(pipes, pos)
-      path_left = {pos => true, next_left => true}
-      path_right = {pos => true, next_right => true}
+      path_left = { pos => true, next_left => true }
+      path_right = { pos => true, next_right => true }
       loop do
         next_left = next_positions(pipes, next_left).reject { |ps| path_left[ps] || path_right[ps] }.first
         break if next_left.nil?
@@ -91,7 +89,7 @@ module Year2023
         path_left[next_left] = true
         next_right = next_positions(pipes, next_right).reject { |ps| path_left[ps] || path_right[ps] }.first
         break if next_right.nil?
- 
+
         path_right[next_right] = true
       end
       [path_left, path_right]
