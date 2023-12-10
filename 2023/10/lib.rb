@@ -26,6 +26,25 @@ module Year2023
     end
 
     def problem2(input)
+      pos = find_start_pos(input)
+      pipes = replace_start(input)
+      path_left, path_right = find_loop(pipes, pos)
+      pipes = remove_non_loop(pipes, path_left.merge(path_right))
+      pipes.each_with_index do |line, y|
+        line.each_with_index do |c, x|
+          next unless c == "."
+
+          if x.zero? || y.zero?
+            pipes[y][x] = "O"
+          elsif pipes[y-1][x] == "O" || pipes[y][x-1] == "O"
+            pipes[y][x] = "O"
+          else
+            cut = pipes[y][...x].join.scan(/\||L-*7|F-*J/).size
+            pipes[y][x] = cut.even? ? "O" : "I"
+          end
+        end
+      end
+      pipes.sum { |line| line.count("I") }
     end
 
     private
@@ -86,6 +105,14 @@ module Year2023
         dirs.push(pos.zip(dir).map(&:sum))
       end
       dirs
+    end
+
+    def remove_non_loop(pipes, path)
+      pipes.map.with_index do |line, y|
+        line.map.with_index do |c, x|
+          path[[y, x]] ? c : "."
+        end
+      end
     end
   end
 end

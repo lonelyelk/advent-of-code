@@ -39,6 +39,7 @@ L|-JF
         "LJ.LJ",
       ]
     end
+
     it "returns 4 for test input" do
       expect(problem1(processed_input)).to eq(4)
     end
@@ -49,8 +50,27 @@ L|-JF
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+    let(:another_input) do
+      [
+        "FF7FSF7F7F7F7F7F---7",
+        "L|LJ||||||||||||F--J",
+        "FL-7LJLJ||||||LJL-77",
+        "F--JF--7||LJLJ7F7FJ-",
+        "L---JF-JLJ.||-FJLJJ7",
+        "|F|F-JF---7F7-L7L|7|",
+        "|FFJF7L7F-JF7|JL---7",
+        "7-L-JL7||F7|L7F-7F7|",
+        "L.L7LFJ|||||FJL7||LJ",
+        "L7JLJL-JLJLJL--JLJ.L",
+      ]
+    end
+
+    it "returns 1 for test input" do
+      expect(problem2(processed_input)).to eq(1)
+    end
+
+    it "returns 10 for another input" do
+      expect(problem2(another_input)).to eq(10)
     end
   end
 end
