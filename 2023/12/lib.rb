@@ -17,14 +17,24 @@ module Year2023
         diff = [total_op - spaces, map.scan(/[.?]+/).map(&:size).max].min
         ranges = [0..diff, *Array.new(spaces, 1..(1 + diff)), 0..diff]
         p ranges
-        solutions = possible_op_positions(ranges, total_op)
+        # solutions = possible_op_positions(ranges, total_op)
+        solutions = ranges.each_with_index.inject([""]) do |sols, (range, index)|
+          sols.each_with_object([]) do |sol, acc|
+            next_sols = range.to_a.map do |num|
+              sol + "." * num + (index < nums.size ? "#" * nums[index] : "")
+            end
+            p next_sols
+            passing_sols = next_sols.select do |sol|
+              sol.chars.each_with_index.all? { |c, i| map[i] == "?" || c == map[i] } &&
+                sol.size <= map.size && sol.count("#") <= nums.sum
+            end
+            p passing_sols
+            acc.push(*passing_sols)
+          end
+        end.select { |sol| sol.size == map.size }
         p [map, nums, solutions.size]
-        sols = solutions.map do |sol|
-          sol.map.with_index do |op, index|
-            "." * op + (index < nums.size ? "#" * nums[index] : "")
-          end.join
-        end
-        sols.count { |sol| map.chars.each_with_index.all? { |c, i| c == "?" || c == sol[i] } }
+        p solutions
+        solutions.count
       end
     end
 
