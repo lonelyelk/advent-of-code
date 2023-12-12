@@ -16,25 +16,8 @@ module Year2023
         spaces = nums.size - 1
         diff = [total_op - spaces, map.scan(/[.?]+/).map(&:size).max].min
         ranges = [0..diff, *Array.new(spaces, 1..(1 + diff)), 0..diff]
-        p ranges
-        # solutions = possible_op_positions(ranges, total_op)
-        solutions = ranges.each_with_index.inject([""]) do |sols, (range, index)|
-          sols.each_with_object([]) do |sol, acc|
-            next_sols = range.to_a.map do |num|
-              sol + "." * num + (index < nums.size ? "#" * nums[index] : "")
-            end
-            p next_sols
-            passing_sols = next_sols.select do |sol|
-              sol.chars.each_with_index.all? { |c, i| map[i] == "?" || c == map[i] } &&
-                sol.size <= map.size && sol.count("#") <= nums.sum
-            end
-            p passing_sols
-            acc.push(*passing_sols)
-          end
-        end.select { |sol| sol.size == map.size }
-        p [map, nums, solutions.size]
-        p solutions
-        solutions.count
+        @cache = {}
+        count_solutions(map, nums, ranges)
       end
     end
 
@@ -47,12 +30,25 @@ module Year2023
 
     private
 
-    def possible_op_positions(ranges, total_op)
-      ranges.inject([[]]) do |solutions, range|
-        solutions.each_with_object([]) do |sol, acc|
-          acc.push(*range.to_a.map { |num| [*sol, num] }.reject { |s| s.sum > total_op })
+    def count_solutions(map, nums, ranges)
+      key = [map, nums]
+      return @cache[key] if @cache[key]
+
+      range = ranges.first
+      num = nums.first
+      next_sols = range.to_a.map do |n|
+        "." * n + (num.nil? ? "" : "#" * num)
+      end
+      passing_sols = next_sols.select do |sol|
+        sol.chars.each_with_index.all? { |c, i| map[i] == "?" || c == map[i] } && sol.size <= map.size
+      end
+      if ranges.size == 1
+        @cache[key] = passing_sols.count { |sol| sol.size == map.size }
+      else
+        @cache[key] = passing_sols.sum do |sol|
+          count_solutions(map[sol.size..], nums[1..], ranges[1..])
         end
-      end.select { |sol| sol.sum == total_op }
+      end
     end
   end
 end
