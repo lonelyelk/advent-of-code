@@ -34,20 +34,20 @@ module Year2023
       key = [map, nums]
       return @cache[key] if @cache[key]
 
-      range = ranges.first
-      num = nums.first
-      next_sols = range.to_a.map do |n|
-        "." * n + (num.nil? ? "" : "#" * num)
+      passing_sols = next_possible_solutions(map, nums, ranges)
+      return @cache[key] = passing_sols.count { |sol| sol.size == map.size } if nums.empty?
+
+      @cache[key] = passing_sols.sum do |sol|
+        count_solutions(map[sol.size..], nums[1..], ranges[1..])
       end
-      passing_sols = next_sols.select do |sol|
-        sol.chars.each_with_index.all? { |c, i| map[i] == "?" || c == map[i] } && sol.size <= map.size
+    end
+
+    def next_possible_solutions(map, nums, ranges)
+      next_sols = ranges.first.to_a.map do |n|
+        "." * n + (nums.empty? ? "" : "#" * nums.first)
       end
-      if ranges.size == 1
-        @cache[key] = passing_sols.count { |sol| sol.size == map.size }
-      else
-        @cache[key] = passing_sols.sum do |sol|
-          count_solutions(map[sol.size..], nums[1..], ranges[1..])
-        end
+      next_sols.select do |sol|
+        sol.chars.each_with_index.all? { |c, i| map[i] == c || map[i] == "?" }
       end
     end
   end
