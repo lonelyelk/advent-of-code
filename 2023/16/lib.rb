@@ -23,12 +23,12 @@ module Year2023
       real_max = input.size - 1
       imag_max = input.first.size - 1
       hors = (0..real_max).flat_map do |r|
-        [problem1(input, [Complex(r), 1i]), problem1(input, [Complex(r, imag_max), -1i])]
+        [[Complex(r), 1i], [Complex(r, imag_max), -1i]]
       end
       vers = (0..imag_max).flat_map do |i|
-        [problem1(input, [Complex(0, i), 1]), problem1(input, [Complex(real_max, i), -1])]
+        [[Complex(0, i), 1], [Complex(real_max, i), -1]]
       end
-      [*hors, *vers].max
+      [*hors, *vers].map { |init| problem1(input, init) }.max
     end
 
     private
@@ -52,12 +52,13 @@ module Year2023
       !pos.real.negative? && !pos.imag.negative? && pos.real < input.size && pos.imag < input.first.size
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def next_dirs(input, pos, dir)
       case input[pos.real][pos.imag]
       when "."
         [dir]
       when "|"
-        dir.imag.zero? ?  [dir] : [dir * 1i, dir * 1i**3]
+        dir.imag.zero? ? [dir] : [dir * 1i, dir * 1i**3]
       when "-"
         dir.real.zero? ? [dir] : [dir * 1i, dir * 1i**3]
       when "/"
@@ -66,5 +67,6 @@ module Year2023
         [dir.imag.zero? ? dir * 1i : -dir * 1i]
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   end
 end

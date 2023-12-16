@@ -13,20 +13,30 @@ module Year2023
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def problem2(input)
-      state = Array.new(256) { |_i| [] }
-      state = input.each_with_object(state) do |instr, s|
-        md = instr.match(/(.+)([=-])(\d*)/)
-        label = md[1]
-        box = hash(label)
-        if md[2] == "-"
-          s[box].reject! { |l| l.first == label }
-        elsif (index = s[box].index { |l| l.first == label })
-          s[box][index] = [label, md[3].to_i]
-        else
-          s[box].push([label, md[3].to_i])
-        end
+      state = input.each_with_object(init_state) do |instr, s|
+        label, box, op, lens = parse_instruction(instr)
+        index = s[box].index { |l| l.first == label } || s[box].size
+        op == "-" ? s[box].delete_at(index) : s[box][index] = lens
       end
+      focusing_power(state)
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    private
+
+    def init_state
+      Array.new(256) { |_i| [] }
+    end
+
+    def hash(str)
+      str.chars.inject(0) do |acc, c|
+        (acc + c.ord) * 17 % 256
+      end
+    end
+
+    def focusing_power(state)
       state.each_with_index.sum do |box, index|
         box.each_with_index.sum do |(_l, fl), pos|
           (index + 1) * (pos + 1) * fl
@@ -34,12 +44,11 @@ module Year2023
       end
     end
 
-    private
-
-    def hash(str)
-      str.chars.inject(0) do |acc, c|
-        (acc + c.ord) * 17 % 256
-      end
+    def parse_instruction(instr)
+      md = instr.match(/(.+)([=-])(\d*)/)
+      label = md[1]
+      box = hash(label)
+      [label, box, md[2], [label, md[3].to_i]]
     end
   end
 end
