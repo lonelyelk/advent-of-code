@@ -7,42 +7,64 @@ module Year2023
       str.split("\n")
     end
 
-    def problem1(input)
-      ray = [[0i, 1i]]
-      e = [] | ray
+    def problem1(input, init = [0i, 1i])
+      ray = { init => true }
+      e = energize({}, ray)
       until ray.empty?
-        ray = ray.each_with_object([]) do |(pos, dir), nr|
-          case input[pos.real][pos.imag]
-          when "."
-            nr.push([pos + dir, dir])
-          when "|"
-            if dir.imag.zero?
-              nr.push([pos + dir, dir])
-            else
-              [dir * 1i, dir * 1i**3].each { |d| nr.push([pos + d, d]) } 
-            end
-          when "-"
-            if dir.real.zero?
-              nr.push([pos + dir, dir])
-            else
-              [dir * 1i, dir * 1i**3].each { |d| nr.push([pos + d, d]) } 
-            end
-          when "/"
-            d = dir.real.zero? ? dir * 1i : -dir * 1i
-            nr.push([pos + d, d])
-          when "\\"
-            d = dir.imag.zero? ? dir * 1i : -dir * 1i
-            nr.push([pos + d, d])
-          end
+        ray = ray.each_with_object({}) do |((pos, dir), _), nr|
+          next_dirs(input, pos, dir).each { |d| propagate(input, e, nr, pos, d) }
         end
-        ray = ray.reject { |(pos, _)| pos.real.negative? || pos.imag.negative? || pos.real >= input.size || pos.imag >= input.first.size }
-        ray -= e
-        e |= ray
+        e = energize(e, ray)
       end
-      e.map(&:first).uniq.size
+      e.keys.map(&:first).uniq.size
     end
 
     def problem2(input)
+      real_max = input.size - 1
+      imag_max = input.first.size - 1
+      hors = (0..real_max).flat_map do |r|
+        [problem1(input, [Complex(r), 1i]), problem1(input, [Complex(r, imag_max), -1i])]
+      end
+      vers = (0..imag_max).flat_map do |i|
+        [problem1(input, [Complex(0, i), 1]), problem1(input, [Complex(real_max, i), -1])]
+      end
+      [*hors, *vers].max
+    end
+
+    private
+
+    def energize(energized, ray)
+      ray.each_with_object(energized) do |(z, _), e|
+        e[z] = true
+      end
+    end
+
+    def propagate(input, energized, ray, pos, dir)
+      next_pos = pos + dir
+      return ray unless pos_within_input?(next_pos, input)
+      return ray if energized[[next_pos, dir]]
+
+      ray[[next_pos, dir]] = true
+      ray
+    end
+
+    def pos_within_input?(pos, input)
+      !pos.real.negative? && !pos.imag.negative? && pos.real < input.size && pos.imag < input.first.size
+    end
+
+    def next_dirs(input, pos, dir)
+      case input[pos.real][pos.imag]
+      when "."
+        [dir]
+      when "|"
+        dir.imag.zero? ?  [dir] : [dir * 1i, dir * 1i**3]
+      when "-"
+        dir.real.zero? ? [dir] : [dir * 1i, dir * 1i**3]
+      when "/"
+        [dir.real.zero? ? dir * 1i : -dir * 1i]
+      when "\\"
+        [dir.imag.zero? ? dir * 1i : -dir * 1i]
+      end
     end
   end
 end

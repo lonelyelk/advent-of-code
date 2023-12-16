@@ -46,8 +46,8 @@ RSpec.describe Year2023::Day16 do
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+    it "returns 51 for test input" do
+      expect(problem2(processed_input)).to eq(51)
     end
   end
 end
