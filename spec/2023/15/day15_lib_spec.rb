@@ -10,7 +10,7 @@ RSpec.describe Year2023::Day15 do
 )
   end
   let(:processed_input) do
-    "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7"
+    %w[rn=1 cm- qp=3 cm=2 qp- pc=4 ot=9 ab=5 pc- pc=6 ot=7]
   end
 
   describe "process_input" do
