@@ -12,7 +12,7 @@ module Year2023
       path[0][0] = { [0, 0, 0, 0] => 0 }
       to_process = { [0, 0, [0, 0, 0, 0]] => 0 }
       until to_process.empty?
-        target_heat = path[input.size - 1][input.first.size - 1].values.min
+        target_heat = heat_loss(path)
         to_process = to_process.each_with_object({}) do |((y, x, len), heat), tp|
           positions_with_index(x, y, input, len).each do |(yy, xx), i|
             pos_len = 4.times.map { |ii| ii == i ? len[i] + 1 : 0 }
@@ -25,9 +25,8 @@ module Year2023
             end
           end
         end
-        # p path
       end
-      path[input.size - 1][input.first.size - 1].values.min
+      heat_loss(path)
     end
 
     def problem2(input)
@@ -54,9 +53,16 @@ module Year2023
 
     private
 
+    # rubocop:disable Naming/MethodParameterName
+    def possible_moves(x, y)
+      [[y - 1, x], [y, x + 1], [y + 1, x], [y, x - 1]]
+    end
+
     def positions_with_index(x, y, input, len)
-      [[y - 1, x], [y, x + 1], [y + 1, x], [y, x - 1]].each_with_index.map do |(yy, xx), i|
-        [[yy, xx], i] unless len[i] >= 3 || len[(i + 2) % 4].positive? || outside?(xx, yy, input)
+      possible_moves(x, y).each_with_index.map do |(yy, xx), i|
+        next if len[i] >= 3 || len[(i + 2) % 4].positive? || outside?(xx, yy, input)
+
+        [[yy, xx], i]
       end.compact
     end
 
@@ -67,11 +73,16 @@ module Year2023
     def ultra_positions_with_index(x, y, input, len)
       current_dir = len.index(&:positive?)
       no_turn = current_dir && len[current_dir] < 4
-      [[y - 1, x], [y, x + 1], [y + 1, x], [y, x - 1]].each_with_index.map do |(yy, xx), i|
-        unless (i != current_dir && no_turn) || len[i] >= 10 || len[(i + 2) % 4].positive? || outside?(xx, yy, input)
-          [[yy, xx], i]
-        end
+      possible_moves(x, y).each_with_index.map do |(yy, xx), i|
+        next if (i != current_dir && no_turn) || len[i] >= 10 || len[(i + 2) % 4].positive? || outside?(xx, yy, input)
+
+        [[yy, xx], i]
       end.compact
+    end
+    # rubocop:enable Naming/MethodParameterName
+
+    def heat_loss(path)
+      path[path.size - 1][path.first.size - 1].values.min
     end
 
     def ultra_heat_loss(path)
