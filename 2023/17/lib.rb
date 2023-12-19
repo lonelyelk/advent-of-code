@@ -7,21 +7,19 @@ module Year2023
       str.split("\n").map { |line| line.chars.map(&:to_i) }
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def problem1(input)
-      path = Array.new(input.size) { |i| Array.new(input[i].size) { |_| {} } }
-      path[0][0] = { [0, 0, 0, 0] => 0 }
-      to_process = { [0, 0, [0, 0, 0, 0]] => 0 }
+      path, to_process = init_path(input)
       until to_process.empty?
         target_heat = heat_loss(path)
         to_process = to_process.each_with_object({}) do |((y, x, len), heat), tp|
-          positions_with_index(x, y, input, len).each do |(yy, xx), i|
-            pos_len = 4.times.map { |ii| ii == i ? len[i] + 1 : 0 }
+          positions_with_index(x, y, len, input).each do |(yy, xx), i|
             pos_heat = heat + input[yy][xx]
             next if target_heat && pos_heat > target_heat
 
+            pos_len = next_position_lengths(len, i)
             if path[yy][xx][pos_len].nil? || path[yy][xx][pos_len] > pos_heat
-              path[yy][xx][pos_len] = pos_heat
-              tp[[yy, xx, pos_len]] = pos_heat
+              path[yy][xx][pos_len] = tp[[yy, xx, pos_len]] = pos_heat
             end
           end
         end
@@ -30,35 +28,45 @@ module Year2023
     end
 
     def problem2(input)
-      path = Array.new(input.size) { |i| Array.new(input[i].size) { |_| {} } }
-      path[0][0] = { [0, 0, 0, 0] => 0 }
-      to_process = { [0, 0, [0, 0, 0, 0]] => 0 }
+      path, to_process = init_path(input)
       until to_process.empty?
         target_heat = ultra_heat_loss(path)
         to_process = to_process.each_with_object({}) do |((y, x, len), heat), tp|
-          ultra_positions_with_index(x, y, input, len).each do |(yy, xx), i|
-            pos_len = 4.times.map { |ii| ii == i ? len[i] + 1 : 0 }
+          ultra_positions_with_index(x, y, len, input).each do |(yy, xx), i|
             pos_heat = heat + input[yy][xx]
             next if target_heat && pos_heat > target_heat
 
+            pos_len = next_position_lengths(len, i)
             if path[yy][xx][pos_len].nil? || path[yy][xx][pos_len] > pos_heat
-              path[yy][xx][pos_len] = pos_heat
-              tp[[yy, xx, pos_len]] = pos_heat
+              path[yy][xx][pos_len] = tp[[yy, xx, pos_len]] = pos_heat
             end
           end
         end
       end
       ultra_heat_loss(path)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     private
+
+    def init_path(input)
+      lengths = [0, 0, 0, 0]
+      path = Array.new(input.size) { |i| Array.new(input[i].size) { |_| {} } }
+      path[0][0] = { lengths => 0 }
+      to_process = { [0, 0, lengths] => 0 }
+      [path, to_process]
+    end
+
+    def next_position_lengths(lengths, direction_index)
+      4.times.map { |i| i == direction_index ? lengths[direction_index] + 1 : 0 }
+    end
 
     # rubocop:disable Naming/MethodParameterName
     def possible_moves(x, y)
       [[y - 1, x], [y, x + 1], [y + 1, x], [y, x - 1]]
     end
 
-    def positions_with_index(x, y, input, len)
+    def positions_with_index(x, y, len, input)
       possible_moves(x, y).each_with_index.map do |(yy, xx), i|
         next if len[i] >= 3 || len[(i + 2) % 4].positive? || outside?(xx, yy, input)
 
@@ -70,11 +78,13 @@ module Year2023
       y.negative? || x.negative? || y >= input.size || x >= input.first.size
     end
 
-    def ultra_positions_with_index(x, y, input, len)
-      current_dir = len.index(&:positive?)
-      no_turn = current_dir && len[current_dir] < 4
+    def ultra_positions_with_index(x, y, len, input)
       possible_moves(x, y).each_with_index.map do |(yy, xx), i|
-        next if (i != current_dir && no_turn) || len[i] >= 10 || len[(i + 2) % 4].positive? || outside?(xx, yy, input)
+        if (len[i].zero? && (1...4).include?(len.max)) ||
+           len[i] >= 10 || len[(i + 2) % 4].positive? ||
+           outside?(xx, yy, input)
+          next
+        end
 
         [[yy, xx], i]
       end.compact
