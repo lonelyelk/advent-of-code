@@ -42,8 +42,8 @@ hdj{m>838:A,pv}
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(process_input(input))).to eq(nil)
+    it "returns 167409079868000 for test input" do
+      expect(problem2(process_input(input))).to eq(167409079868000)
     end
   end
 end

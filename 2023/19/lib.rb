@@ -23,10 +23,8 @@ module Year2023
 
     def problem1(input)
       input[:ratings].sum do |r|
-        op = process_step(input[:workflows], "in", r)
-        until %w[A R].include?(op)
-          op = process_step(input[:workflows], op, r)
-        end
+        op = "in"
+        op = process_step(input[:workflows], op, r) until %w[A R].include?(op)
         op == "A" ? r.sum : 0
       end
     end
