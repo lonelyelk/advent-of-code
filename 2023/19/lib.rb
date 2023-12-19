@@ -30,6 +30,49 @@ module Year2023
     end
 
     def problem2(input)
+      flows = [["in", [], []]]
+      until flows.all? { |f| %w[A R].include?(f.first) }
+        flows = flows.each_with_object([]) do |(op, yes, no), nf|
+          if %w[A R].include?(op)
+            nf.push([op, yes, no])
+          else
+            input[:workflows][op].each do |wf|
+              if wf.size == 1
+                nf.push([wf.last, yes, no])
+              else
+                nf.push([wf.last, [*yes, wf.first], no])
+                no = [*no, wf.first]
+              end
+            end
+          end
+        end
+      end
+      flows = flows.select { |f| f.first == "A" }.map do |_, yes, no|
+        y = no.map do |s|
+          md = s.match(/(\w)([<>])(\d+)/)
+          case md[2]
+          when "<"
+            "#{md[1]}>#{md[3].to_i - 1}"
+          when ">"
+            "#{md[1]}<#{md[3].to_i + 1}"
+          end
+        end
+        [*yes, *y]
+      end
+      flows = flows.map do |rules|
+        rules.each_with_object({"x" => [1, 4000], "m" => [1, 4000], "a" => [1,4000], "s" => [1, 4000]}) do |rule, ranges|
+          md = rule.match(/(\w)([<>])(\d+)/)
+          case md[2]
+          when "<"
+            ranges[md[1]][1] = [md[3].to_i - 1, ranges[md[1]][1]].min
+          when ">"
+            ranges[md[1]][0] = [md[3].to_i + 1, ranges[md[1]][0]].max
+          end
+        end
+      end
+      flows.sum do |ranges|
+        ranges.values.map { |min, max| max - min + 1 }.inject(&:*)
+      end
     end
 
     def process_step(workflows, operation, rating)
