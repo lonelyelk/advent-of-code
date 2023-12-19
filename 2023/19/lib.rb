@@ -60,7 +60,7 @@ module Year2023
         [*yes, *y]
       end
       flows = flows.map do |rules|
-        rules.each_with_object({"x" => [1, 4000], "m" => [1, 4000], "a" => [1,4000], "s" => [1, 4000]}) do |rule, ranges|
+        rules.each_with_object(default_ranges) do |rule, ranges|
           md = rule.match(/(\w)([<>])(\d+)/)
           case md[2]
           when "<"
@@ -75,11 +75,17 @@ module Year2023
       end
     end
 
+    private
+
     def process_step(workflows, operation, rating)
       workflows[operation].each do |wf|
         return wf.first if wf.size == 1
         return wf[1] if rating.b.eval(wf[0])
       end
+    end
+
+    def default_ranges
+      { "x" => [1, 4000], "m" => [1, 4000], "a" => [1, 4000], "s" => [1, 4000] }
     end
   end
 end

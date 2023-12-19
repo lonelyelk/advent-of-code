@@ -54,8 +54,8 @@ U 2 (#7a21e3)
   end
 
   describe "problem2" do
-    it "returns 952408144115 for test input" do
-      expect(problem2(processed_input)).to eq(952408144115)
+    it "returns 952_408_144_115 for test input" do
+      expect(problem2(processed_input)).to eq(952_408_144_115)
     end
   end
 end

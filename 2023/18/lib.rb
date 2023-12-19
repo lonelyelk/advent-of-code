@@ -29,9 +29,11 @@ module Year2023
           trench[pos] = true
         end
       end
-      xmin, xmax, ymin, ymax = trench.keys.transpose.map(&:minmax).flatten
+      xmin, xmax, ymin, = trench.keys.transpose.map(&:minmax).flatten
       yseed = ymin + 1
-      xseed = xmin.upto(xmax).detect { |x| !trench[[x, yseed]] && trench[[x, ymin]] && trench[[x - 1, yseed]] && trench [[x - 1, ymin]] }
+      xseed = xmin.upto(xmax).detect do |x|
+        !trench[[x, yseed]] && trench[[x, ymin]] && trench[[x - 1, yseed]] && trench[[x - 1, ymin]]
+      end
       seeds = { [xseed, yseed] => true }
       inside = {}
       until seeds.empty?

@@ -29,21 +29,15 @@ hdj{m>838:A,pv}
     nil
   end
 
-  xdescribe "process_input" do
-    it "consumes multiline string and returns processed input" do
-      expect(process_input(input)).to eq(processed_input)
-    end
-  end
-
   describe "problem1" do
-    it "returns 19114 for test input" do
-      expect(problem1(process_input(input))).to eq(19114)
+    it "returns 19_114 for test input" do
+      expect(problem1(process_input(input))).to eq(19_114)
     end
   end
 
   describe "problem2" do
-    it "returns 167409079868000 for test input" do
-      expect(problem2(process_input(input))).to eq(167409079868000)
+    it "returns 167_409_079_868_000 for test input" do
+      expect(problem2(process_input(input))).to eq(167_409_079_868_000)
     end
   end
 end

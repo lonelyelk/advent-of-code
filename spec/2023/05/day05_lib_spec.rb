@@ -45,12 +45,6 @@ humidity-to-location map:
     nil
   end
 
-  xdescribe "process_input" do
-    it "consumes multiline string and returns processed input" do
-      expect(process_input(input)).to eq(processed_input)
-    end
-  end
-
   describe "problem1" do
     it "returns 35 for test input" do
       expect(problem1(process_input(input))).to eq(35)
