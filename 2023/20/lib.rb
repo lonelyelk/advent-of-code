@@ -75,7 +75,7 @@ module Year2023
       reset(input) # almost forgot this
       counts = [0, 0]
       1000.times do
-        run_button(input) do |_, pulse, _|
+        press_button(input) do |_, pulse, _|
           counts[pulse == :low ? 0 : 1] += 1
         end
       end
@@ -87,7 +87,7 @@ module Year2023
       count, count_till_low = 0, MODS_OF_INTEREST.to_h { |mod| [mod, 0] }
       while count_till_low.values.any?(&:zero?)
         count += 1
-        run_button(input) do |_, pulse, out|
+        press_button(input) do |_, pulse, out|
           count_till_low[out] = count if MODS_OF_INTEREST.include?(out) && pulse == :low
         end
       end
@@ -119,12 +119,12 @@ module Year2023
       schema.each_value(&:reset)
     end
 
-    def run_button(schema)
+    def press_button(schema)
       queue = [["button", :low, "broadcaster"]]
       until queue.empty?
-        op = queue.shift
-        yield(op)
-        queue.push(*schema[op[2]].receive(op[1], op[0])) if schema[op[2]]
+        src, pulse, out = queue.shift
+        yield(src, pulse, out)
+        queue.push(*schema[out].receive(pulse, src)) if schema[out]
       end
     end
   end
