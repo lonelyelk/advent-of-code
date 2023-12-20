@@ -9,6 +9,7 @@ module Year2023
       def initialize(name:, outputs:)
         @name = name[1..]
         @outputs = outputs
+        reset
       end
 
       def init_inputs(_inputs); end
@@ -17,11 +18,6 @@ module Year2023
     end
 
     class FlipFlop < Mod
-      def initialize(name:, outputs:)
-        @state = :off
-        super
-      end
-
       def reset
         @state = :off
       end
@@ -40,7 +36,7 @@ module Year2023
       end
 
       def reset
-        @states = @states.keys.to_h { |n| [n, :low] }
+        init_inputs(@state.keys) if @state
       end
 
       def receive(pulse, input)
