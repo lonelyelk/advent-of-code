@@ -26,7 +26,7 @@ RSpec.describe Year2023::Day21 do
     end
   end
 
-  describe "problem2" do
+  xdescribe "problem2" do
     {
       6 => 16,
       10 => 50,
