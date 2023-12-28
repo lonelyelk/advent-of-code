@@ -28,13 +28,81 @@ module Year2023
     end
 
     def problem2(input, steps = 26_501_365)
+      # sizes are the same in all directions
+      # full_gardens, rem_gardens = (steps - input[:start].real).divmod(input[:r_size])
+      p (steps - input[:start].imag).divmod(input[:i_size])
+      set_boundaries(input)
+      states = {
+        mc: input[:start],
+        tl: Complex(0, 0),
+        tc: Complex(input[:r_size] / 2, 0),
+        tr: Complex(input[:r_size] - 1, 0),
+        mr: Complex(input[:r_size] - 1, input[:i_size] / 2),
+        br: Complex(input[:r_size] - 1, input[:i_size] - 1),
+        bc: Complex(input[:r_size] / 2, input[:i_size] - 1),
+        bl: Complex(0, input[:i_size] - 1),
+        ml: Complex(0, input[:i_size] / 2),
+      }.each_with_object({}) do |(key, start), pos_num|
+        cache = {}
+        positions = { start => true }
+        # p [input[:r_size], input[:i_size]]
+        # p input[:start]
+        pos_num[key] = { final: {}, flow: {} }
+        step = 0
+        loop do
+          cache[step] = positions
+          pos_num[key][:flow][step] = positions.size
+          positions = positions.each_with_object({}) do |(pos, _), np|
+            STEPS.each do |diff|
+              n = pos + diff
+              np[n] = true unless input[:garden][n]
+            end
+          end
+          if cache[step - 1] == positions
+            pos_num[key][:final][(step - 1) % 2] = positions.size
+            pos_num[key][:final][step % 2] = cache[step].size
+            pos_num[key][:final][:max] = step
+            break
+          end
+          step += 1
+        end
+        puts key
+      end
+      # p states
+      count = states[:mc][:final][steps % 2]
+      steps -= input[:start].real + 1
+      angle_count = 1
+      while steps > 0
+        %i[tc mr bc ml].each do |key|
+          if states[key][:final][:max] < steps
+            count += states[key][:final][steps % 2]
+          else
+            count += states[key][:flow][steps]
+          end
+        end
+        steps -= input[:start].real + 1
+        %i[tl tr br bl].each do |key|
+          if states[key][:final][:max] < steps
+            count += states[key][:final][steps % 2] * angle_count
+          else
+            count += states[key][:flow][steps] * angle_count
+          end
+        end
+        angle_count += 1
+        steps -= input[:start].real
+        p steps
+      end
+      count
+    end
+
+    def problem3(input, steps = 26_501_365)
+      return
       cache = {}
-      cached = {}
-      true_cache = {}
+      printed = {}
       init = init_garden
       init[0i] = { input[:start] => true }
       steps.times.inject(init) do |positions, step|
-        p [step, positions.size, cached.size, cache.size, true_cache.size]
+        # p [step, positions.size, cached.size, cache.size, true_cache.size]
         # (-input[:r_size]..(input[:r_size]*2 - 2)).each do |r|
         #   (-input[:i_size]..(input[:i_size]*2 - 2)).each do |i|
         #     grid_r, pos_r = r.divmod(input[:r_size])
@@ -57,55 +125,47 @@ module Year2023
           # if cache[inner_positions] && cache[cache[inner_positions]] != cache[inner_positions]
           # end
           key = cache_key(positions, grid)
-          # if true_cache[key]
-          #   np[grid] = true_cache[key]
-          #   cached[grid] = true
-          if cache[key] # && cache[cache[key]] == inner_positions
-            # true_cache[key] = np[grid] = cache[key]
-            np[grid] = cache[key][:inner]
-            cached[grid] = true
-            cache[key][:outer].each do |g, cached_pos|
-              next if cached[grid + g]
-              cached_pos.each { |pos, _| np[grid + g][pos] = true }
-            end
-          else
-            outer = init_garden
-            inner_positions.each do |pos, _|
-              STEPS.each do |diff|
-                z = pos + diff
-                grid_r, pos_r = z.real.divmod(input[:r_size])
-                grid_i, pos_i = z.imag.divmod(input[:i_size])
-                n_grid = grid + Complex(grid_r, grid_i)
-                n_pos = Complex(pos_r, pos_i)
-                next if input[:garden][n_pos] || cached[n_grid]
+          outer = init_garden
+          inner_positions.each do |pos, _|
+            STEPS.each do |diff|
+              z = pos + diff
+              grid_r, pos_r = z.real.divmod(input[:r_size])
+              grid_i, pos_i = z.imag.divmod(input[:i_size])
+              n_grid = grid + Complex(grid_r, grid_i)
+              n_pos = Complex(pos_r, pos_i)
+              next if input[:garden][n_pos]
 
-                np[n_grid][n_pos] = true
-                outer[n_grid - grid][n_pos] = true unless grid == n_grid
-              end
+              np[n_grid][n_pos] = true
+              outer[n_grid - grid][n_pos] = true unless grid == n_grid
             end
-            # if cache[key] && cache[key] != np[grid]
-            #   (0...input[:r_size]).each do |r|
-            #     (0...input[:i_size]).each do |i|
-            #       pos = Complex(r, i)
-            #       if input[:garden][pos]
-            #         print "#"
-            #       elsif np[grid][pos] && !cache[inner_positions][pos]
-            #         print "N"
-            #       elsif !np[grid][pos] && cache[inner_positions][pos]
-            #         print "O"
-            #       elsif np[grid][pos]
-            #         print "="
-            #       else
-            #         print "."
-            #       end
-            #     end
-            #     puts "  = #{grid}"
-            #   end
-            #   puts
-            #   sleep 1
-            # end
-            cache[key] = {inner: np[grid], outer: }
           end
+          # if cache[key] && cache[key] != np[grid]
+          #   (0...input[:r_size]).each do |r|
+          #     (0...input[:i_size]).each do |i|
+          #       pos = Complex(r, i)
+          #       if input[:garden][pos]
+          #         print "#"
+          #       elsif np[grid][pos] && !cache[inner_positions][pos]
+          #         print "N"
+          #       elsif !np[grid][pos] && cache[inner_positions][pos]
+          #         print "O"
+          #       elsif np[grid][pos]
+          #         print "="
+          #       else
+          #         print "."
+          #       end
+          #     end
+          #     puts "  = #{grid}"
+          #   end
+          #   puts
+          #   sleep 1
+          # end
+          if !printed[grid] && cache[np[grid]] == key
+            p [grid, step - 1, key.size]
+            p [grid, step, np[grid].size]
+            printed[grid] = true
+          end
+          cache[key] = np[grid]
         end
       end.values.sum { |v| v.size }
     end
@@ -122,8 +182,8 @@ module Year2023
     end
 
     def cache_key(garden, grid)
-      # garden[grid]
-      [garden[grid], *STEPS.map { |d| garden.key?(grid + d) && garden[grid + d] }]
+      garden[grid]
+      # [garden[grid], *STEPS.map { |d| garden.key?(grid + d) && garden[grid + d] }]
     end
   end
 end
