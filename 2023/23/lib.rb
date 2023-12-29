@@ -39,47 +39,38 @@ module Year2023
     end
 
     def problem2(input)
-      start = Complex(0, 1)
-      finish = Complex(input.size - 1, input.last.size - 2)
-      path = { current: start, walk: { start => true } }
-      paths = { path => true }
-      max_length = 0
-      puts
-      until paths.empty?
-        puts "#{max_length} / #{paths.size}"
-        print "\e[1A"
-        paths = paths.each_with_object({}) do |(pth, _), next_paths|
-          STEPS.each do |_, diff|
-            pos = pth[:current] + diff
-            if pos == finish
-              max_length = [max_length, pth[:walk].size].max
-              next
+      graph = build_graph(input)
+      paths = [{ nodes: { "START" => true }, current: "START", length: 0 }]
+      max_finish = 0
+      max_path = {}
+      until paths.all? { |pth| pth[:current] == "FINISH" }
+        paths = paths.flat_map do |pth|
+          if pth[:current] == "FINISH"
+            if max_finish <= pth[:length]
+              max_finish = pth[:length]
+              pth
             end
-            next if pth[:walk][pos]
-            next if forest(input, pos) == "#"
-            # next unless solvable?(input, pth[:walk], pos, finish)
-
-            npth = { current: pos, walk: pth[:walk].merge(pos => true) }
-            next_paths[npth] = true
+          else
+            # next_paths(graph, pth)
+            next_paths(graph, pth).select do |npth|
+              if max_path[npth.except(:length)].nil? || max_path[npth.except(:length)] <= npth[:length]
+                max_path[npth.except(:length)] = npth[:length]
+              end
+            end
           end
-        end
-        # input.size.times do |r|
-        #   input[r].size.times do |i|
-        #     if paths.any? { |pth| pth[:walk][Complex(r, i)] }
-        #       print "O"
-        #     else
-        #       print input[r][i]
-        #     end
-        #   end
-        #   puts
-        # end
-        # puts "\e[#{input.size + 1}A"
-        # sleep 0.1
+        end.compact
+        # p paths.size
       end
-      max_length
+      paths.map { |pth| pth[:length] }.max
     end
 
     private
+
+    def next_paths(graph, path)
+      graph[path[:current]].except(*path[:nodes].keys).map do |node, dist|
+        { nodes: path[:nodes].merge(node => true), current: node, length: path[:length] + dist }
+      end
+    end
 
     def forest(input, position)
       r = position.real
@@ -89,23 +80,48 @@ module Year2023
       input[r][i]
     end
 
-    def solvable?(input, walk, position, finish)
-      positions = [position]
-      flood = { position => true }
-      until positions.empty?
-        positions = positions.each_with_object([]) do |pos, next_positions|
-          STEPS.each do |_, diff|
-            np = pos + diff
-            next if flood[np] || walk[np]
-            return true if np == finish
-            next if forest(input, np) == "#"
-
-            flood[np] = true
-            next_positions.push(np)
+    def build_graph(input)
+      start = 1i
+      finish = Complex(input.size - 1, input.last.size - 2)
+      paths = [[start]]
+      current = { start => true }
+      next_label = "A"
+      labels = {start => "START", finish => "FINISH"}
+      until current.all? { |pos, _| pos == finish }
+        current = {}
+        paths = paths.each_with_object([]) do |path, next_paths|
+          curr = path.last
+          next_positions = STEPS.map do |_, diff|
+            np = curr + diff
+            next if forest(input, np) == "#" || path.include?(np)
+            np
+          end.compact
+          if next_positions.size == 1
+            next_paths.push([*path, next_positions.first])
+            current[next_positions.first] = true
+          elsif next_positions.size > 1
+            next_paths.push(path)
+            unless labels[curr]
+              labels[curr] = next_label
+              next_label = next_label.succ
+              next_positions.each do |pos|
+                current[pos] = true
+                next_paths.push([curr, pos])
+              end
+            end
+          else
+            next_paths.push(path)
           end
         end
       end
-      return false
+      paths.each_with_object({}) do |path, g|
+        from_node = path.first
+        to_node = path.last
+        g[labels[from_node]] ||= {}
+        g[labels[from_node]][labels[to_node]] = path.size - 1
+        g[labels[to_node]] ||= {}
+        g[labels[to_node]][labels[from_node]] = path.size - 1
+      end
     end
   end
 end
