@@ -23,13 +23,13 @@ module Year2023
       _, supported_by, supports = settle(input.sort_by { |(_, _, z)| z.first })
       supported_by.sum do |brick, supported_bricks|
         des_bricks = { brick => true }
-        falling_bricks = supported_bricks.reject { |sb, _| supports[sb].except(*des_bricks.keys).size > 0 }
-        while falling_bricks.size > 0
+        falling_bricks = supported_bricks.reject { |sb, _| supports[sb].any? { |b, _| !des_bricks[b] } }
+        until falling_bricks.empty?
           des_bricks.merge!(falling_bricks)
           falling_bricks = falling_bricks.each_with_object({}) do |(falling_brick, _), chain_falling|
             next if supported_by[falling_brick].nil?
 
-            really_falling = supported_by[falling_brick].reject { |sb, _| supports[sb].except(*des_bricks.keys).size > 0 }
+            really_falling = supported_by[falling_brick].reject { |sb, _| supports[sb].any? { |b, _| !des_bricks[b] } }
             chain_falling.merge!(really_falling)
           end
         end
