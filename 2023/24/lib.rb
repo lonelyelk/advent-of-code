@@ -28,48 +28,17 @@ module Year2023
     end
 
     def problem2(input)
-      sx = [nil, nil]
-      svx = [nil, nil]
-      ranges = [[[sx, svx]], [[sx, svx]], [[sx, svx]]]
-      count = 0
-      input.each do |(c, v)|
-        count += 1
-        3.times do |index|
-          cc = c[index]
-          vv = v[index]
-          ranges[index] = ranges[index].each_with_object([]) do |(cr, vcr), r|
-            # sx < x && svx > vx
-            ncr = set_range_max(cr, cc - 1)
-            nvcr = set_range_min(vcr, vv + 1)
-            r.push([ncr, nvcr]) if ncr && nvcr
-
-            # sx > x && svx < vx
-            ncr = set_range_min(cr, cc + 1)
-            nvcr = set_range_max(vcr, vv - 1)
-            r.push([ncr, nvcr]) if ncr && nvcr
-          end
-        end
-        puts "#{count} / #{input.size} : #{ranges.map(&:size)}"
+      c0, v0 = input[0]
+      a = []
+      b = []
+      (1..3).each do |i|
+        ci, vi = input[i]
+        a.push([v0[1] - vi[1], vi[0] - v0[0], 0, ci[1] - c0[1], c0[0] - ci[0], 0])
+        a.push([v0[2] - vi[2], 0, vi[0] - v0[0], ci[2] - c0[2], 0, c0[0] - ci[0]])
+        b.push(c0[0] * v0[1] - c0[1] * v0[0] - ci[0] * vi[1] + ci[1] * vi[0])
+        b.push(c0[0] * v0[2] - c0[2] * v0[0] - ci[0] * vi[2] + ci[2] * vi[0])
       end
-      p ranges
-    end
-
-    private
-
-    def set_range_max(range, max)
-      if range[1] && range[1] <= max
-        range
-      elsif range[0].nil? || range[0] < max
-        [range[0], max]
-      end
-    end
-
-    def set_range_min(range, min)
-      if range[0] && range[0] >= min
-        range
-      elsif range[1].nil? || range[1] > min
-        [min, range[1]]
-      end
+      (Matrix[*a].inverse * Matrix.columns([b])).to_a.flatten[..2].inject(&:+).to_i
     end
   end
 end
