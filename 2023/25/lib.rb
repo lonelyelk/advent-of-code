@@ -29,7 +29,6 @@ module Year2023
       v.count(&:positive?) * v.count(&:negative?)
     end
 
-    def problem2(input)
-    end
+    def problem2(input); end
   end
 end

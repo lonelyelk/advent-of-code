@@ -86,7 +86,7 @@ module Year2023
       paths = [[start]]
       current = { start => true }
       next_label = "A"
-      labels = {start => "START", finish => "FINISH"}
+      labels = { start => "START", finish => "FINISH" }
       until current.all? { |pos, _| pos == finish }
         current = {}
         paths = paths.each_with_object([]) do |path, next_paths|
@@ -94,6 +94,7 @@ module Year2023
           next_positions = STEPS.map do |_, diff|
             np = curr + diff
             next if forest(input, np) == "#" || path.include?(np)
+
             np
           end.compact
           if next_positions.size == 1

@@ -7,7 +7,7 @@ module Year2023
       str.split("\n").map { |line| line.split("@").map { |v| v.split(",").map(&:to_i) } }
     end
 
-    def problem1(input, range = (200000000000000..400000000000000))
+    def problem1(input, range = (200_000_000_000_000..400_000_000_000_000))
       (0...(input.size - 1)).sum do |l1|
         ((l1 + 1)...(input.size)).count do |l2|
           c1, v1 = input[l1]
@@ -19,8 +19,7 @@ module Year2023
             t = Rational(((c1[1] - c2[1]) * v2[0] - (c1[0] - c2[0]) * v2[1]), denom)
             u = Rational(((c1[1] - c2[1]) * v1[0] - (c1[0] - c2[0]) * v1[1]), denom)
             pc1 = [c1[0] + t * v1[0], c1[1] + t * v1[1]]
-            # p [pc1, pc2, input[l1], input[l2], range.include?(pc1[0]), range.include?(pc1[1]), u.positive?, t.positive?]
-              range.include?(pc1[0]) && range.include?(pc1[1]) &&
+            range.include?(pc1[0]) && range.include?(pc1[1]) &&
               u.positive? && t.positive?
           end
         end
