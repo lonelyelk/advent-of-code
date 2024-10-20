@@ -51,7 +51,7 @@ RSpec.describe Day23 do
       end
 
       it "calculates costs of possible moves for almost all out state correctly" do
-        expect(possible_moves(state1).map { |st| st[3] }).to match_array([30, 40])
+        expect(possible_moves(state1).map { |st| st[3] }).to contain_exactly(30, 40)
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe Day23 do
       end
 
       it "calculates cost of return" do
-        expect(possible_moves(state1).map { |st| st[3] }).to match_array([30, 2, 400])
+        expect(possible_moves(state1).map { |st| st[3] }).to contain_exactly(30, 2, 400)
       end
 
       it "detects one amphipod that can return" do
@@ -86,7 +86,7 @@ RSpec.describe Day23 do
       end
 
       it "calculates the cost of return for single amphipod" do
-        expect(possible_moves(state2).map { |st| st[3] }).to match_array([300])
+        expect(possible_moves(state2).map { |st| st[3] }).to contain_exactly(300)
       end
     end
   end

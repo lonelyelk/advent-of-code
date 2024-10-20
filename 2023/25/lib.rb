@@ -20,7 +20,7 @@ module Year2023
       nodes = input.keys.each_with_index.to_h
       laplacian = Matrix.diagonal(*nodes.map { |node, _| input[node].size })
       nodes.each do |node, index|
-        input[node].each do |adj_node, _|
+        input[node].each_key do |adj_node|
           laplacian[index, nodes[adj_node]] = -1
         end
       end

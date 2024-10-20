@@ -55,7 +55,7 @@ frs: qnr lhk lsr
 
   describe "problem2" do
     it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+      expect(problem2(processed_input)).to be_nil
     end
   end
 end

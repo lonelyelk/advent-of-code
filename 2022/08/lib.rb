@@ -9,7 +9,7 @@ module Year2022
 
     def problem1(input)
       visible = inside_in_lines(input).each_with_object({}) do |(line, x, key), acc|
-        acc[key] ||= (line[...x].max < line[x] || line[(x + 1)..].max < line[x])
+        acc[key] ||= line[...x].max < line[x] || line[(x + 1)..].max < line[x]
       end
       visible.count { |_k, v| v } + perimeter(input)
     end

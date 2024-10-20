@@ -29,7 +29,7 @@ module Day25
       next_state = { east: {}, south: {} }
       moved = 0
       directions.each_with_index do |dir, i|
-        state[dir].each do |coord, _|
+        state[dir].each_key do |coord|
           new_coord = coord.dup
           new_coord[i] += 1
           new_coord[i] = 0 if new_coord[i] >= frame[i]

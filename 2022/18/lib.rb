@@ -24,7 +24,7 @@ module Year2022
 
     def problem1(input)
       total_sides = input.size * 6
-      POCKET_TRANS.each do |_, trans|
+      POCKET_TRANS.each_value do |trans|
         input.map(&trans[:fwd]).sort.each_cons(2) do |(x1, y1, z1), (x2, y2, z2)|
           total_sides -= 2 if x1 == x2 && y1 == y2 && z1 == z2 - 1
         end

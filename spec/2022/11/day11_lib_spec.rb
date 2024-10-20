@@ -76,7 +76,7 @@ Monkey 3:
     end
   end
 
-  xdescribe "problem2" do
+  describe "problem2", skip: "too slow to run every time" do
     it "returns 2_713_310_158 for test input" do
       expect(problem2(processed_input)).to eq(2_713_310_158)
     end

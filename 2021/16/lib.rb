@@ -21,8 +21,8 @@ module Day16
   OPERATORS = {
     0 => ->(values) { values.inject(&:+) },
     1 => ->(values) { values.inject(1) { |acc, v| acc * v } },
-    2 => ->(values) { values.min },
-    3 => ->(values) { values.max },
+    2 => lambda(&:min),
+    3 => lambda(&:max),
     5 => ->(values) { values.inject(&:>) ? 1 : 0 },
     6 => ->(values) { values.inject(&:<) ? 1 : 0 },
     7 => ->(values) { values.inject(&:==) ? 1 : 0 },

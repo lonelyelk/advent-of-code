@@ -26,7 +26,7 @@ RSpec.describe Year2023::Day21 do
     end
   end
 
-  xdescribe "problem2" do
+  describe "problem2", skip: "too slow to run every time" do
     {
       6 => 16,
       10 => 50,

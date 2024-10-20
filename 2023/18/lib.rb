@@ -64,7 +64,7 @@ module Year2023
     def flood_fill(seeds, trench)
       inside = {}
       until seeds.empty?
-        seeds.each { |pt, _| inside[pt] = true }
+        seeds.each_key { |pt| inside[pt] = true }
         seeds = seeds.each_with_object({}) do |(pos, _), s|
           flood(pos).each do |pt|
             s[pt] = true unless trench[pt] || inside[pt]
