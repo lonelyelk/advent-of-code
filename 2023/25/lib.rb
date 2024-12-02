@@ -2,6 +2,7 @@
 
 # https://adventofcode.com/2023/day/25
 module Year2023
+  # rubocop:disable Metrics/AbcSize
   module Day25
     def process_input(str)
       str.split("\n").each_with_object(Hash.new { |h, k| h[k] = {} }) do |line, graph|
@@ -31,4 +32,5 @@ module Year2023
 
     def problem2(input); end
   end
+  # rubocop:enable Metrics/AbcSize
 end

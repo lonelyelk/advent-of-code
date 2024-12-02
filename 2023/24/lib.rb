@@ -2,6 +2,7 @@
 
 # https://adventofcode.com/2023/day/24
 module Year2023
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   module Day24
     def process_input(str)
       str.split("\n").map { |line| line.split("@").map { |v| v.split(",").map(&:to_i) } }
@@ -40,4 +41,5 @@ module Year2023
       (Matrix[*a].inverse * Matrix.columns([b])).to_a.flatten[..2].inject(&:+).to_i
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end

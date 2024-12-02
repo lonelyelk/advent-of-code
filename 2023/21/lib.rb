@@ -2,6 +2,7 @@
 
 # https://adventofcode.com/2023/day/21
 module Year2023
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   module Day21
     STEPS = [Complex(0, 1), Complex(0, -1), Complex(1, 0), Complex(-1, 0)].freeze
 
@@ -16,7 +17,7 @@ module Year2023
     end
 
     def problem1(input, steps = 64)
-      set_boundaries(input)
+      boundaries!(input)
       steps.times.inject({ input[:start] => true }) do |positions, _|
         positions.each_with_object({}) do |(pos, _), np|
           STEPS.each do |diff|
@@ -30,7 +31,7 @@ module Year2023
     # This only works for "production" data, as it has nice straight paths ensuring somewhat
     # symmetrical reach
     def problem2(input, steps = 26_501_365)
-      set_boundaries(input)
+      boundaries!(input)
       states = {
         mc: input[:start],
         tl: Complex(0, 0),
@@ -89,7 +90,7 @@ module Year2023
 
     private
 
-    def set_boundaries(garden)
+    def boundaries!(garden)
       (-1..garden[:r_size]).each do |r|
         garden[:garden][Complex(r, -1)] = garden[:garden][Complex(r, garden[:i_size])] = true
       end
@@ -102,4 +103,5 @@ module Year2023
       Hash.new { |h, k| h[k] = {} }
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 end
