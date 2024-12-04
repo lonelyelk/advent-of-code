@@ -16,14 +16,23 @@ module Year2024
     end
 
     def problem2(input)
+      1.upto(input.size - 2).sum do |i|
+        1.upto(input[i].size - 2).sum do |j|
+          x_mas?(input[i - 1, 3].map { |l| l[j - 1, 3] }) ? 1 : 0
+        end
+      end
     end
 
     def count_xmas_and_backward(lines)
+      count_and_backward(lines, "XMAS")
+    end
+
+    def count_and_backward(lines, expr)
       right = lines.sum do |line|
-        line.scan("XMAS").size
+        line.scan(expr).size
       end
       left = lines.map(&:reverse).sum do |line|
-        line.scan("XMAS").size
+        line.scan(expr).size
       end
       left + right
     end
@@ -34,6 +43,11 @@ module Year2024
           (lines[j] || [])[i - j] || ""
         end
       end.map(&:join)
+    end
+
+    def x_mas?(sub_lines)
+      count_and_backward(diagonals(sub_lines), "MAS") == 1 &&
+        count_and_backward(diagonals(sub_lines.map(&:reverse)), "MAS") == 1
     end
   end
 end
