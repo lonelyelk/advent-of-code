@@ -32,7 +32,7 @@ RSpec.describe Year2024::Day06 do
         #.........
         ......#...
       ],
-      pos: Complex(4, 6),
+      pos: [Complex(4, 6), -1i],
     }
   end
 

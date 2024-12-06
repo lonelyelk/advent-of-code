@@ -8,51 +8,44 @@ module Year2024
       pos_y = map.index { |line| line.include?("^") }
       pos_x = map[pos_y].index("^")
       map[pos_y].sub!("^", ".")
-      { map:, pos: Complex(pos_x, pos_y) }
+      { map:, pos: [Complex(pos_x, pos_y), -1i] }
     end
 
     def problem1(input)
-      all_positions(input[:pos], input[:map]).keys.size
+      possible_coordinates(input).size
     end
 
     def problem2(input)
-      positions = all_positions(input[:pos], input[:map])
-      (positions.keys - [input[:pos]]).count do |obstacle_pos|
-        input[:map][obstacle_pos.imag][obstacle_pos.real] = "#"
-        positions = {}
-        pos = [input[:pos], Complex(0, -1)]
-        stuck = false
-        loop do
-          positions[pos] = true
-          new_pos = [pos.sum, pos.last]
-          break if out?(new_pos.first, input[:map])
-
-          if positions[new_pos]
-            stuck = true
-            break
-          end
-
-          pos = if input[:map][new_pos.first.imag][new_pos.first.real] == "."
-                  new_pos
-                else
-                  [pos.first, pos.last * 1i]
-                end
+      (possible_coordinates(input) - [input[:pos].first]).count do |obstacle_pos|
+        map = input[:map].map(&:dup)
+        map[obstacle_pos.imag][obstacle_pos.real] = "#"
+        res = catch(:stuck) do
+          all_positions(input[:pos], map)
         end
-        input[:map][obstacle_pos.imag][obstacle_pos.real] = "."
-        stuck
+        !res
       end
     end
 
-    def all_positions(pos, map, dir = Complex(0, -1))
+    def possible_coordinates(input)
+      all_positions(input[:pos], input[:map]).keys.map(&:first).uniq
+    end
+
+    def all_positions(pos, map)
       positions = {}
       loop do
         positions[pos] = true
-        new_pos = pos + dir
-        break if out?(new_pos, map)
+        new_pos = [pos.sum, pos.last]
+        break if out?(new_pos.first, map)
 
-        map[new_pos.imag][new_pos.real] == "." ? pos = new_pos : dir *= 1i
+        throw :stuck if positions[new_pos]
+
+        pos = free?(new_pos.first, map) ? new_pos : [pos.first, pos.last * 1i]
       end
       positions
+    end
+
+    def free?(pos, map)
+      map[pos.imag][pos.real] == "."
     end
 
     def out?(pos, map)
