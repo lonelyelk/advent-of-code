@@ -9,13 +9,8 @@ module Year2024
 
     def problem1(input)
       nodes = antennas(input).each_with_object([]) do |(_name, points), acc|
-        next if points.size < 2
-
-        points[...-1].each_with_index do |(x1, y1), i|
-          points[(i + 1)..].each do |(x2, y2)|
-            dx, dy = [x2 - x1, y2 - y1]
-            acc.push([x2 + dx, y2 + dy], [x1 - dx, y1 - dy])
-          end
+        each_pair(points) do |v1, v2, d|
+          acc.push(v2 + d, v1 - d)
         end
       end
       nodes.uniq.count do |point|
@@ -25,24 +20,16 @@ module Year2024
 
     def problem2(input)
       nodes = antennas(input).each_with_object([]) do |(_name, points), acc|
-        next if points.size < 2
-
-        points[...-1].each_with_index do |(x1, y1), i|
-          points[(i + 1)..].each do |(x2, y2)|
-            dx, dy = [x2 - x1, y2 - y1]
-            gcd = dx.gcd(dy)
-            dx /= gcd
-            dy /= gcd
-            point = [x1, y1]
-            while inside?(point, input)
-              acc.push(point)
-              point = [point[0] + dx, point[1] + dy]
-            end
-            point = [x1, y1]
-            while inside?(point, input)
-              acc.push(point)
-              point = [point[0] - dx, point[1] - dy]
-            end
+        each_pair(points, normalize: true) do |v1, _, d|
+          point = v1
+          while inside?(point, input)
+            acc.push(point)
+            point += d
+          end
+          point = v1 - d
+          while inside?(point, input)
+            acc.push(point)
+            point -= d
           end
         end
       end
@@ -55,8 +42,18 @@ module Year2024
           next if c == "."
 
           acc[c] ||= []
-          acc[c].push([j, i])
+          acc[c].push(Vector[j, i])
         end
+      end
+    end
+
+    def each_pair(points, normalize: false)
+      return if points.size < 2
+
+      points.combination(2) do |(v1, v2)|
+        d = v2 - v1
+        d /= d[0].gcd(d[1]) if normalize
+        yield(v1, v2, d)
       end
     end
 
