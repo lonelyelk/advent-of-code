@@ -7,47 +7,46 @@ module Year2024
       str.chomp
     end
 
+    # rubocop:disable Metrics/MethodLength
     def problem1(input)
       drive = sectors(input)
-      back = drive.size - 1
-      pos = 0
+      back = drive.size
       sum = 0
-      loop do
+      (0..).each do |pos|
+        back -= 1 while back > pos && !drive[back]
         if drive[pos]
           sum += drive[pos] * pos
         else
           sum += drive[back] * pos
           back -= 1
         end
-        pos += 1
-        back -= 1 while back > pos && !drive[back]
-        if back <= pos
-          sum += drive[pos] * pos
-          break
-        end
+        break if back == pos
       end
       sum
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def problem2(input)
       drive = partitions(input)
       (input.size / 2).downto(1) do |i|
-        size, pos = drive[:files][i]
+        size, position = drive[:files][i]
 
-        new_pos_size = drive[:free].keys.select { |s| s >= size }.min_by { |s| drive[:free][s].first || input.size }
-        next if new_pos_size.nil? || drive[:free][new_pos_size].empty? || drive[:free][new_pos_size].first > pos
+        candidates = drive[:free].select do |space, positions|
+          space >= size && !positions.empty? && positions.first < position
+        end
+        next if candidates.empty?
 
-        new_pos = drive[:free][new_pos_size].shift
-        remains = new_pos_size - size
+        space, positions = candidates.min_by { |_, v| v.first }
+        new_pos = positions.shift
+        remains = space - size
         drive[:files][i] = [size, new_pos]
         drive[:free][remains] = (drive[:free][remains] + [new_pos + size]).sort
       end
       drive[:files].sum do |i, (size, pos)|
-        size.times.sum do |j|
-          i * (pos + j)
-        end
+        size.times.sum { |j| i * (pos + j) }
       end
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     def sectors(input)
       input.chars.each_slice(2).with_index.each_with_object([]) do |((file, space), i), acc|
@@ -56,17 +55,19 @@ module Year2024
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def partitions(input)
       position = 0
-      input.chars
-           .each_slice(2)
-           .with_index
+      input.chars.map(&:to_i).each_slice(2).with_index
            .each_with_object({ files: {}, free: {} }) do |((file, space), i), acc|
-        acc[:files][i] = [file.to_i, position]
-        acc[:free][space.to_i] ||= []
-        acc[:free][space.to_i].push(position + file.to_i)
-        position += file.to_i + space.to_i
+        acc[:files][i] = [file, position]
+        next if space.nil?
+
+        acc[:free][space] ||= []
+        acc[:free][space].push(position + file)
+        position += file + space
       end
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
