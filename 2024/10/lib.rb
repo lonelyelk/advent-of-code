@@ -3,7 +3,7 @@
 # https://adventofcode.com/2024/day/10
 module Year2024
   module Day10
-    STEPS = [-1i, 1 + 0i, 1i, -1 + 0i].freeze
+    STEPS = 4.times.map { |i| 1i * 1i**i }.freeze
 
     def process_input(str)
       str.split("\n").each_with_object({}).with_index do |(line, acc), y|
@@ -15,28 +15,28 @@ module Year2024
 
     def problem1(input)
       heads = input.select { |_, v| v.zero? }
-      trailheads = heads.each_with_object([]) { |(k, _), acc| acc.push([k]) }
+      trails = heads.each_with_object([]) { |(k, _), acc| acc.push([k]) }
       (1..9).each do |i|
-        trailheads = trailheads.map do |points|
-          points.filter_map do |point|
-            STEPS.filter_map { |d| d + point if input[d + point] == i }
-          end.flatten.uniq
-        end
+        trails = step_to(i, trails, input)
       end
-      trailheads.sum(&:size)
+      trails.sum { |points| points.uniq.size }
     end
 
     def problem2(input)
       heads = input.select { |_, v| v.zero? }
-      trailheads = heads.each_with_object([]) { |(k, _), acc| acc.push([k]) }
+      trails = heads.each_with_object([]) { |(k, _), acc| acc.push([k]) }
       (1..9).each do |i|
-        trailheads = trailheads.map do |points|
-          points.filter_map do |point|
-            STEPS.filter_map { |d| d + point if input[d + point] == i }
-          end.flatten
-        end
+        trails = step_to(i, trails, input)
       end
-      trailheads.sum(&:size)
+      trails.sum(&:size)
+    end
+
+    def step_to(height, trails, map)
+      trails.map do |points|
+        points.filter_map do |point|
+          STEPS.filter_map { |d| d + point if map[d + point] == height }
+        end.flatten
+      end
     end
   end
 end
