@@ -33,9 +33,9 @@ module Year2024
 
     def step_to(height, trails, map)
       trails.map do |points|
-        points.filter_map do |point|
+        points.flat_map do |point|
           STEPS.filter_map { |d| d + point if map[d + point] == height }
-        end.flatten
+        end
       end
     end
   end
