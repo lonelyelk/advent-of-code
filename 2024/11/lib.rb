@@ -26,7 +26,7 @@ module Year2024
       if num == "0"
         ["1"]
       elsif num.size.even?
-        [num[...(num.size / 2)].to_i.to_s, num[(num.size / 2)..].to_i.to_s]
+        [num[...(num.size / 2)], num[(num.size / 2)..].to_i.to_s]
       else
         [(num.to_i * 2024).to_s]
       end
