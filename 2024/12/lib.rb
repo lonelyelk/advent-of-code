@@ -8,6 +8,7 @@ module Year2024
       ["." * (lines.first.size + 2)] + lines.map { |line| ".#{line}." } + ["." * (lines.first.size + 2)]
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/BlockLength
     def problem1(input)
       measure = {}
       index = {}
@@ -28,8 +29,7 @@ module Year2024
               index.keys.each do |key|
                 index[key] = code if index[key] == old_code
               end
-              measure[code][:area] += measure[old_code][:area]
-              measure[code][:perim] += measure[old_code][:perim]
+              merge_measure1!(measure[code], measure[old_code])
               measure.delete(old_code)
             end
           else
@@ -40,8 +40,7 @@ module Year2024
           code = (index.values.max || 0) + 1 if code.nil?
           index[[x, y]] = code
           measure[code] ||= { area: 0, perim: 0 }
-          measure[code][:area] += 1
-          measure[code][:perim] += perim
+          merge_measure1!(measure[code], { area: 1, perim: })
         end
       end
       measure.values.sum { |m| m[:area] * m[:perim] }
@@ -67,12 +66,7 @@ module Year2024
               index.keys.each do |key|
                 index[key] = code if index[key] == old_code
               end
-              measure[code][:area] += measure[old_code][:area]
-              %i[hor ver].each do |dir|
-                measure[old_code][:perim][dir].each do |k, v|
-                  measure[code][:perim][dir][k].push(*v)
-                end
-              end
+              merge_measure2!(measure[code], measure[old_code])
               measure.delete(old_code)
             end
           else
@@ -83,31 +77,38 @@ module Year2024
           code = (index.values.max || 0) + 1 if code.nil?
           index[[x, y]] = code
           measure[code] ||= { letter: input[y][x], area: 0, perim: init_perim }
-          measure[code][:area] += 1
-          %i[hor ver].each do |dir|
-            perim[dir].each do |k, v|
-              measure[code][:perim][dir][k].push(*v)
-            end
-          end
+          merge_measure2!(measure[code], { area: 1, perim: })
         end
       end
       measure.values.sum do |m|
         perim = m[:perim].values.sum do |hsh|
           hsh.sum do |_, arr|
-            gaps = arr.sort.each_cons(2).sum do |(a, b)|
+            1 + arr.sort.each_cons(2).sum do |(a, b)|
               b - a > 1 ? 1 : 0
             end
-            gaps + 1
           end
         end
         perim * m[:area]
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/BlockLength
+
+    def merge_measure1!(measure, another)
+      measure[:area] += another[:area]
+      measure[:perim] += another[:perim]
+    end
 
     def init_perim
-      hor = Hash.new { |h, k| h[k] = [] }
-      ver = Hash.new { |h, k| h[k] = [] }
-      { hor:, ver: }
+      { hor: Hash.new { |h, k| h[k] = [] }, ver: Hash.new { |h, k| h[k] = [] } }
+    end
+
+    def merge_measure2!(measure, another)
+      measure[:area] += another[:area]
+      %i[hor ver].each do |dir|
+        another[:perim][dir].each do |k, v|
+          measure[:perim][dir][k].push(*v)
+        end
+      end
     end
   end
 end
