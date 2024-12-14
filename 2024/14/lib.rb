@@ -10,36 +10,32 @@ module Year2024
       end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def problem1(input, size = [101, 103], time = 100)
-      positions = positions_in(input, size, time)
       midx, midy = size.map { |c| c / 2 }
-      positions.each_with_object(Array.new(4, 0)) do |(x, y), acc|
+      positions_in(input, size, time).each_with_object(Array.new(4, 0)) do |(x, y), acc|
         acc[0] += 1 if x < midx && y < midy
         acc[1] += 1 if x > midx && y < midy
         acc[2] += 1 if x > midx && y > midy
         acc[3] += 1 if x < midx && y > midy
       end.inject(&:*)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def problem2(input, size = [101, 103])
       best_xt, best_yt = [0, 0]
       best_vx, best_vy = variances(input.map(&:first))
-      size.max.times do |i|
-        positions = positions_in(input, size, i + 1)
+      (1..(size.max)).each do |i|
+        positions = positions_in(input, size, i)
         vx, vy = variances(positions)
-        if vx < best_vx
-          best_vx = vx
-          best_xt = i + 1
-        end
-        if vy < best_vy
-          best_vy = vy
-          best_yt = i + 1
-        end
+        best_vx, best_xt = [[vx, i], [best_vx, best_xt]].min_by(&:first)
+        best_vy, best_yt = [[vy, i], [best_vy, best_yt]].min_by(&:first)
       end
-      (1..).each do |xt|
-        time = best_xt + xt * size[0]
-        break time if time % size[1] == best_yt
-      end
+      crt(best_xt, best_yt, *size)
+    end
+
+    def problem2_slow(input, size = [101, 103])
+      (1...(size.inject(&:*))).min_by { |i| problem1(input, size, i) }
     end
 
     def positions_in(input, size, time)
@@ -53,6 +49,13 @@ module Year2024
         mean = coords.sum.to_f / coords.size
         v = coords.inject(0.0) { |acc, coord| acc + (coord - mean)**2 }
         v / coords.size
+      end
+    end
+
+    def crt(rem0, rem1, dim0, dim1)
+      (1..).each do |t0|
+        time = rem0 + dim0 * t0
+        break time if time % dim1 == rem1
       end
     end
   end
