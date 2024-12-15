@@ -43,9 +43,6 @@ module Year2024
       map.keys.select { |k| map[k] == "O" }.sum { |(x, y)| x + 100 * y }
     end
 
-    def problem2(input)
-    end
-
     def direction(dir, mult = 1)
       case dir
       when "^"
@@ -64,6 +61,7 @@ module Year2024
     end
 
     def display(map, pos)
+      puts
       x_range, y_range = map.keys.transpose.map(&:minmax)
       y_range.first.upto(y_range.last).each do |y|
         x_range.first.upto(x_range.last).each do |x|
@@ -74,6 +72,64 @@ module Year2024
           end
         end
         puts
+      end
+    end
+
+    def problem2(input)
+      pos, map, ops = scale_up(input)
+      ops.each do |op|
+        n_pos = next_pos(pos, op)
+        next if map[n_pos] == "#"
+
+        if map[n_pos].nil?
+          pos = n_pos
+        else
+          catch("#") do
+            wl = {}
+            next_wl = { pos => nil }
+            until next_wl.empty?
+              next_wl = next_workload(next_wl.keys, map, op)
+              wl.merge!(next_wl)
+            end
+            wl.each_key { |coord| map.delete(coord) }
+            wl.each do |coord, val|
+              map[next_pos(coord, op)] = val
+            end
+            pos = n_pos
+          end
+        end
+      end
+      map.keys.select { |k| map[k] == "[" }.sum { |(x, y)| x + 100 * y }
+    end
+
+    def scale_up(input)
+      start, map, ops = input
+      scaled_map = map.each_with_object({}) do |((x, y), val), acc|
+        if val == "O"
+          acc[[x * 2, y]] = "["
+          acc[[x * 2 + 1, y]] = "]"
+        else
+          acc[[x * 2, y]] = "#"
+          acc[[x * 2 + 1, y]] = "#"
+        end
+      end
+      x, y = start
+      [[x * 2, y], scaled_map, ops]
+    end
+
+    def next_workload(prev_wl, map, dir)
+      prev_wl.each_with_object({}) do |coord, acc|
+        x, y = next_pos(coord, dir)
+        case map[[x, y]]
+        when "["
+          acc[[x, y]] = "["
+          acc[[x + 1, y]] = "]" unless coord == [x + 1, y]
+        when "]"
+          acc[[x, y]] = "]"
+          acc[[x - 1, y]] = "[" unless coord == [x - 1, y]
+        when "#"
+          throw "#"
+        end
       end
     end
   end
