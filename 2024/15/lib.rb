@@ -2,6 +2,7 @@
 
 # https://adventofcode.com/2024/day/15
 module Year2024
+  # rubocop:disable Metrics/ModuleLength
   module Day15
     def process_input(str)
       map_input, ops_input = str.split("\n\n")
@@ -15,26 +16,25 @@ module Year2024
       [start, map, ops_input.split("\n").join.chars]
     end
 
+    # rubocop:disable Metrics/MethodLength
     def problem1(input)
       pos, map, ops = input.map(&:dup)
       ops.each do |op|
         n_pos = next_pos(pos, op)
-        if map[n_pos].nil?
-          pos = n_pos
-        elsif map[n_pos] == "O"
-          work_body = (0..).lazy.map do |mult|
-            next_pos(n_pos, op, mult)
-          end
-          to_move = work_body.take_while { |coord| map[coord] == "O" }.to_a
-          if map[next_pos(n_pos, op, to_move.size)].nil?
-            map.delete(to_move.first)
-            map[next_pos(to_move.last, op)] = "O"
-            pos = n_pos
-          end
+        next if map[n_pos] == "#"
+
+        if map[n_pos]
+          to_move = workload(n_pos, map, op)
+          to_take = next_pos(to_move.last, op)
+          next if map[to_take]
+
+          map[to_take] = map.delete(to_move.first)
         end
+        pos = n_pos
       end
-      map.keys.select { |k| map[k] == "O" }.sum { |(x, y)| x + 100 * y }
+      gps(map, "O")
     end
+    # rubocop:enable Metrics/MethodLength
 
     def direction(dir, mult = 1)
       case dir
@@ -53,6 +53,15 @@ module Year2024
       start.zip(direction(dir, mult)).map(&:sum)
     end
 
+    def workload(start, map, dir)
+      work_body = (0..).lazy.map { |mult| next_pos(start, dir, mult) }
+      work_body.take_while { |coord| map[coord] == "O" }.to_a
+    end
+
+    def gps(map, char)
+      map.keys.select { |k| map[k] == char }.sum { |(x, y)| x + 100 * y }
+    end
+
     def display(map, pos)
       puts
       x_range, y_range = map.keys.transpose.map(&:minmax)
@@ -64,43 +73,42 @@ module Year2024
       end
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def problem2(input)
       pos, map, ops = scale_up(input)
       ops.each do |op|
         n_pos = next_pos(pos, op)
         next if map[n_pos] == "#"
 
-        if map[n_pos].nil?
+        unless map[n_pos]
           pos = n_pos
-        else
-          catch("#") do
-            wl = {}
-            next_wl = { pos => nil }
-            until next_wl.empty?
-              next_wl = next_workload(next_wl.keys, map, op)
-              wl.merge!(next_wl)
-            end
-            wl.each_key { |coord| map.delete(coord) }
-            wl.each do |coord, val|
-              map[next_pos(coord, op)] = val
-            end
-            pos = n_pos
-          end
+          next
+        end
+
+        catch("#") do
+          wl = {}
+          next_wl = { pos => nil }
+          wl.merge!(next_wl = next_workload(next_wl.keys, map, op)) until next_wl.empty?
+          wl.each_key { |coord| map.delete(coord) }
+          wl.each { |coord, val| map[next_pos(coord, op)] = val }
+          pos = n_pos
         end
       end
-      map.keys.select { |k| map[k] == "[" }.sum { |(x, y)| x + 100 * y }
+      gps(map, "[")
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def scale_up(input)
       start, map, ops = input
       scaled_map = map.each_with_object({}) do |((x, y), val), acc|
-        acc[[x * 2, y]] = val == "O" ? "[" : "#"
-        acc[[x * 2 + 1, y]] = val == "O" ? "]" : "#"
+        acc[[x * 2, y]] = val == "O" ? "[" : val
+        acc[[x * 2 + 1, y]] = val == "O" ? "]" : val
       end
       x, y = start
       [[x * 2, y], scaled_map, ops]
     end
 
+    # rubocop:disable Metrics/MethodLength
     def next_workload(prev_wl, map, dir)
       prev_wl.each_with_object({}) do |coord, acc|
         x, y = next_pos(coord, dir)
@@ -116,5 +124,7 @@ module Year2024
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
+  # rubocop:enable Metrics/ModuleLength
 end
