@@ -8,14 +8,8 @@ module Year2024
       start = nil
       map = map_input.split("\n").each_with_object({}).with_index do |(line, acc), y|
         line.chars.each_with_index do |c, x|
-          next if c == "."
-
-          if c == "@"
-            start = [x, y]
-            next
-          end
-
-          acc[[x, y]] = c
+          acc[[x, y]] = c if "#O".include?(c)
+          start = [x, y] if c == "@"
         end
       end
       [start, map, ops_input.split("\n").join.chars]
@@ -38,7 +32,6 @@ module Year2024
             pos = n_pos
           end
         end
-        # display(map, pos)
       end
       map.keys.select { |k| map[k] == "O" }.sum { |(x, y)| x + 100 * y }
     end
@@ -65,11 +58,7 @@ module Year2024
       x_range, y_range = map.keys.transpose.map(&:minmax)
       y_range.first.upto(y_range.last).each do |y|
         x_range.first.upto(x_range.last).each do |x|
-          if map[[x, y]].nil?
-            print(pos == [x, y] ? "@" : ".")
-          else
-            print(map[[x, y]])
-          end
+          print(map[[x, y]] || (pos == [x, y] ? "@" : "."))
         end
         puts
       end
@@ -105,13 +94,8 @@ module Year2024
     def scale_up(input)
       start, map, ops = input
       scaled_map = map.each_with_object({}) do |((x, y), val), acc|
-        if val == "O"
-          acc[[x * 2, y]] = "["
-          acc[[x * 2 + 1, y]] = "]"
-        else
-          acc[[x * 2, y]] = "#"
-          acc[[x * 2 + 1, y]] = "#"
-        end
+        acc[[x * 2, y]] = val == "O" ? "[" : "#"
+        acc[[x * 2 + 1, y]] = val == "O" ? "]" : "#"
       end
       x, y = start
       [[x * 2, y], scaled_map, ops]
