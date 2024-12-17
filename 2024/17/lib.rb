@@ -13,7 +13,7 @@ module Year2024
       }
     end
 
-    def problem1(input)
+    def problem1(input, target_out = nil)
       comp = input.dup
       instr = 0
       out = []
@@ -39,12 +39,19 @@ module Year2024
         when 7
           comp[:c] = comp[:a] / 2**combo_operand(operand, comp)
         end
+        break if target_out && out != target_out[...(out.size)]
+
         instr += 2
       end
       out.join(",")
     end
 
     def problem2(input)
+      (1..).each do |i|
+        p i
+        out = problem1(input.merge(a: i), input[:p])
+        return i if out == input[:p].join(",")
+      end
     end
 
     def combo_operand(operand, comp)
