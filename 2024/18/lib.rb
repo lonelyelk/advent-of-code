@@ -26,7 +26,7 @@ module Year2024
 
     def problem2(input, max = [70, 70], start = 1024)
       start.upto(input.size) do |i|
-        p "#{i}/#{input.size}"
+        # p "#{i}/#{input.size}"
         break input[i - 1].join(",") if problem1(input, max, i).nil?
       end
     end
