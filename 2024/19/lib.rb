@@ -34,6 +34,28 @@ module Year2024
     end
 
     def problem2(input)
+      avail, desired = input
+      count = 0
+      desired.sum do |pattern|
+        count += 1
+        puts "#{count}/#{desired.size}"
+        possible = 0
+        set = { pattern => 1 }
+        loop do
+          set = set.each_with_object(Hash.new(0)) do |(ptr, cnt), acc|
+            if ptr == ""
+              possible += cnt
+              next
+            end
+            avail.select { |aptr| ptr.match?(/^#{aptr}/) }.each do |aptr|
+              sub = ptr[aptr.size..]
+              acc[sub] += cnt
+            end
+          end
+          break if set.except("").empty?
+        end
+        set.values.sum + possible
+      end
     end
   end
 end

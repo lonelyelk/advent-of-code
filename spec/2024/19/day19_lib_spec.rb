@@ -47,8 +47,8 @@ bbrgwb
   end
 
   describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
+    it "returns 16 for test input" do
+      expect(problem2(processed_input)).to eq(16)
     end
   end
 end
