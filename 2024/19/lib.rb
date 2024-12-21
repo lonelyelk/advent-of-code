@@ -13,7 +13,7 @@ module Year2024
       count = 0
       desired.count do |pattern|
         count += 1
-        puts "#{count}/#{desired.size}"
+        # puts "#{count}/#{desired.size}"
         possible = false
         set = { pattern => true }
         loop do
@@ -38,7 +38,7 @@ module Year2024
       count = 0
       desired.sum do |pattern|
         count += 1
-        puts "#{count}/#{desired.size}"
+        # puts "#{count}/#{desired.size}"
         possible = 0
         set = { pattern => 1 }
         loop do
