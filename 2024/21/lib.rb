@@ -3,19 +3,7 @@
 # https://adventofcode.com/2024/day/21
 module Year2024
   module Day21
-    ARROWS = {
-      "A" => 2 + 0i,
-      "^" => 1 + 0i,
-      "<" => 0 + 1i,
-      "v" => 1 + 1i,
-      ">" => 2 + 1i,
-    }.freeze
-    DIRECTIONS = {
-      -1i => "^",
-      -1 + 0i => "<",
-      1i => "v",
-      1 + 0i => ">",
-    }.freeze
+    DIRECTIONS = { -1i => "^", -1 + 0i => "<", 1i => "v", 1 + 0i => ">" }.freeze
     NUMBERS = {
       "7" => 0 + 0i,
       "8" => 1 + 0i,
@@ -57,60 +45,40 @@ module Year2024
       str.split("\n")
     end
 
-    def problem1(input)
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def problem1(input, step_cost = step_cost2)
       input.sum do |sequence|
         pos = NUMBERS["A"]
-        acc = 0
-        sequence.chars.each do |c|
+        length = sequence.chars.sum do |c|
           diff = NUMBERS[c] - pos
-          seqs = sequences_for(diff)
-          seqs = seqs.reject do |seq|
-            pass_hole = false
-            pos_test = pos
-            seq[...-1].chars.each do |mvm|
-              pos_test += DIRECTIONS.key(mvm)
-              pass_hole = true if NUMBERS.key(pos_test).nil?
-            end
-            pass_hole
+          seqs = sequences_for(diff).reject do |seq|
+            pass_over_hole?(seq, pos)
           end
           lens = seqs.each_with_object({}) do |seq, len_acc|
             len_acc[seq] = "A#{seq}".chars.each_cons(2).sum do |pair|
-              step_cost2[pair.join]
+              step_cost[pair.join]
             end
           end
-          acc += lens.values.min
           pos += diff
+          lens.values.min
         end
-        acc * sequence[...-1].to_i
+        length * sequence[...-1].to_i
       end
     end
+    # rubocop:enable Metrics/MethodLength
+
+    def sequences_for(diff)
+      dx, dy = diff.rect
+      dxa = dx.abs
+      dya = dy.abs
+      dxseq = DIRECTIONS[Complex(dx / dxa, 0)] * dxa unless dx.zero?
+      dyseq = DIRECTIONS[Complex(0, dy / dya)] * dya unless dy.zero?
+      "#{dxseq}#{dyseq}".chars.permutation.uniq.map { |perm| "#{perm.join}A" }
+    end
+    # rubocop:enable Metrics/AbcSize
 
     def problem2(input)
-      input.sum do |sequence|
-        pos = NUMBERS["A"]
-        acc = 0
-        sequence.chars.each do |c|
-          diff = NUMBERS[c] - pos
-          seqs = sequences_for(diff)
-          seqs = seqs.reject do |seq|
-            pass_hole = false
-            pos_test = pos
-            seq[...-1].chars.each do |mvm|
-              pos_test += DIRECTIONS.key(mvm)
-              pass_hole = true if NUMBERS.key(pos_test).nil?
-            end
-            pass_hole
-          end
-          lens = seqs.each_with_object({}) do |seq, len_acc|
-            len_acc[seq] = "A#{seq}".chars.each_cons(2).sum do |pair|
-              step_cost25[pair.join]
-            end
-          end
-          acc += lens.values.min
-          pos += diff
-        end
-        acc * sequence[...-1].to_i
-      end
+      problem1(input, step_cost25)
     end
 
     def resolve_sequences(movements, resolution = MOVEMENTS)
@@ -140,12 +108,11 @@ module Year2024
       @step_cost25 = count_sequences(step13, step)
     end
 
-    def sequences_for(diff)
-      dx = diff.real
-      dy = diff.imag
-      dxseq = DIRECTIONS[Complex(dx / dx.abs, 0)] * dx.abs unless dx.zero?
-      dyseq = DIRECTIONS[Complex(0, dy / dy.abs)] * dy.abs unless dy.zero?
-      "#{dxseq}#{dyseq}".chars.permutation.to_a.uniq.map { |perm| "#{perm.join}A" }
+    def pass_over_hole?(sequence, position)
+      sequence[...-1].chars.any? do |mvm|
+        position += DIRECTIONS.key(mvm)
+        NUMBERS.key(position).nil?
+      end
     end
   end
 end
