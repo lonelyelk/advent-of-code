@@ -7,61 +7,29 @@ module Year2024
       res = {}
       res[:map] = str.split("\n").map.with_index do |line, y|
         line.chars.map.with_index do |c, x|
-          if %w[S E].include?(c)
-            res[c.downcase.to_sym] = [x, y]
-            "."
-          else
-            c
-          end
+          res[c.downcase.to_sym] = [x, y] if %w[S E].include?(c)
+          c.sub(/[SE]/, ".")
         end.join
       end
       res
     end
 
-    def problem1(input, max = 100)
-      cheats = Hash.new { |h, k| h[k] = [] }
-      point = input[:s]
-      steps = 0
-      points = {}
-      until points[input[:e]]
-        points[point] = steps
-        moves = movements(point, input[:map])
-        moves.each do |(x, y)|
-          if input[:map][y][x] == "."
-            point = [x, y] unless points[[x, y]]
-          else
-            cheats[[x, y]].push(steps)
-          end
-        end
-        steps += 1
-      end
-      cheats.values.filter_map do |arr|
-        diff = -2 - arr.minmax.inject(&:-)
-        diff if diff >= max
-      end.count
+    # Part 2 was the more generic solution so it's a refactoring
+    def problem1(input, max_gain = 100)
+      problem2(input, max_gain, 2)
     end
 
-    def problem2(input, max = 100)
+    def problem2(input, max_gain = 100, max_cheat = 20)
       point = input[:s]
-      steps = 0
-      points = { point => steps }
+      points = { point => (steps = 0) }
       until points[input[:e]]
-        moves = movements(point, input[:map])
-        moves.each do |(x, y)|
+        movements(point, input[:map]).each do |(x, y)|
           point = [x, y] if input[:map][y][x] == "." && !points[[x, y]]
         end
         steps += 1
         points[point] = steps
       end
-      points.sum do |(x, y), val|
-        (-20..20).sum do |y1|
-          dx = 20 - y1.abs
-          (-dx..dx).count do |x1|
-            points[[x + x1, y + y1]] &&
-              points[[x + x1, y + y1]] - val >= max + x1.abs + y1.abs
-          end
-        end
-      end
+      count_cheats(points, max_gain, max_cheat)
     end
 
     def movements(point, map)
@@ -70,5 +38,19 @@ module Year2024
         [x + x1, y + y1] if (1...(map.size - 1)).include?(y + y1) && (1...(map.first.size - 1)).include?(x + x1)
       end
     end
+
+    # rubocop:disable Metrics/AbcSize
+    def count_cheats(points, max_gain, max_cheat)
+      points.sum do |(x, y), val|
+        (-max_cheat..max_cheat).sum do |y1|
+          dx = max_cheat - y1.abs
+          (-dx..dx).count do |x1|
+            point = [x + x1, y + y1]
+            points[point] && points[point] - val >= max_gain + x1.abs + y1.abs
+          end
+        end
+      end
+    end
+    # rubocop:enable Metrics/AbcSize
   end
 end

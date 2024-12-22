@@ -5,51 +5,46 @@ module Year2024
   module Day19
     def process_input(str)
       avail, desired = str.split("\n\n")
-      [avail.split(", "), desired.split("\n")]
+      avail = avail.split(", ")
+      avail_min, avail_max = avail.map(&:size).minmax
+      avail_set = avail.each_with_object({}) { |ptr, acc| acc[ptr] = true }
+      [desired.split("\n"), { set: avail_set, range: (avail_min..avail_max) }]
     end
 
+    # rubocop:disable Metrics/MethodLength
     def problem1(input)
-      avail, desired = input
-      count = 0
+      desired, avail = input
       desired.count do |pattern|
-        count += 1
-        # puts "#{count}/#{desired.size}"
-        possible = false
         set = { pattern => true }
         loop do
           set = set.each_with_object({}) do |(ptr, _), acc|
-            avail.select { |aptr| ptr.match?(/^#{aptr}/) }.each do |aptr|
-              acc[ptr[(aptr.size..)]] = true
+            avail[:range].each do |size|
+              acc[ptr[size..]] = true if avail[:set][ptr[...size]]
             end
           end
           break if set.empty?
-
-          if set[""]
-            possible = true
-            break
-          end
+          break true if set[""]
         end
-        possible
       end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def problem2(input)
-      avail, desired = input
-      count = 0
+      desired, avail = input
       desired.sum do |pattern|
-        count += 1
-        # puts "#{count}/#{desired.size}"
         possible = 0
         set = { pattern => 1 }
         loop do
           set = set.each_with_object(Hash.new(0)) do |(ptr, cnt), acc|
+            next if ptr.nil?
+
             if ptr == ""
               possible += cnt
               next
             end
-            avail.select { |aptr| ptr.match?(/^#{aptr}/) }.each do |aptr|
-              sub = ptr[aptr.size..]
-              acc[sub] += cnt
+
+            avail[:range].each do |size|
+              acc[ptr[size..]] += cnt if avail[:set][ptr[...size]]
             end
           end
           break if set.except("").empty?
@@ -57,5 +52,6 @@ module Year2024
         set.values.sum + possible
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   end
 end

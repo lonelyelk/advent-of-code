@@ -20,7 +20,6 @@ bbrgwb
   end
   let(:processed_input) do
     [
-      %w[r wr b g bwu rb gb br],
       %w[
         brwrr
         bggr
@@ -31,6 +30,19 @@ bbrgwb
         brgr
         bbrgwb
       ],
+      {
+        set: {
+          "r" => true,
+          "wr" => true,
+          "b" => true,
+          "g" => true,
+          "bwu" => true,
+          "rb" => true,
+          "gb" => true,
+          "br" => true,
+        },
+        range: (1..3),
+      },
     ]
   end
 
