@@ -47,10 +47,13 @@ module Year2024
     end
 
     def problem2(input)
-      (1..).each do |i|
-        p i
-        out = problem1(input.merge(a: i), input[:p])
-        return i if out == input[:p].join(",")
+      (input[:p].size - 1).downto(0).inject(0) do |acc, index|
+        acc <<= 3
+        octet = (0..7).each do |i|
+          out = problem1(input.merge(a: acc | i), input[:p][index..])
+          break i if out == input[:p][index..].join(",")
+        end
+        acc | octet
       end
     end
 
