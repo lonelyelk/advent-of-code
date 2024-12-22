@@ -55,21 +55,10 @@ module Year2024
       end
       points.sum do |(x, y), val|
         (-20..20).sum do |y1|
-          diry = y1.zero? ? 0 : y1 / y1.abs
           dx = 20 - y1.abs
           (-dx..dx).count do |x1|
-            dirx = x1.zero? ? 0 : x1 / x1.abs
-            if points[[x + x1, y + y1]] && points[[x + x1, y + y1]] - val == 72 + x1 + y1
-              p [
-                [x, y], val, [x + x1, y + y1], points[[x + x1, y + y1]],
-                input[:map][y][x + dirx] == "#" || input[:map][y + diry][x] == "#",
-                input[:map][y + y1][x + x1 - dirx] == "#" || input[:map][y + y1 - diry][x + x1] == "#",
-              ]
-            end
             points[[x + x1, y + y1]] &&
-              points[[x + x1, y + y1]] - val == max + x1 + y1 &&
-              (input[:map][y][x + dirx] == "#" || input[:map][y + diry][x] == "#") &&
-              (input[:map][y + y1][x + x1 - dirx] == "#" || input[:map][y + y1 - diry][x + x1] == "#")
+              points[[x + x1, y + y1]] - val >= max + x1.abs + y1.abs
           end
         end
       end
