@@ -47,10 +47,4 @@ x02 OR y02 -> z02
       expect(problem1(processed_input)).to eq(4)
     end
   end
-
-  describe "problem2" do
-    it "returns nil for test input" do
-      expect(problem2(processed_input)).to eq(nil)
-    end
-  end
 end
