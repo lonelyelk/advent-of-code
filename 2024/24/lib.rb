@@ -49,6 +49,10 @@ module Year2024
         # for this generic and better understandable than the puzzle input on its own. The solution
         # relies on knowing the addition in binary using boolean logic. There maybe a better
         # analysis that just matching the output values when they are expected.
+        # The same goes for the least significant bit. I know it's OK. So the only rule I apply here
+        # is expecting the output for each byte and swapping whatever non-z wire I see with the
+        # expected number of z-wire. This finds me 3 out of 4 swaps. Writing a generic search for
+        # this "cbd" <> "rqf" case seems unnecessary.
         if xorxy.last == "cbd"
           ops = swap_out(ops, xorxy, "rqf")
           acc.push("cbd", "rqf")
