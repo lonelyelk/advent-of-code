@@ -38,7 +38,7 @@ module Year2022
     end
 
     def filter_cached_paths(valve, target)
-      @paths[valve].select { |k, _| target.include?(k) }
+      @paths[valve].slice(*target)
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity

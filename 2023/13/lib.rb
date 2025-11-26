@@ -43,7 +43,7 @@ module Year2023
     def find_edge_with_smudge(section)
       (1...section.size).to_a.detect do |row|
         part, reflection = reflected_parts(section, row)
-        part.join.chars.zip(reflection.join.chars).count { |c1, c2| c1 != c2 } == 1
+        part.join.chars.zip(reflection.join.chars).one? { |c1, c2| c1 != c2 }
       end
     end
 

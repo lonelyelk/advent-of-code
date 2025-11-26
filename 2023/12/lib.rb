@@ -47,7 +47,7 @@ module Year2023
         "." * n + (nums.empty? ? "" : "#" * nums.first)
       end
       next_sols.select do |sol|
-        sol.chars.each_with_index.all? { |c, i| map[i] == c || map[i] == "?" }
+        sol.chars.each_with_index.all? { |c, i| [c, "?"].include?(map[i]) }
       end
     end
   end

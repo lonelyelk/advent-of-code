@@ -31,7 +31,7 @@ RSpec.describe Year2023::Day24 do
 
   describe "problem1" do
     it "returns 2 for test input and range 7..27" do
-      expect(problem1(processed_input, (7..27))).to eq(2)
+      expect(problem1(processed_input, 7..27)).to eq(2)
     end
   end
 

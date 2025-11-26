@@ -17,8 +17,8 @@ module Year2023
           if denom.zero?
             false
           else
-            t = Rational(((c1[1] - c2[1]) * v2[0] - (c1[0] - c2[0]) * v2[1]), denom)
-            u = Rational(((c1[1] - c2[1]) * v1[0] - (c1[0] - c2[0]) * v1[1]), denom)
+            t = Rational((c1[1] - c2[1]) * v2[0] - (c1[0] - c2[0]) * v2[1], denom)
+            u = Rational((c1[1] - c2[1]) * v1[0] - (c1[0] - c2[0]) * v1[1], denom)
             pc1 = [c1[0] + t * v1[0], c1[1] + t * v1[1]]
             range.include?(pc1[0]) && range.include?(pc1[1]) &&
               u.positive? && t.positive?

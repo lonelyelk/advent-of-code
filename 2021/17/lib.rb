@@ -14,7 +14,7 @@ module Day17
   def problem2(input)
     input[:y].min.upto(max_speed_y(input)).inject(0) do |acc, vy0|
       acc + 1.upto(input[:x].max).count do |vx0|
-        solve(vx0, vy0, input)
+        solve?(vx0, vy0, input)
       end
     end
   end
@@ -25,7 +25,7 @@ module Day17
     -input[:y].min - 1
   end
 
-  def solve(speed_x, speed_y, input)
+  def solve?(speed_x, speed_y, input)
     x = y = 0
     while x <= input[:x].max && y >= input[:y].min
       return true if x.between?(*input[:x]) && y.between?(*input[:y])

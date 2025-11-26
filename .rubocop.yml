@@ -7,8 +7,10 @@ AllCops:
   - "2020/**/*"
   - "spec/spec_helper.rb"
 
-require:
+plugins:
 - rubocop-rspec
+
+require:
 - rubocop-rake
 
 Lint/AmbiguousOperatorPrecedence:
