@@ -29,11 +29,27 @@ module Year2025
       input.sum do |move|
         dir = move[0]
         num = move[1..].to_i
-        num.times.count do
-          curr = (curr + DIRECTION[dir]) % MAX
-          curr.zero?
-        end
+        step = DIRECTION[dir]
+
+        count = count_zero_passes(curr, num, dir)
+        curr = (curr + num * step) % MAX
+        count
       end
+    end
+
+    private
+
+    def count_zero_passes(curr, num, dir)
+      distance_to_zero =
+        if curr.zero?
+          MAX
+        else
+          dir == "R" ? MAX - curr : curr
+        end
+
+      return 0 if num < distance_to_zero
+
+      1 + (num - distance_to_zero) / MAX
     end
   end
 end
