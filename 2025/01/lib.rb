@@ -26,14 +26,13 @@ module Year2025
     def problem2(input)
       curr = 50
       max = 100
-      input.inject(0) do |acc, move|
+      input.sum do |move|
         dir = move[0]
         num = move[1..].to_i
-        num.times do
+        num.times.count do
           curr = (curr + DIRECTION[dir]) % max
-          acc += 1 if curr.zero?
+          curr.zero?
         end
-        acc
       end
     end
   end
