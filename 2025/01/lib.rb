@@ -29,10 +29,9 @@ module Year2025
       input.sum do |move|
         dir = move[0]
         num = move[1..].to_i
-        step = DIRECTION[dir]
 
         count = count_zero_passes(curr, num, dir)
-        curr = (curr + num * step) % MAX
+        curr = (curr + num * DIRECTION[dir]) % MAX
         count
       end
     end
