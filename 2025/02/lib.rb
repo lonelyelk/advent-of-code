@@ -14,8 +14,8 @@ module Year2025
         if first.length.odd? && first.length == last.length
           0
         else
-          min = next_sym_part(first)
-          max = prev_sym_part(last)
+          min = next_rep_part(first)
+          max = prev_rep_part(last)
           min.upto(max).sum { |num| "#{num}#{num}".to_i }
         end
       end
@@ -23,12 +23,9 @@ module Year2025
 
     def problem2(input)
       input.each_with_object({}) do |(first, last), acc|
-        nums = first.length.upto(last.length).flat_map do |i|
-          2.upto(i).select { |j| (i % j).zero? }
-        end
-        nums.each do |num|
-          min = next_sym_part(first, num)
-          max = prev_sym_part(last, num)
+        rep_parts_number(first, last).each do |num|
+          min = next_rep_part(first, num)
+          max = prev_rep_part(last, num)
           min.upto(max).each do |n|
             acc[(n.to_s * num).to_i] = true
           end
@@ -38,7 +35,7 @@ module Year2025
 
     private
 
-    def next_sym_part(str, num = 2)
+    def next_rep_part(str, num = 2)
       if (str.length % num).zero?
         left = str[...(str.length / num)].to_i
         (left.to_s * num).to_i < str.to_i ? left + 1 : left
@@ -47,13 +44,19 @@ module Year2025
       end
     end
 
-    def prev_sym_part(str, num = 2)
+    def prev_rep_part(str, num = 2)
       if (str.length % num).zero?
         left = str[...(str.length / num)].to_i
         (left.to_s * num).to_i > str.to_i ? left - 1 : left
       else
         ("9" * (str.length / num)).to_i
       end
+    end
+
+    def rep_parts_number(first, last)
+      first.length.upto(last.length).flat_map do |i|
+        2.upto(i).select { |j| (i % j).zero? }
+      end.uniq
     end
   end
 end
