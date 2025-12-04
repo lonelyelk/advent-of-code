@@ -7,32 +7,27 @@ module Year2025
       lines = str.split
       (0...lines.length).each_with_object({}) do |y, acc|
         lines[y].chars.each_with_index do |c, x|
-          acc[[x, y]] = c
+          acc[[x, y]] = true if c == "@"
         end
       end
     end
 
     def problem1(input)
-      input.count do |point, c|
-        c == "@" && adjacent(point).count { |point| input[point] == "@" } < 4
+      input.count do |point, _|
+        count_adj_rolls(point, input) < 4
       end
     end
 
     def problem2(input)
       count = 0
       loop do
-        diff = 0
-        input = input.each_with_object({}) do |(point, c), acc|
-          if c == "." || count_adj_rolls(point, input) >= 4
-            acc[point] = c
-          else
-            diff += 1 if c == "@"
-            acc[point] = "."
-          end
+        size = input.size
+        input = input.each_with_object({}) do |(point, _), acc|
+          acc[point] = true if count_adj_rolls(point, input) >= 4
         end
-        break if diff.zero?
+        break if size == input.size
 
-        count += diff
+        count += size - input.size
       end
       count
     end
@@ -49,7 +44,7 @@ module Year2025
     end
 
     def count_adj_rolls(point, input)
-      adjacent(point).count { |pt| input[pt] == "@" }
+      adjacent(point).count { |pt| input[pt] }
     end
   end
 end
