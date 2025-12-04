@@ -3,6 +3,12 @@
 # https://adventofcode.com/2025/day/4
 module Year2025
   module Day04
+    ADJACENT = [
+      [- 1, - 1], [0, - 1], [1, - 1],
+      [- 1, 0], [1, 0],
+      [- 1, 1], [0, 1], [1, 1],
+    ].freeze
+
     def process_input(str)
       lines = str.split
       (0...lines.length).each_with_object({}) do |y, acc|
@@ -19,32 +25,21 @@ module Year2025
     end
 
     def problem2(input)
-      count = 0
+      total = input.size
       loop do
         size = input.size
-        input = input.each_with_object({}) do |(point, _), acc|
-          acc[point] = true if count_adj_rolls(point, input) >= 4
+        input.each_key do |point|
+          input.delete(point) if count_adj_rolls(point, input) < 4
         end
         break if size == input.size
-
-        count += size - input.size
       end
-      count
+      total - input.size
     end
 
     private
 
-    def adjacent(point)
-      x, y = point
-      [
-        [x - 1, y - 1], [x, y - 1], [x + 1, y - 1],
-        [x - 1, y], [x + 1, y],
-        [x - 1, y + 1], [x, y + 1], [x + 1, y + 1],
-      ]
-    end
-
     def count_adj_rolls(point, input)
-      adjacent(point).count { |pt| input[pt] }
+      ADJACENT.count { |pt| input[[point[0] + pt[0], point[1] + pt[1]]] }
     end
   end
 end
