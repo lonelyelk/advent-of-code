@@ -14,17 +14,20 @@ module Year2025
     end
 
     def problem2(input)
-      input.map(&:chars)
-           .transpose.reverse
-           .each_with_object({ sum: 0, curr: [] }) do |arr, acc|
-        next if arr.all? { |c| c == " " }
+      process_input2(input).each_with_object({ sum: 0, curr: [] }) do |arr, acc|
+        operator = arr.pop
+        acc[:curr].push(arr.join.to_i)
+        next if operator == " "
 
-        acc[:curr].push(arr[...-1].join.to_i)
-        next unless arr.last != " "
-
-        acc[:sum] += acc[:curr].inject(&arr.last.strip.to_sym)
+        acc[:sum] += acc[:curr].inject(&operator.to_sym)
         acc[:curr] = []
       end[:sum]
+    end
+
+    private
+
+    def process_input2(input)
+      input.map(&:chars).transpose.reverse.reject { |a| a.all? { |c| c == " " } }
     end
   end
 end
