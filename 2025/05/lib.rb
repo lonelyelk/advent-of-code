@@ -24,23 +24,25 @@ module Year2025
         overlaps = acc.select { |r| r.overlap?(range) }
         unless overlaps.empty?
           overlaps.each { |r| acc.delete_at(acc.index(r)) }
-          range = overlaps.inject(range) do |frange, r|
-            if frange.include?(r.begin)
-              if frange.include?(r.end)
-                frange
-              else
-                (frange.begin..r.end)
-              end
-            elsif frange.include?(r.end)
-              (r.begin..frange.end)
-            else
-              r
-            end
-          end
+          range = join(overlaps, range)
         end
         acc.push(range)
       end
       fresh.sum(&:size)
+    end
+
+    private
+
+    def join(overlaps, range)
+      overlaps.inject(range) do |final_range, r|
+        if final_range.include?(r.begin)
+          final_range.include?(r.end) ? final_range : (final_range.begin..r.end)
+        elsif final_range.include?(r.end)
+          (r.begin..final_range.end)
+        else
+          r
+        end
+      end
     end
   end
 end
