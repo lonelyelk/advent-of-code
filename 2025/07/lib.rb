@@ -9,32 +9,45 @@ module Year2025
 
     def problem1(input)
       splits = 0
-      input.each_with_object({}) do |line, acc|
+      input.each_with_object(init_problem1(input)) do |line, acc|
         line.chars.each_with_index do |c, i|
-          if c == "S"
-            acc[i] = true
-          elsif c == "^" && acc[i]
-            splits += 1
-            acc[i] = false
-            acc[i - 1] = acc[i + 1] = true
-          end
+          next unless c == "^" && acc[i]
+
+          splits += 1
+          acc[i] = false
+          acc[i - 1] = acc[i + 1] = true
         end
       end
       splits
     end
 
+    # rubocop:disable Metrics/AbcSize
     def problem2(input)
-      input.each_with_object(Hash.new { |h, k| h[k] = 0 }) do |line, acc|
+      beams = input.each_with_object(init_problem2(input)) do |line, acc|
         line.chars.each_with_index do |c, i|
-          if c == "S"
-            acc[i] += 1
-          elsif c == "^" && acc[i].positive?
-            acc[i - 1] += acc[i]
-            acc[i + 1] += acc[i]
-            acc[i] = 0
-          end
+          next unless c == "^" && acc[i].positive?
+
+          acc[i - 1] += acc[i]
+          acc[i + 1] += acc[i]
+          acc[i] = 0
         end
-      end.values.sum
+      end
+      beams.values.sum
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    private
+
+    def init_problem1(input)
+      h = {}
+      h[input.first.index("S")] = true
+      h
+    end
+
+    def init_problem2(input)
+      h = Hash.new { |h, k| h[k] = 0 }
+      h[input.first.index("S")] = 1
+      h
     end
   end
 end
