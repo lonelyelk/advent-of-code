@@ -30,22 +30,16 @@ module Year2025
           xmin, xmax = [input[i].first, input[j].first].minmax
 
           cross = edges[:horizontals].any? do |(y, er)|
-            ((ymin + 1)..(ymax - 1)).include?(y) && er.include?(xmin) && er.end > xmin
-          end
-          next if cross
-
-          cross = edges[:horizontals].any? do |(y, er)|
-            ((ymin + 1)..(ymax - 1)).include?(y) && er.include?(xmax) && er.begin < xmax
-          end
-          next if cross
-
-          cross = edges[:verticals].any? do |(x, er)|
-            ((xmin + 1)..(xmax - 1)).include?(x) && er.include?(ymax) && er.begin < ymax
+            ((ymin + 1)..(ymax - 1)).include?(y) &&
+              ((er.include?(xmin) && er.end > xmin) ||
+              (er.include?(xmax) && er.begin < xmax))
           end
           next if cross
 
           cross = edges[:verticals].any? do |(x, er)|
-            ((xmin + 1)..(xmax - 1)).include?(x) && er.include?(ymin) && er.end > ymin
+            ((xmin + 1)..(xmax - 1)).include?(x) &&
+              ((er.include?(ymax) && er.begin < ymax) ||
+                (er.include?(ymin) && er.end > ymin))
           end
           next if cross
 
