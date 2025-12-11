@@ -33,6 +33,8 @@ module Year2025
         contrib = machine[:joltage].size.times.map do |i|
           machine[:buttons].select { |btn| (btn & 1 << i).positive? }
         end
+        biggest_groups = machine[:buttons].group_by { |b| contrib.count { |c| c.include?(b) } }
+        biggest = biggest_groups[biggest_groups.keys.max]
         p contrib
         loop do
           p [free, fixed]
@@ -49,9 +51,14 @@ module Year2025
           end
           break if fixed.size + free.size == machine[:buttons].size
 
-          to_free = machine[:buttons].select do |b|
+          to_free_cand = machine[:buttons].select do |b|
             !fixed.key?(b) && !free.key?(b)
-          end.sort_by { |b| b.to_s(2).chars.count("1") }.last
+          end.group_by do |b|
+            contrib.count { |c| c.include?(b) }
+          end
+          to_free = to_free_cand[to_free_cand.keys.max].min_by do |b|
+            contrib.select { |c| c.include?(b) }.sum { |c| (c - free.keys).size }
+          end
           free[to_free] = contrib.filter_map.with_index { |c, i| machine[:joltage][i] if c.include?(to_free) }.min
         end
         p [contrib, fixed, free]
@@ -61,17 +68,15 @@ module Year2025
           end
         end
         presses = free.each_key.with_object({}) { |b, acc| acc[b] = 0 }
-        keys = presses.keys.sort
         p free.values.map { |m| m + 1 }.inject(&:*)
         min = machine[:joltage].sum * 1000
-        count = 0
         total = free.values.map { |m| m + 1 }.inject(&:*) || 1
-        total.times do
-          count += 1
-          p [count, total, min] if count % 10_000 == 0
+        last_found_presses = {}
+        total.times do |count|
+          p [count, total, min, presses] if count % 10_000 == 0
           # p free.values.map { |m| m + 1 }.inject(&:*)
           solved = fixed.dup
-          keys.each do |btn|
+          free.each_key do |btn|
             if presses[btn] < free[btn]
               presses[btn] += 1
               break
@@ -79,23 +84,13 @@ module Year2025
               presses[btn] = 0
             end
           end
-          next if presses.values.sum >= min
 
-          pressed = presses.dup
-          loop do
-            solved = solved.each_with_object({}) do |(btn, expr), acc|
-              pressed.each do |b, val|
-                expr = expr.gsub("{#{b}}", val.to_s)
-              end
-              if expr.include?("{")
-                acc[btn] = expr
-              else
-                pressed[btn] = eval(expr)
-              end
-            end
-            break if solved.empty?
+          pressed = solve_from_pressed(presses, solved)
+          break if !last_found_presses.empty? && last_found_presses.all? do |b, n|
+            n < presses[b]
           end
           next if pressed.values.any?(&:negative?)
+          next if presses.values.sum >= min
 
           joltage = pressed.each_with_object(Array.new(machine[:joltage].size, 0)) do |(btn, val), acc|
             machine[:joltage].size.times do |i|
@@ -106,7 +101,14 @@ module Year2025
           next unless joltage == machine[:joltage]
 
           cand = pressed.values.sum
-          min = cand if cand < min
+          next unless cand < min
+
+          min = cand
+          puts "FOUND"
+          p min
+          p pressed
+          p presses
+          last_found_presses = presses.dup
         end
         # p solutions.min
         # solutions.min
@@ -116,11 +118,29 @@ module Year2025
 
     private
 
-    def press_button(btn, state)
-      {
-        ind: state[:ind] ^ btn,
-        joltage: state[:joltage].map.with_index { |j, i| j + (1 & (btn >> i)) },
-      }
+    def solve_from_pressed(presses, solved)
+      pressed = presses.dup
+      loop do
+        solved = solved.each_with_object({}) do |(btn, expr), acc|
+          pressed.each do |b, val|
+            expr = expr.gsub("{#{b}}", val.to_s)
+          end
+          if expr.include?("{")
+            acc[btn] = expr
+          else
+            pressed[btn] = eval(expr)
+          end
+        end
+        break if solved.empty?
+      end
+      pressed
+    end
+
+    def next_free_state(joltage, free)
+      if free.values.all?(&:zero?)
+        free[free.keys.first] = joltage.size.filter_map { |i| joltage[i] if free.keys.first.anybits?(1 << i) }.min
+      else
+      end
     end
   end
 end
