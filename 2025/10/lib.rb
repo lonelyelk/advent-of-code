@@ -84,13 +84,13 @@ module Year2025
               presses[btn] = 0
             end
           end
+          break if !last_found_presses.empty? && last_found_presses.all? do |b, n|
+            n < presses[b] + 1 # THINK!
+          end
+          next if presses.values.sum >= min
 
           pressed = solve_from_pressed(presses, solved)
-          break if !last_found_presses.empty? && last_found_presses.all? do |b, n|
-            n < presses[b]
-          end
           next if pressed.values.any?(&:negative?)
-          next if presses.values.sum >= min
 
           joltage = pressed.each_with_object(Array.new(machine[:joltage].size, 0)) do |(btn, val), acc|
             machine[:joltage].size.times do |i|
