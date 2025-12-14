@@ -7,7 +7,7 @@ module Year2025
       str.split("\n").map do |line|
         md = line.match(/\[([.#]+)\]([()0-9, ]+)\{(.+)\}/)
         target = md[1]
-        buttons = md[2].strip.split(" ")
+        buttons = md[2].strip.split
         joltage = md[3].split(",").map(&:to_i)
         { target:, buttons:, joltage: }
       end
@@ -60,29 +60,25 @@ module Year2025
     end
 
     def joltage_gain(pressed, machine)
-      return @joltage_gain[pressed] if @joltage_gain.key?(pressed)
-
-      @joltage_gain[pressed] =
+      @joltage_gain[pressed] ||=
         pressed.each_with_index.with_object(Array.new(machine[:joltage].size, 0)) do |(b, i), acc|
           machine[:buttons][i].each { |j| acc[j] += b }
         end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def presses(joltage, machine)
-      return @btn_presses[joltage] if @btn_presses.key?(joltage)
       return 0 if joltage.all?(&:zero?)
       return Float::INFINITY if joltage.any?(&:negative?)
 
-      total = Float::INFINITY
       target_leds = joltage.map { |j| j % 2 }
 
-      @patterns[target_leds].each do |pressed|
+      @btn_presses[joltage] ||= @patterns[target_leds].inject(Float::INFINITY) do |total, pressed|
         gain = joltage_gain(pressed, machine)
         target = joltage.zip(gain).map { |arr| arr.inject(&:-) / 2 }
-        total = [total, pressed.sum + 2 * presses(target, machine)].min
+        [total, pressed.sum + 2 * presses(target, machine)].min
       end
-
-      @btn_presses[joltage] = total
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
 end
