@@ -78,9 +78,9 @@ RSpec.describe Year2025::Day12 do
   end
 
   describe "problem1" do
-    it "returns nil for test input" do
+    it "returns 2 for test input" do
       skip "Generic implementation for the test case would not be able to solve the real input in reasonable time"
-      expect(problem1(processed_input)).to eq(nil)
+      expect(problem1(processed_input)).to eq(2)
     end
   end
 end

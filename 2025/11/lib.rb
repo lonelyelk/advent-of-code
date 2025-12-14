@@ -11,26 +11,17 @@ module Year2025
     end
 
     def problem1(input)
-      state = input["you"].each_with_object(Hash.new(0)) do |out, acc|
-        acc[out] += 1
-      end
+      state = init_state1(input)
       until state.keys == ["out"]
         state = state.each_with_object(Hash.new(0)) do |(out, count), acc|
-          if input.key?(out)
-            input[out].each { |o| acc[o] += count }
-          else
-            acc[out] += count
-          end
+          input.key?(out) ? input[out].each { |o| acc[o] += count } : acc[out] += count
         end
       end
       state["out"]
     end
 
     def problem2(input)
-      state = input["svr"].each_with_object(hash_hash) do |out, acc|
-        key = %w[dac fft].include?(out) ? out : "+++"
-        acc[out][key] += 1
-      end
+      state = init_state2(input)
       until state.keys == ["out"]
         state = state.each_with_object(hash_hash) do |(out, counter), acc|
           if input.key?(out)
@@ -43,17 +34,11 @@ module Year2025
                 acc[o]["dacfft"] += counter["dac"] + counter["dacfft"]
                 acc[o]["fft"] += counter["+++"]
               else
-                acc[o]["dacfft"] += counter["dacfft"]
-                acc[o]["dac"] += counter["dac"]
-                acc[o]["fft"] += counter["fft"]
-                acc[o]["+++"] += counter["+++"]
+                %w[dacfft dac fft +++].each { |key| acc[o][key] += counter[key] }
               end
             end
           else
-            acc[out]["dacfft"] += counter["dacfft"]
-            acc[out]["dac"] += counter["dac"]
-            acc[out]["fft"] += counter["fft"]
-            acc[out]["+++"] += counter["+++"]
+            %w[dacfft dac fft +++].each { |key| acc[out][key] += counter[key] }
           end
         end
       end
@@ -62,8 +47,21 @@ module Year2025
 
     private
 
+    def init_state1(input)
+      input["you"].each_with_object(Hash.new(0)) do |out, acc|
+        acc[out] += 1
+      end
+    end
+
     def hash_hash
       Hash.new { |h, k| h[k] = Hash.new(0) }
+    end
+
+    def init_state2(input)
+      input["svr"].each_with_object(hash_hash) do |out, acc|
+        key = %w[dac fft].include?(out) ? out : "+++"
+        acc[out][key] += 1
+      end
     end
   end
 end
