@@ -50,9 +50,7 @@ module Year2025
     private
 
     def init_state1(input)
-      input["you"].each_with_object(Hash.new(0)) do |out, acc|
-        acc[out] += 1
-      end
+      input["you"].tally
     end
 
     def hash_hash

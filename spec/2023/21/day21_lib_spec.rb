@@ -37,7 +37,6 @@ RSpec.describe Year2023::Day21 do
       # 5000 => 16733044,
     }.each do |steps, spots|
       it "returns #{spots} for test input in #{steps} steps" do
-        p steps
         expect(problem2(process_input(input), steps)).to eq(spots)
       end
     end

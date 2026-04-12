@@ -12,11 +12,9 @@ module Year2024
     end
 
     def problem2(input)
-      right_count = input[1].each_with_object(Hash.new(0)) do |num, cnt|
-        cnt[num] += 1
-      end
+      right_count = input[1].tally
       input[0].sum do |num|
-        num * right_count[num]
+        num * (right_count[num] || 0)
       end
     end
   end

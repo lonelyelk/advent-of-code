@@ -54,10 +54,10 @@ module Year2024
           seqs = sequences_for(diff).reject do |seq|
             pass_over_hole?(seq, pos)
           end
-          lens = seqs.each_with_object({}) do |seq, len_acc|
-            len_acc[seq] = "A#{seq}".chars.each_cons(2).sum do |pair|
+          lens = seqs.to_h do |seq|
+            [seq, "A#{seq}".chars.each_cons(2).sum do |pair|
               step_cost[pair.join]
-            end
+            end,]
           end
           pos += diff
           lens.values.min

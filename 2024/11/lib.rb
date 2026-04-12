@@ -4,9 +4,7 @@
 module Year2024
   module Day11
     def process_input(str)
-      str.split.each_with_object(Hash.new(0)) do |num, acc|
-        acc[num] += 1
-      end
+      str.split.tally
     end
 
     def problem1(input, blinks = 25)

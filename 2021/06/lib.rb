@@ -17,7 +17,7 @@ module Day06
   protected
 
   def initial_population(input)
-    input.each_with_object(Hash.new(0)) { |days, acc| acc[days] += 1 }
+    input.tally
   end
 
   def multiply(init_population, total_days)

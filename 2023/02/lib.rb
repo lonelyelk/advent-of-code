@@ -27,8 +27,8 @@ module Year2023
     def problem2(input)
       input.values.sum do |game|
         game.inject do |acc, set|
-          TARGET_GAME.keys.each_with_object({}) do |color, obj|
-            obj[color] = [acc[color] || 0, set[color] || 0].max
+          TARGET_GAME.keys.to_h do |color|
+            [color, [acc[color] || 0, set[color] || 0].max]
           end
         end.values.inject(&:*)
       end

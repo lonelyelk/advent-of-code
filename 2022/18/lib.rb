@@ -35,7 +35,7 @@ module Year2022
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def problem2(input)
       total_sides = problem1(input)
-      cover = POCKET_TRANS.keys.each_with_object({}) { |key, acc| acc[key] = [] }
+      cover = POCKET_TRANS.keys.to_h { |key| [key, []] }
       POCKET_TRANS.each do |key, trans|
         input.map(&trans[:fwd]).sort.each_cons(2) do |(x1, y1, z1), (x2, y2, z2)|
           next unless x1 == x2 && y1 == y2 && z2 - z1 > 1

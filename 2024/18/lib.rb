@@ -24,7 +24,7 @@ module Year2024
     end
 
     def bytes_fall(input, num_bytes)
-      input[...num_bytes].each_with_object({}) { |c, acc| acc[c] = true }
+      input[...num_bytes].to_h { |c| [c, true] }
     end
 
     def possible_steps(coord, max)

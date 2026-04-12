@@ -7,7 +7,7 @@ module Year2024
       avail, desired = str.split("\n\n")
       avail = avail.split(", ")
       avail_min, avail_max = avail.map(&:size).minmax
-      avail_set = avail.each_with_object({}) { |ptr, acc| acc[ptr] = true }
+      avail_set = avail.to_h { |ptr| [ptr, true] }
       [desired.split("\n"), { set: avail_set, range: (avail_min..avail_max) }]
     end
 
