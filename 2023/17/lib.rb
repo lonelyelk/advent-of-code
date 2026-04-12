@@ -92,11 +92,11 @@ module Year2023
     # rubocop:enable Naming/MethodParameterName
 
     def heat_loss(path)
-      path[path.size - 1][path.first.size - 1].values.min
+      path[-1][path.first.size - 1].values.min
     end
 
     def ultra_heat_loss(path)
-      path[path.size - 1][path.first.size - 1].select do |len, _|
+      path[-1][path.first.size - 1].select do |len, _|
         current_dir = len.index(&:positive?)
         (4..10).include?(len[current_dir])
       end.values.min

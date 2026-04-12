@@ -19,7 +19,7 @@ module Day13
     end
     (0..folded.map(&:last).max).map do |y|
       (0..folded.map(&:first).max).map do |x|
-        (folded.include?([x, y]) ? "#" : ".")
+        folded.include?([x, y]) ? "#" : "."
       end.join
     end.join("\n")
   end
