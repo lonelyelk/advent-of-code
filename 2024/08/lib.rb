@@ -18,7 +18,7 @@ module Year2024
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def problem2(input)
       nodes = antennas(input).each_with_object([]) do |(_name, points), acc|
         each_pair(points, normalize: true) do |v1, _, d|
@@ -30,7 +30,6 @@ module Year2024
       end
       nodes.uniq.count
     end
-    # rubocop:enable Metrics/AbcSize
 
     def antennas(input)
       input.each_with_object({}).with_index do |(line, acc), i|

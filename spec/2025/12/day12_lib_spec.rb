@@ -65,8 +65,8 @@ RSpec.describe Year2025::Day12 do
       ],
       spaces: [
         { width: 4, length: 4, presents: [0, 0, 0, 0, 2, 0] },
-        { width: 12, length: 5, presents: [1,  0, 1, 0,  2,  2] },
-        { width: 12, length: 5, presents: [1,  0, 1, 0,  3,  2] },
+        { width: 12, length: 5, presents: [1, 0, 1, 0, 2, 2] },
+        { width: 12, length: 5, presents: [1, 0, 1, 0, 3, 2] },
       ],
     }
   end

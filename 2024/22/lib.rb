@@ -15,7 +15,7 @@ module Year2024
       end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def problem2(input)
       market = input.map do |num|
         key = []
@@ -29,7 +29,6 @@ module Year2024
       end
       find_sequence(market)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def mix(num, other)
       num ^ other

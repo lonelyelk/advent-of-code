@@ -71,7 +71,7 @@ module Year2023
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def find_loop(pipes, pos)
       next_left, next_right = next_positions(pipes, pos)
       path_left = { pos => true, next_left => true }
@@ -88,7 +88,6 @@ module Year2023
       end
       [path_left, path_right]
     end
-    # rubocop:enable Metrics/MethodLength
 
     def next_positions(pipes, pos, *paths)
       dirs = []

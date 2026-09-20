@@ -13,7 +13,7 @@ module Year2023
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def problem2(input)
       state = input.each_with_object(init_state) do |instr, s|
         label, box, op, lens = parse_instruction(instr)
@@ -22,7 +22,6 @@ module Year2023
       end
       focusing_power(state)
     end
-    # rubocop:enable Metrics/AbcSize
 
     private
 

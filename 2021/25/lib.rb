@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/25
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+# rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
 module Day25
   def process_input(str)
     lines = str.split("\n").reject(&:empty?)
@@ -20,7 +20,7 @@ module Day25
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def problem1(input)
     state = input
     frame = [@width, @height]
@@ -48,6 +48,4 @@ module Day25
       state = next_state
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize

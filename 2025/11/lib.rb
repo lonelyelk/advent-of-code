@@ -20,7 +20,7 @@ module Year2025
       state["out"]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def problem2(input)
       state = init_state2(input)
       until state.keys == ["out"]
@@ -45,7 +45,6 @@ module Year2025
       end
       state["out"]["dacfft"]
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     private
 

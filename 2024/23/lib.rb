@@ -15,7 +15,7 @@ module Year2024
       subnets(input).count { |net| net.any? { |c| c =~ /^t/ } }
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def problem2(input)
       nets = subnets(input)
       until nets.size == 1
@@ -27,7 +27,6 @@ module Year2024
       end
       nets.first.join(",")
     end
-    # rubocop:enable Metrics/AbcSize
 
     def subnets(input)
       input.each_with_object([]) do |(comp, net), acc|

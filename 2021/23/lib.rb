@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/23
-# rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+# rubocop:disable-next Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 module Day23
   HALL = [0, 1, 3, 5, 7, 9, 10].freeze
   COSTS = {
@@ -161,4 +161,3 @@ module Day23
     find_solutions(unfolded).min
   end
 end
-# rubocop:enable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

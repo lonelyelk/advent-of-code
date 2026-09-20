@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/18
-# rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize
+# rubocop:disable-next Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize
 module Day18
   def process_input(str)
     str.split("\n").reject(&:empty?).map do |l|
@@ -128,4 +128,3 @@ module Day18
     number.map { |num| { path: num[:path][1..], value: num[:value] } }
   end
 end
-# rubocop:enable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize

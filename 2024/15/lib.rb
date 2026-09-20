@@ -2,7 +2,7 @@
 
 # https://adventofcode.com/2024/day/15
 module Year2024
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module Day15
     def process_input(str)
       map_input, ops_input = str.split("\n\n")
@@ -16,7 +16,7 @@ module Year2024
       [start, map, ops_input.split("\n").join.chars]
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def problem1(input)
       pos, map, ops = input.map(&:dup)
       ops.each do |op|
@@ -34,7 +34,6 @@ module Year2024
       end
       gps(map, "O")
     end
-    # rubocop:enable Metrics/MethodLength
 
     def direction(dir, mult = 1)
       case dir
@@ -73,7 +72,7 @@ module Year2024
       end
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
     def problem2(input)
       pos, map, ops = scale_up(input)
       ops.each do |op|
@@ -96,7 +95,6 @@ module Year2024
       end
       gps(map, "[")
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def scale_up(input)
       start, map, ops = input
@@ -108,7 +106,7 @@ module Year2024
       [[x * 2, y], scaled_map, ops]
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def next_workload(prev_wl, map, dir)
       prev_wl.each_with_object({}) do |coord, acc|
         x, y = next_pos(coord, dir)
@@ -124,7 +122,5 @@ module Year2024
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
   end
-  # rubocop:enable Metrics/ModuleLength
 end

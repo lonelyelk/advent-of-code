@@ -21,7 +21,7 @@ module Year2023
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def problem2(input)
       flows = [["in", [], []]]
       flows = next_workflow_steps(flows, input) until flows.all? { |f| %w[A R].include?(f.first) }
@@ -30,7 +30,6 @@ module Year2023
         ranges.values.map { |min, max| max - min + 1 }.inject(&:*)
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -88,7 +87,7 @@ module Year2023
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def apply_to_default_ranges(workflows)
       workflows.map do |rules|
         rules.each_with_object(default_ranges) do |rule, ranges|
@@ -98,7 +97,6 @@ module Year2023
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     def default_ranges
       { "x" => [1, 4000], "m" => [1, 4000], "a" => [1, 4000], "s" => [1, 4000] }

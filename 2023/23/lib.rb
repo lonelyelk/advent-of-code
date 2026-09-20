@@ -2,7 +2,7 @@
 
 # https://adventofcode.com/2023/day/23
 module Year2023
-  # rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   module Day23
     STEPS = {
       "^" => Complex(-1, 0),
@@ -126,5 +126,4 @@ module Year2023
       end
     end
   end
-  # rubocop:enable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

@@ -31,12 +31,11 @@ module Day14
 
   def build_linked_list(template)
     list_start = {}
-    # rubocop:disable Lint/UnmodifiedReduceAccumulator
+    # rubocop:disable-next Lint/UnmodifiedReduceAccumulator
     template.chars.inject(list_start) do |acc, c|
       acc[:c] = c
       acc[:next] = {}
     end
-    # rubocop:enable Lint/UnmodifiedReduceAccumulator
     list_start
   end
 

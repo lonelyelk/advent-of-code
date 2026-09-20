@@ -32,7 +32,7 @@ module Year2022
       total_sides
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def problem2(input)
       total_sides = problem1(input)
       cover = POCKET_TRANS.keys.to_h { |key| [key, []] }
@@ -53,6 +53,5 @@ module Year2022
       air_cubes = cover[:z].flatten(1)
       total_sides - problem1(air_cubes)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   end
 end

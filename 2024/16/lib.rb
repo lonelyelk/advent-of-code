@@ -20,7 +20,7 @@ module Year2024
       map[input[:e]].values.map(&:first).min
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def problem2(input)
       map = map_points(input)
       path = { input[:e] => map[input[:e]].values.min_by(&:first) }
@@ -31,7 +31,6 @@ module Year2024
       end
       path.size
     end
-    # rubocop:enable Metrics/AbcSize
 
     def transform_to_map(input)
       input[:map].each_with_object({}).with_index do |(line, acc), y|
@@ -52,7 +51,7 @@ module Year2024
       }
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def map_points(input)
       map = transform_to_map(input)
       edge = [input[:s]]
@@ -78,6 +77,5 @@ module Year2024
       end
       map
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   end
 end

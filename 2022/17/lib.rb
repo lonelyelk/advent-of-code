@@ -17,7 +17,7 @@ module Year2022
       str.chomp
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def problem1(input, max_rocks = 2022)
       init!
       loop do
@@ -35,7 +35,6 @@ module Year2022
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def problem2(input)
       problem1(input, 1_000_000_000_000)
@@ -104,7 +103,7 @@ module Year2022
       end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def print_pipe(input)
       puts "\n#{input[@wind]}\n"
       y_range_reversed.each do |yy|
@@ -116,7 +115,6 @@ module Year2022
         puts l
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def y_range_reversed
       (([@top + @rock.size + 3 - 30, 0].max)...(@top + @rock.size + 3)).to_a.reverse

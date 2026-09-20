@@ -50,7 +50,7 @@ module Year2022
       end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def recursive_solve(time, costs, robots, ores)
       return @max_geodes = [ores.last, @max_geodes].max if time == @max_time
 
@@ -84,6 +84,5 @@ module Year2022
         end
       end.max
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   end
 end

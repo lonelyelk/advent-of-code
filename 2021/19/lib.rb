@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/19
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+# rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 module Day19
   def process_input(str)
     str.split(/---[^-]+---/).reject(&:empty?).map do |scanner|
@@ -94,4 +94,3 @@ module Day19
     nil
   end
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

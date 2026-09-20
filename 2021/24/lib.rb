@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 # https://adventofcode.com/2021/day/24
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+# rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 module Day24
   def process_input(str)
     str.split("\n").reject(&:empty?).map(&:split)
   end
 
-  # rubocop:disable Naming/MethodParameterName, Metrics/ParameterLists
+  # rubocop:disable-next Naming/MethodParameterName, Metrics/ParameterLists
   def run(program, inp: [], w: 0, x: 0, y: 0, z: 0)
     registers = { "w" => w, "x" => x, "y" => y, "z" => z }
     program.each do |instr|
@@ -30,7 +30,6 @@ module Day24
     end
     registers
   end
-  # rubocop:enable Naming/MethodParameterName, Metrics/ParameterLists
 
   def serial_check(num)
     z = 0
@@ -114,4 +113,3 @@ module Day24
     end
   end
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

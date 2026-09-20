@@ -52,7 +52,7 @@ module Year2023
       !pos.real.negative? && !pos.imag.negative? && pos.real < input.size && pos.imag < input.first.size
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def next_dirs(input, pos, dir)
       case input[pos.real][pos.imag]
       when "."
@@ -67,6 +67,5 @@ module Year2023
         [dir.imag.zero? ? dir * 1i : -dir * 1i]
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   end
 end

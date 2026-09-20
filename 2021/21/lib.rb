@@ -49,7 +49,7 @@ module Day21
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def round_dirac(positions, scores, player)
     roll_dirac.tally.inject([0, 0]) do |wins, (roll, count)|
       variant_positions, variant_scores = game_move(positions, scores, player, roll)
@@ -62,7 +62,6 @@ module Day21
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def game_move(positions, scores, player, roll)
     next_positions = positions.dup

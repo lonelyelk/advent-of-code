@@ -39,7 +39,7 @@ module Year2024
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def count_cheats(points, max_gain, max_cheat)
       points.sum do |(x, y), val|
         (-max_cheat..max_cheat).sum do |y1|
@@ -51,6 +51,5 @@ module Year2024
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end

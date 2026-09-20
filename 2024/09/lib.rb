@@ -55,7 +55,7 @@ module Year2024
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def partitions(input)
       position = 0
       input.chars.map(&:to_i).each_slice(2).with_index
@@ -68,6 +68,5 @@ module Year2024
         position += file + space
       end
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end

@@ -31,11 +31,10 @@ module Day20
 
   protected
 
-  # rubocop:disable Naming/MethodParameterName
+  # rubocop:disable-next Naming/MethodParameterName
   def pt(x, y)
     x + (y * 1i)
   end
-  # rubocop:enable Naming/MethodParameterName
 
   def enhanced(point, alg, pic)
     pixel = neighbours(point).map { |c| pic[c].to_s }.join.to_i(2)

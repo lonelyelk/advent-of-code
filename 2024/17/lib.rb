@@ -13,7 +13,7 @@ module Year2024
       }
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def problem1(input, target_out = nil)
       comp = input.dup
       instr = 0
@@ -46,7 +46,6 @@ module Year2024
       end
       out.join(",")
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     def problem2(input)
       (input[:p].size - 1).downto(0).inject(0) do |acc, index|

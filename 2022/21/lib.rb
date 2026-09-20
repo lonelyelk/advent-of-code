@@ -41,7 +41,7 @@ module Year2022
       h
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def extract(input, lookup)
       re = /^(\S+) = (\S+) (\S) (\S+)$/
       i = input.index { |l| l.match?(/=.+#{lookup[3, 4]}/) }
@@ -54,7 +54,6 @@ module Year2022
              end
       [line, md[1]]
     end
-    # rubocop:enable Metrics/AbcSize
 
     def extract_first(left, operation, second)
       case operation

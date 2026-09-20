@@ -2,7 +2,7 @@
 
 require_relative "../../../2021/23/lib"
 
-# rubocop:disable Style/SymbolArray
+# rubocop:disable-next Style/SymbolArray
 RSpec.describe Day23 do
   include described_class
 
@@ -109,4 +109,3 @@ RSpec.describe Day23 do
     end
   end
 end
-# rubocop:enable Style/SymbolArray

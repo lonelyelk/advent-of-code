@@ -66,7 +66,7 @@ module Year2025
         end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def presses(joltage, machine)
       return 0 if joltage.all?(&:zero?)
       return Float::INFINITY if joltage.any?(&:negative?)
@@ -79,6 +79,5 @@ module Year2025
         [total, pressed.sum + 2 * presses(target, machine)].min
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
 end

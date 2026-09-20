@@ -10,7 +10,7 @@ module Year2024
       end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def problem1(input, size = [101, 103], time = 100)
       midx, midy = size.map { |c| c / 2 }
       positions_in(input, size, time).each_with_object(Array.new(4, 0)) do |(x, y), acc|
@@ -20,7 +20,6 @@ module Year2024
         acc[3] += 1 if x < midx && y > midy
       end.inject(&:*)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def problem2(input, size = [101, 103])
       best_xt, best_yt = [0, 0]

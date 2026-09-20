@@ -3,14 +3,13 @@
 # https://adventofcode.com/2022/day/11
 module Year2022
   module Day11
-    # rubocop:disable Style/RegexpLiteral
+    # rubocop:disable-next Style/RegexpLiteral
     PARSER_RE = %r{Monkey \d+:
   Starting items: ([0-9, ]+)
   Operation: new = (.+)
   Test: divisible by (\d+)
     If true: throw to monkey (\d+)
     If false: throw to monkey (\d+)}
-    # rubocop:enable Style/RegexpLiteral
 
     def process_input(str)
       str.split("\n\n").reject(&:empty?).map(&:chomp)

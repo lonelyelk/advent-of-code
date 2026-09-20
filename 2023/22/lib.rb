@@ -2,7 +2,7 @@
 
 # https://adventofcode.com/2023/day/22
 module Year2023
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   module Day22
     def process_input(str)
       str.split("\n").map do |line|
@@ -64,5 +64,4 @@ module Year2023
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 end

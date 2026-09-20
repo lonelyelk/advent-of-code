@@ -59,7 +59,7 @@ module Year2023
       dest_num || num
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def split_range_for_map(source_range, vmap)
       vmap.inject([source_range]) do |ranges, (_, st, sz)|
         ranges.each_with_object([]) do |(start, size), re|
@@ -77,6 +77,5 @@ module Year2023
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end

@@ -13,7 +13,7 @@ module Day22
     problem2(intersections_within([[-50, 50], [-50, 50], [-50, 50]], input))
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def problem2(input)
     intersections = []
     input.each_with_index.inject(0) do |sum, (cuboid, index)|
@@ -34,9 +34,8 @@ module Day22
       sum + add
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
   def intersections_within(cuboid, input)
     input.each_with_object([]) do |cbd, res|
       intersect = (0..2).all? do |i|
@@ -51,7 +50,6 @@ module Day22
       res.push(intrn)
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def volume(cuboid)
     cuboid[0, 3].map { |c| c[1] - c[0] + 1 }.inject(&:*)

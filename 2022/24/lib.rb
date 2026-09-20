@@ -16,7 +16,7 @@ module Year2022
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def problem1(input, start: START, goal: @end, start_time: 0)
       paths = [[start]]
       time = start_time
@@ -32,7 +32,6 @@ module Year2022
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def problem2(input)
       time_fw = problem1(input)

@@ -2,7 +2,7 @@
 
 # https://adventofcode.com/2023/day/21
 module Year2023
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   module Day21
     STEPS = [Complex(0, 1), Complex(0, -1), Complex(1, 0), Complex(-1, 0)].freeze
 
@@ -103,5 +103,4 @@ module Year2023
       Hash.new { |h, k| h[k] = {} }
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 end

@@ -21,7 +21,7 @@ module Year2025
       splits
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def problem2(input)
       beams = input.each_with_object(init_problem2(input)) do |line, acc|
         line.chars.each_with_index do |c, i|
@@ -34,7 +34,6 @@ module Year2025
       end
       beams.values.sum
     end
-    # rubocop:enable Metrics/AbcSize
 
     private
 
